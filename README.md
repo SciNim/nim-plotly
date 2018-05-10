@@ -36,6 +36,8 @@ p.show()
 
 ![simple scatter](https://user-images.githubusercontent.com/1739/39875828-e65293a8-542e-11e8-9b18-12130b8694c3.png)
 
+The `show` call opens a browser pointing to a plot like above, but the actual plot will
+be interactive.
 
 #### Scatter with custom colors and sizes
 
@@ -63,3 +65,4 @@ p.show()
 + [ ] convert `%` procs into macros so I don't have to re-write the same code over and over.
 + [ ] more of plotly API
 + [ ] ergonomics / plotting DSL
++ [ ] custom interactivity.
