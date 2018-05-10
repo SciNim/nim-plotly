@@ -1,0 +1,4 @@
+import fig1_simple_scatter
+import fig2_scatter_colors_sizes
+import fig3_multiple_plot_types
+import fig4_multiple_axes
