@@ -1,5 +1,5 @@
-include ./plotly_api
-import ./browser
+include plotly/api
+import plotly/browser
 import os
 import strutils
 import json
