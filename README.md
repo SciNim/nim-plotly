@@ -47,7 +47,7 @@ be interactive.
 
 #### Multiple plot types
 
-[source](https://github.com/brentp/nim-plotly/blob/master/examples/fig2_scatter_colors_sizes.nim)
+[source](https://github.com/brentp/nim-plotly/blob/master/examples/fig3_multiple_plot_types.nim)
 
 ![multiple plot types](https://user-images.githubusercontent.com/1739/39875825-e62d5c0a-542e-11e8-83be-cdbfa18cfec9.png)
 
