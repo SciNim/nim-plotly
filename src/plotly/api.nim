@@ -18,6 +18,38 @@ type
     Left = "left"
     Right = "right"
 
+  ErrorBarKind = enum   # different error bar kinds (from constant value, array,...)
+    ebkConstantSym,      # constant symmetric error
+    ebkConstantAsym,     # constant asymmetric error
+    ebkPercentSym,       # symmetric error on percent of value
+    ebkPercentAsym,      # asymmetric error on percent of value
+    ebkSqrt,             # error based on sqrt of value
+    ebkArraySym,         # symmetric error based on array of length data.len
+    ebkArrayAsym        # assymmetric error based on array of length data.len
+
+  ErrorBar*[T: SomeNumber] = ref object
+    visible*: bool
+    color*: Color            # color of bars (including alpha channel)
+    thickness*: float        # thickness of bar
+    width*: float            # width of bar
+    case kind: ErrorBarKind
+    of ebkConstantSym:
+      value*: T
+    of ebkConstantAsym:
+      valueMinus*: T
+      valuePlus*: T
+    of ebkPercentSym:
+      percent*: T
+    of ebkPercentAsym:
+      percentMinus*: T
+      percentPlus*: T
+    of ebkSqrt: discard
+    of ebkArraySym:
+      errors*: seq[T]
+    of ebkArrayAsym:
+      errorsMinus*: seq[T]
+      errorsPlus*: seq[T]
+
   Marker*[T: SomeNumber] = ref object
     size*: seq[T]
     color*: seq[Color]
@@ -25,6 +57,9 @@ type
   Trace*[T: SomeNumber] = ref object
     xs*: seq[T]
     ys*: seq[T]
+    # TODO: allow for single element errors or use single element seqs for that?
+    xs_err*: ErrorBar[T]
+    ys_err*: ErrorBar[T]
     marker*: Marker[T]
     text*: seq[string]
     mode*: PlotMode
@@ -52,6 +87,43 @@ type
     xaxis*: Axis
     yaxis*: Axis
     yaxis2*: Axis
+
+func newErrorBar*[T: SomeNumber](err: T, color: Color, thickness = 0.0, width = 0.0, visible = true, percent = false): ErrorBar[T] =
+  ## creates an `ErrorBar` object of type `ebkConstantSym` or `ebkPercentSym`, if the `percent` flag
+  ## is set to `true`
+  if percent == false:
+    result = ErrorBar[T](visible: visible, color: color, thickness: thickness, width: width, kind: ebkConstantSym)
+    result.value = err
+  else:
+    result = ErrorBar[T](visible: visible, color: color, thickness: thickness, width: width, kind: ebkPercentSym)
+    result.percent = err
+
+func newErrorBar*[T: SomeNumber](err: tuple[p, m: T], color: Color, thickness = 0.0, width = 0.0, visible = true, percent = false): ErrorBar[T] =
+  ## creates an `ErrorBar` object of type `ebkConstantAsym`, constant plus and minus errors given as tuple
+  ## or `ebkPercentAsym` of `percent` flag is set to true
+  if percent == false:
+    result = ErrorBar[T](visible: visible, color: color, thickness: thickness, width: width, kind: ebkConstantAsym)
+    result.valuePlus  = err.p
+    result.valueMinus = err.m
+  else:
+    result = ErrorBar[T](visible: visible, color: color, thickness: thickness, width: width, kind: ebkPercentAsym)
+    result.percentPlus  = err.p
+    result.percentMinus = err.m
+
+func newErrorBar*[T: SomeNumber](color: Color, thickness = 0.0, width = 0.0, visible = true): ErrorBar[T] =
+  ## creates an `ErrorBar` object of type `ebkSqrt`
+  result = ErrorBar[T](visible: visible, color: color, thickness: thickness, width: width, kind: ebkSqrt)
+
+func newErrorBar*[T](err: seq[T], color: Color, thickness = 0.0, width = 0.0, visible = true): ErrorBar[T] =
+  ## creates an `ErrorBar` object of type `ebkArraySym`
+  result = ErrorBar[T](visible: visible, color: color, thickness: thickness, width: width, kind: ebkArraySym)
+  result.errors = err
+
+func newErrorBar*[T: SomeNumber](err: tuple[p, m: seq[T]], color: Color, thickness = 0.0, width = 0.0, visible = true): ErrorBar[T] =
+  ## creates an `ErrorBar` object of type `ebkArrayAsym`
+  result = ErrorBar[T](visible: visible, color: color, thickness: thickness, width: width, kind: ebkArraySym)
+  result.errorsPlus  = err.p
+  result.errorsMinus = err.m
 
 func empty(c: Color): bool =
   # TODO: this is also black, but should never need black with alpha == 0
@@ -106,7 +178,47 @@ func toHtmlHex(colors: seq[Color]): seq[string] =
   for i, c in colors:
     result[i] = c.toHtmlHex
 
-proc `%`*(t: Trace): JsonNode =
+func `%`*(b: ErrorBar): JsonNode =
+  ## creates a JsonNode from an `ErrorBar` object depending on the object variant
+  var fields = initOrderedTable[string, JsonNode](4)
+  fields["visible"] = % b.visible
+  fields["color"] = % b.color.toHtmlHex
+  if b.thickness > 0:
+    fields["thickness"] = % b.thickness
+  if b.width > 0:
+    fields["width"] = % b.width
+  case b.kind
+  of ebkConstantSym:
+    fields["symmetric"] = % true
+    fields["type"] = % "constant"
+    fields["value"] = % b.value
+  of ebkConstantAsym:
+    fields["symmetric"] = % false
+    fields["type"] = % "constant"
+    fields["valueminus"] = % b.valueMinus
+    fields["value"] = % b.valuePlus
+  of ebkPercentSym:
+    fields["symmetric"] = % true
+    fields["type"] = % "percent"
+    fields["value"] = % b.percent
+  of ebkPercentAsym:
+    fields["symmetric"] = % false
+    fields["type"] = % "percent"
+    fields["valueminus"] = % b.percentMinus
+    fields["value"] = % b.percentPlus
+  of ebkSqrt:
+    fields["type"] = % "sqrt"
+  of ebkArraySym:
+    fields["symmetric"] = % true
+    fields["type"] = % "data"
+    fields["array"] = % b.errors
+  of ebkArrayAsym:
+    fields["symmetric"] = % false
+    fields["type"] = % "data"
+    fields["arrayminus"] = % b.errorsMinus
+    fields["array"] = % b.errorsPlus
+  result = JsonNode(kind: JObject, fields: fields)
+
 func `%`*(t: Trace): JsonNode =
   var fields = initOrderedTable[string, JsonNode](8)
   if t.xs == nil or t.xs.len == 0:
@@ -117,6 +229,12 @@ func `%`*(t: Trace): JsonNode =
   if t.yaxis != "":
     fields["yaxis"] = % t.yaxis
   fields["y"] = % t.ys
+
+  if t.xs_err != nil:
+    fields["error_x"] = % t.xs_err
+  if t.ys_err != nil:
+    fields["error_y"] = % t.ys_err
+
   fields["mode"] = % t.mode
   fields["type"] = % t.`type`
   if t.name != nil:
@@ -125,7 +243,7 @@ func `%`*(t: Trace): JsonNode =
     fields["text"] = % t.text
   if t.marker != nil:
     fields["marker"] = % t.marker
-  result = JsonNode(kind:Jobject, fields:  fields)
+  result = JsonNode(kind:Jobject, fields: fields)
 
 func `%`*(m: Marker): JsonNode =
   var fields = initOrderedTable[string, JsonNode](8)
