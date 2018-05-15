@@ -57,7 +57,6 @@ type
   Trace*[T: SomeNumber] = ref object
     xs*: seq[T]
     ys*: seq[T]
-    # TODO: allow for single element errors or use single element seqs for that?
     xs_err*: ErrorBar[T]
     ys_err*: ErrorBar[T]
     marker*: Marker[T]
@@ -91,6 +90,7 @@ type
 func newErrorBar*[T: SomeNumber](err: T, color: Color, thickness = 0.0, width = 0.0, visible = true, percent = false): ErrorBar[T] =
   ## creates an `ErrorBar` object of type `ebkConstantSym` or `ebkPercentSym`, if the `percent` flag
   ## is set to `true`
+  # NOTE: there is a lot of visual noise in the creation here... change how?
   if percent == false:
     result = ErrorBar[T](visible: visible, color: color, thickness: thickness, width: width, kind: ebkConstantSym)
     result.value = err
