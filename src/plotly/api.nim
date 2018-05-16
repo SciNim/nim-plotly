@@ -43,7 +43,10 @@ type
     of ebkPercentAsym:
       percentMinus*: T
       percentPlus*: T
-    of ebkSqrt: discard
+    of ebkSqrt:
+      # NOTE: the fact that we technically have not type T in the `ErrorBar` for
+      # this variant means we have to hand it to the `newErrorBar` proc manually!
+      discard
     of ebkArraySym:
       errors*: seq[T]
     of ebkArrayAsym:
@@ -101,10 +104,12 @@ func newErrorBar*[T: SomeNumber](err: T, color: Color, thickness = 0.0, width = 
                          width: width, kind: ebkPercentSym)
     result.percent = err
 
-func newErrorBar*[T: SomeNumber](err: tuple[p, m: T], color: Color, thickness = 0.0,
+func newErrorBar*[T: SomeNumber](err: tuple[m, p: T], color: Color, thickness = 0.0,
                                  width = 0.0, visible = true, percent = false): ErrorBar[T] =
   ## creates an `ErrorBar` object of type `ebkConstantAsym`, constant plus and
   ## minus errors given as tuple or `ebkPercentAsym` of `percent` flag is set to true
+  ## Note: the first element of the `err` tuple is the `negative` size, the second
+  ## the positive!
   if percent == false:
     result = ErrorBar[T](visible: visible, color: color, thickness: thickness,
                          width: width, kind: ebkConstantAsym)
@@ -129,9 +134,11 @@ func newErrorBar*[T](err: seq[T], color: Color, thickness = 0.0, width = 0.0,
                        width: width, kind: ebkArraySym)
   result.errors = err
 
-func newErrorBar*[T: SomeNumber](err: tuple[p, m: seq[T]], color: Color,
+func newErrorBar*[T: SomeNumber](err: tuple[m, p: seq[T]], color: Color,
                                  thickness = 0.0, width = 0.0, visible = true): ErrorBar[T] =
   ## creates an `ErrorBar` object of type `ebkArrayAsym`, where the first
+  ## Note: the first seq of the `err` tuple is the `negative` error seq, the second
+  ## the positive!
   result = ErrorBar[T](visible: visible, color: color, thickness: thickness,
                        width: width, kind: ebkArrayAsym)
   result.errorsPlus  = err.p
