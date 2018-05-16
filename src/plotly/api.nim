@@ -286,4 +286,5 @@ func json*(d: Trace, as_pretty=true): string =
   var j = % d
   if as_pretty:
     result = pretty(j)
-  result = $d
+  else:
+    result = $d
