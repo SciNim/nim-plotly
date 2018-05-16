@@ -3,7 +3,6 @@ import json
 import chroma
 
 type
-
   PlotType* {.pure.} = enum
     Scatter = "scatter"
     ScatterGL = "scattergl"
@@ -54,14 +53,14 @@ type
     yaxis*: Axis
     yaxis2*: Axis
 
-proc empty(c:Color): bool =
+func empty(c: Color): bool =
   # TODO: this is also black, but should never need black with alpha == 0
-  return c.r == 0 and c.g == 0 and c.b == 0 and c.a == 0
+  result = c.r == 0 and c.g == 0 and c.b == 0 and c.a == 0
 
-proc `%`*(c:Color): string =
-  return c.toHtmlHex()
+func `%`*(c: Color): string =
+  result = c.toHtmlHex()
 
-proc `%`*(f:Font): JsonNode =
+func `%`*(f: Font): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if f.size != 0:
     fields["size"] = % f.size
@@ -71,7 +70,7 @@ proc `%`*(f:Font): JsonNode =
     fields["family"] = % f.family
   result = JsonNode(kind:Jobject, fields:  fields)
 
-proc `%`*(a:Axis): JsonNode =
+func `%`*(a: Axis): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if a.title != nil and a.title != "":
     fields["title"] = % a.title
@@ -85,7 +84,7 @@ proc `%`*(a:Axis): JsonNode =
 
   result = JsonNode(kind:Jobject, fields:  fields)
 
-proc `%`*(l:Layout): JsonNode =
+func `%`*(l: Layout): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if l.title != "":
     fields["title"] = % l.title
@@ -102,12 +101,13 @@ proc `%`*(l:Layout): JsonNode =
 
   result = JsonNode(kind:Jobject, fields:  fields)
 
-proc toHtmlHex(colors: seq[Color]): seq[string] =
+func toHtmlHex(colors: seq[Color]): seq[string] =
   result = new_seq[string](len(colors))
   for i, c in colors:
     result[i] = c.toHtmlHex
 
 proc `%`*(t: Trace): JsonNode =
+func `%`*(t: Trace): JsonNode =
   var fields = initOrderedTable[string, JsonNode](8)
   if t.xs == nil or t.xs.len == 0:
     if t.text != nil:
@@ -127,7 +127,7 @@ proc `%`*(t: Trace): JsonNode =
     fields["marker"] = % t.marker
   result = JsonNode(kind:Jobject, fields:  fields)
 
-proc `%`*(m: Marker): JsonNode =
+func `%`*(m: Marker): JsonNode =
   var fields = initOrderedTable[string, JsonNode](8)
   if m.size != nil:
     if m.size.len == 1:
@@ -141,12 +141,12 @@ proc `%`*(m: Marker): JsonNode =
       fields["color"] = % m.color.toHtmlHex()
   result = JsonNode(kind:Jobject, fields:  fields)
 
-proc `$`*(d:Trace): string =
+func `$`*(d: Trace): string =
   var j = % d
-  return $j
+  result = $j
 
-proc json*(d:Trace, as_pretty=true): string =
+func json*(d: Trace, as_pretty=true): string =
   var j = % d
   if as_pretty:
-    return pretty(j)
-  return $d
+    result = pretty(j)
+  result = $d
