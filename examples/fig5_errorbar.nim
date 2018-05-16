@@ -15,11 +15,25 @@ d.marker = Marker[float](size: size, color: colors)
 d.xs = @[1'f64, 2, 3, 4, 5]
 d.ys = @[1'f64, 2, 1, 9, 5]
 
-# set an asymmetric error bar on x
-d.xs_err = newErrorBar((0.2, 0.5), color = colors[0])
+# example of constant error
+# d.xs_err = newErrorBar(0.5, color = colors[0])
+# example of constant percentual error. Note that the value given is in actual
+# percent and not a ratio
+# d.xs_err = newErrorBar(10.0, color = colors[0], percent = true)
+# example of an asymmetric error bar on x
+d.xs_err = newErrorBar((0.1, 0.25), color = colors[0])
+
 # create a sequence of increasing error bars for y
-let yerrs = @[0.1, 0.2, 0.3, 0.4, 0.5]
+let yerrs = mapIt(toSeq(0..5), it.float * 0.25)
 d.ys_err = newErrorBar(yerrs, color = colors[0])
+# import algorithm
+# example of asymmetric error bars for each element
+# let yerrs_high = @[0.1, 0.2, 0.3, 0.4, 0.5].reversed
+# d.ys_err = newErrorBar((yerrs_low, yerrs_high), color = colors[0])
+# example of a sqrt error on y. Need to hand the correct type here manually,
+# otherwise we'll get a "cannot instantiate `ErrorBar[T]`" error, due to
+# no value from which type can be deduced is present
+# d.ys_err = newErrorBar[float](color = colors[0])
 
 d.text = @["hello", "data-point", "third", "highest", "<b>bold</b>"]
 
