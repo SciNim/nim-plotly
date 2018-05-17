@@ -2,66 +2,15 @@ import tables
 import json
 import chroma
 
-type
+# plotly internal modules
+import plotly_types
+import color
+import errorbar
 
-  PlotType* {.pure.} = enum
-    Scatter = "scatter"
-    ScatterGL = "scattergl"
-    Bar = "bar"
+func `%`*(c: Color): string =
+  result = c.toHtmlHex()
 
-  PlotMode* {.pure.} = enum
-    Lines = "lines"
-    Markers = "markers"
-    LinesMarkers = "lines+markers"
-
-  PlotSide* {.pure.} = enum
-    Unset = ""
-    Left = "left"
-    Right = "right"
-
-  Marker*[T: SomeNumber] = ref object
-    size*: seq[T]
-    color*: seq[Color]
-
-  Trace*[T: SomeNumber] = ref object
-    xs*: seq[T]
-    ys*: seq[T]
-    marker*: Marker[T]
-    text*: seq[string]
-    mode*: PlotMode
-    `type`*: PlotType
-    name*: string
-    yaxis*: string
-
-  Font* = ref object
-    family*: string
-    size*: int
-    color*: Color
-
-  Axis* = ref object
-    title*: string
-    font*: Font
-    domain*: seq[float64]
-    side*: PlotSide
-
-  Layout* = ref object
-    title*: string
-    width*: int
-    height*: int
-    autosize*: bool
-    showlegend*: bool
-    xaxis*: Axis
-    yaxis*: Axis
-    yaxis2*: Axis
-
-proc empty(c:Color): bool =
-  # TODO: this is also black, but should never need black with alpha == 0
-  return c.r == 0 and c.g == 0 and c.b == 0 and c.a == 0
-
-proc `%`*(c:Color): string =
-  return c.toHtmlHex()
-
-proc `%`*(f:Font): JsonNode =
+func `%`*(f: Font): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if f.size != 0:
     fields["size"] = % f.size
@@ -71,7 +20,7 @@ proc `%`*(f:Font): JsonNode =
     fields["family"] = % f.family
   result = JsonNode(kind:Jobject, fields:  fields)
 
-proc `%`*(a:Axis): JsonNode =
+func `%`*(a: Axis): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if a.title != nil and a.title != "":
     fields["title"] = % a.title
@@ -85,7 +34,7 @@ proc `%`*(a:Axis): JsonNode =
 
   result = JsonNode(kind:Jobject, fields:  fields)
 
-proc `%`*(l:Layout): JsonNode =
+func `%`*(l: Layout): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if l.title != "":
     fields["title"] = % l.title
@@ -102,12 +51,48 @@ proc `%`*(l:Layout): JsonNode =
 
   result = JsonNode(kind:Jobject, fields:  fields)
 
-proc toHtmlHex(colors: seq[Color]): seq[string] =
-  result = new_seq[string](len(colors))
-  for i, c in colors:
-    result[i] = c.toHtmlHex
+func `%`*(b: ErrorBar): JsonNode =
+  ## creates a JsonNode from an `ErrorBar` object depending on the object variant
+  var fields = initOrderedTable[string, JsonNode](4)
+  fields["visible"] = % b.visible
+  fields["color"] = % b.color.toHtmlHex
+  if b.thickness > 0:
+    fields["thickness"] = % b.thickness
+  if b.width > 0:
+    fields["width"] = % b.width
+  case b.kind
+  of ebkConstantSym:
+    fields["symmetric"] = % true
+    fields["type"] = % "constant"
+    fields["value"] = % b.value
+  of ebkConstantAsym:
+    fields["symmetric"] = % false
+    fields["type"] = % "constant"
+    fields["valueminus"] = % b.valueMinus
+    fields["value"] = % b.valuePlus
+  of ebkPercentSym:
+    fields["symmetric"] = % true
+    fields["type"] = % "percent"
+    fields["value"] = % b.percent
+  of ebkPercentAsym:
+    fields["symmetric"] = % false
+    fields["type"] = % "percent"
+    fields["valueminus"] = % b.percentMinus
+    fields["value"] = % b.percentPlus
+  of ebkSqrt:
+    fields["type"] = % "sqrt"
+  of ebkArraySym:
+    fields["symmetric"] = % true
+    fields["type"] = % "data"
+    fields["array"] = % b.errors
+  of ebkArrayAsym:
+    fields["symmetric"] = % false
+    fields["type"] = % "data"
+    fields["arrayminus"] = % b.errorsMinus
+    fields["array"] = % b.errorsPlus
+  result = JsonNode(kind: JObject, fields: fields)
 
-proc `%`*(t: Trace): JsonNode =
+func `%`*(t: Trace): JsonNode =
   var fields = initOrderedTable[string, JsonNode](8)
   if t.xs == nil or t.xs.len == 0:
     if t.text != nil:
@@ -117,6 +102,12 @@ proc `%`*(t: Trace): JsonNode =
   if t.yaxis != "":
     fields["yaxis"] = % t.yaxis
   fields["y"] = % t.ys
+
+  if t.xs_err != nil:
+    fields["error_x"] = % t.xs_err
+  if t.ys_err != nil:
+    fields["error_y"] = % t.ys_err
+
   fields["mode"] = % t.mode
   fields["type"] = % t.`type`
   if t.name != nil:
@@ -125,9 +116,9 @@ proc `%`*(t: Trace): JsonNode =
     fields["text"] = % t.text
   if t.marker != nil:
     fields["marker"] = % t.marker
-  result = JsonNode(kind:Jobject, fields:  fields)
+  result = JsonNode(kind:Jobject, fields: fields)
 
-proc `%`*(m: Marker): JsonNode =
+func `%`*(m: Marker): JsonNode =
   var fields = initOrderedTable[string, JsonNode](8)
   if m.size != nil:
     if m.size.len == 1:
@@ -141,12 +132,13 @@ proc `%`*(m: Marker): JsonNode =
       fields["color"] = % m.color.toHtmlHex()
   result = JsonNode(kind:Jobject, fields:  fields)
 
-proc `$`*(d:Trace): string =
+func `$`*(d: Trace): string =
   var j = % d
-  return $j
+  result = $j
 
-proc json*(d:Trace, as_pretty=true): string =
+func json*(d: Trace, as_pretty=true): string =
   var j = % d
   if as_pretty:
-    return pretty(j)
-  return $d
+    result = pretty(j)
+  else:
+    result = $d

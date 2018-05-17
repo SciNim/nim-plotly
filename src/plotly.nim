@@ -1,9 +1,17 @@
-include plotly/api
-import plotly/browser
 import os
 import strutils
 import json
 import chroma
+
+# we now import the plotly modules and export them so that
+# the user sees them as a single module
+import plotly/api
+export api
+import plotly/plotly_types
+export plotly_types
+import plotly/errorbar
+export errorbar
+import plotly/browser
 
 type
   Plot*[T:SomeNumber] = ref object
@@ -70,7 +78,7 @@ when isMainModule:
 
     var n = 70
     var color_choice = @[Color(r:0.9, g:0.1, b:0.1, a:1.0), Color(r:0.1, g:0.1, b:0.9, a:1.0)]
-  
+
     var
       y = new_seq[float64](n)
       x = new_seq[float64](n)
@@ -91,12 +99,12 @@ when isMainModule:
 
     var d = Trace[float64](mode:PlotMode.LinesMarkers, `type`: PlotType.ScatterGL, xs:x, ys:y, text:text)
     d.marker = Marker[float64](size:sizes, color:colors)
-  
+
     var layout = Layout(title: "saw the sin", width: 1200, height: 400,
                         xaxis: Axis(title:"my x-axis"),
                         yaxis:Axis(title: "y-axis too"), autosize:false)
     Plot[float64](layout:layout, datas: @[d]).show()
-  
+
   block:
     var text = @["a", "b", "c", "d"]
     var layout = Layout(title: "nim-plotly bar+scattter chart example", width: 1200, height: 400,
@@ -137,7 +145,3 @@ when isMainModule:
                         yaxis2: Axis(title:"cos", side:PlotSide.Right), autosize:false)
 
     Plot[float64](layout:layout, datas: @[t1, t2]).show()
-
-    
-
-
