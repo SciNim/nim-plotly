@@ -22,4 +22,8 @@ task docs, "Builds documentation":
   for file in listfiles("src/"):
     if splitfile(file).ext == ".nim":
       exec "nim doc2 --verbosity:0 --hints:off -o:" & "docs" /../ file.changefileext("html").split("/", 1)[1] & " " & file
+  for file in listfiles("src/plotly/"):
+    if splitfile(file).ext == ".nim":
+      exec "nim doc2 --verbosity:0 --hints:off -o:" & "docs/plotly" /../ file.changefileext("html").split("/", 1)[1] & " " & file
+
 
