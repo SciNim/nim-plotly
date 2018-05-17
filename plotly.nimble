@@ -14,7 +14,7 @@ skipDirs = @["tests"]
 import ospaths,strutils
 
 task test, "run the tests":
-  exec "nim c --lineDir:on --debuginfo -r tests/all"
+  exec "nim c --lineDir:on --debuginfo -r examples/all"
 
 task docs, "Builds documentation":
   mkDir("docs"/"plotly")

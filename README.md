@@ -1,6 +1,7 @@
 ## nim-plotly: simple plots in nim
 
 [![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](http://brentp.github.io/nim-plotly/plotly.html)
+[![Build Status](https://travis-ci.org/brentp/nim-plotly.svg?branch=master)](https://travis-ci.org/brentp/nim-plotly)
 
 this is a relatively minimal version of a plotting library with some functionality
 so I can get feedback before proceeding.

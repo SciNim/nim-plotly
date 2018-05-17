@@ -1,0 +1,9 @@
+sudo: required
+services:
+  - docker
+before_install:
+  - docker pull nimlang/nim:0.18.0-alpine
+
+script:
+  - docker run nimlang/nim:0.18.0-alpine nim --version
+  - docker run -v "$(pwd):/project" -w /project nimlang/nim:0.18.0-alpine sh -c "apk add --no-cache  libcrypto1.0 openssl-dev && nimble install -y && nimble test"
