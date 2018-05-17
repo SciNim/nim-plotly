@@ -25,7 +25,7 @@ type
     ebkPercentAsym,      # asymmetric error on percent of value
     ebkSqrt,             # error based on sqrt of value
     ebkArraySym,         # symmetric error based on array of length data.len
-    ebkArrayAsym        # assymmetric error based on array of length data.len
+    ebkArrayAsym         # assymmetric error based on array of length data.len
 
   ErrorBar*[T: SomeNumber] = ref object
     visible*: bool

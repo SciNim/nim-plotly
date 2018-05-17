@@ -8,6 +8,6 @@ func empty*(c: Color): bool =
   result = c.r == 0 and c.g == 0 and c.b == 0 and c.a == 0
 
 func toHtmlHex*(colors: seq[Color]): seq[string] =
-  result = new_seq[string](len(colors))
+  result = newSeq[string](len(colors))
   for i, c in colors:
     result[i] = c.toHtmlHex
