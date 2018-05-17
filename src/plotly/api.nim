@@ -18,7 +18,7 @@ type
     Left = "left"
     Right = "right"
 
-  ErrorBarKind = enum   # different error bar kinds (from constant value, array,...)
+  ErrorBarKind* = enum   # different error bar kinds (from constant value, array,...)
     ebkConstantSym,      # constant symmetric error
     ebkConstantAsym,     # constant asymmetric error
     ebkPercentSym,       # symmetric error on percent of value
