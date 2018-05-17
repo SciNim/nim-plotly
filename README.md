@@ -30,7 +30,7 @@ d.text = @["hello", "data-point", "third", "highest", "<b>bold</b>"]
 var layout = Layout(title: "testing", width: 1200, height: 400,
                     xaxis: Axis(title:"my x-axis"),
                     yaxis:Axis(title: "y-axis too"), autosize:false)
-var p = Plot[int](layout:layout, datas: @[d])
+var p = Plot[int](layout:layout, traces: @[d])
 p.show()
 ```
 

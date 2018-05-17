@@ -22,4 +22,4 @@ let
                   yaxis: Axis(title: "sin"),
                   yaxis2: Axis(title: "cos", side: PlotSide.Right), autosize: false)
 
-Plot[float64](layout:layout, datas: @[t1, t2]).show()
+Plot[float64](layout:layout, traces: @[t1, t2]).show()

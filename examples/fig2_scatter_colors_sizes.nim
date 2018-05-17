@@ -32,4 +32,4 @@ d.marker = Marker[float64](size: sizes, color: colors)
 let layout = Layout(title: "saw the sin", width: 1200, height: 400,
                     xaxis: Axis(title: "my x-axis"),
                     yaxis: Axis(title: "y-axis too"), autosize: false)
-Plot[float64](layout: layout, datas: @[d]).show()
+Plot[float64](layout: layout, traces: @[d]).show()

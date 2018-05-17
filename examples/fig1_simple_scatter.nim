@@ -19,6 +19,6 @@ let
                   xaxis: Axis(title:"my x-axis"),
                   yaxis: Axis(title: "y-axis too"),
                   autosize: false)
-  p = Plot[int](layout: layout, datas: @[d])
+  p = Plot[int](layout: layout, traces: @[d])
 echo p.save()
 p.show()

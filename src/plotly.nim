@@ -16,7 +16,7 @@ import plotly/browser
 
 type
   Plot*[T:SomeNumber] = ref object
-    datas* : seq[Trace[T]]
+    traces* : seq[Trace[T]]
     layout*: Layout
 
 const defaultTmplPath = currentSourcePath().parentDir / "tmpl.html"
@@ -24,7 +24,7 @@ const defaultTmplPath = currentSourcePath().parentDir / "tmpl.html"
 proc newPlot*(xlabel = "", ylabel = "", title = ""): Plot[float64] =
   ## create a plot with sane default layout.
   result = Plot[float64]()
-  result.datas = newSeq[Trace[float64]]()
+  result.traces = newSeq[Trace[float64]]()
   result.layout = Layout(title: title, width: 600, height: 600,
                          xaxis: Axis(title: xlabel),
                          yaxis: Axis(title: ylabel),
@@ -32,9 +32,9 @@ proc newPlot*(xlabel = "", ylabel = "", title = ""): Plot[float64] =
 
 proc add*[T](p: Plot, d: Trace[T]) =
   ## add a new data set to a plot.
-  if p.datas == nil:
-    p.datas = newSeq[Trace[float64]]()
-  p.datas.add(d)
+  if p.traces == nil:
+    p.traces = newSeq[Trace[float64]]()
+  p.traces.add(d)
 
 proc show*(p: Plot, path = "", html_template = defaultTmplPath) =
   let path = p.save(path, html_template)
@@ -46,8 +46,8 @@ proc save*(p: Plot, path = "", html_template = defaultTmplPath): string =
   if result == "":
     result = "/tmp/x.html"
   let
-    # call `json` for each element of `Plot.datas`
-    jsons = mapIt(p.datas, it.json(as_pretty = true))
+    # call `json` for each element of `Plot.traces`
+    jsons = mapIt(p.traces, it.json(as_pretty = true))
     data_string = "[" & join(jsons, ",") & "]"
     # read the HTML template and insert data, layout and title strings
     s = ($readFile(html_template)) % ["data", data_string, "layout", $(%p.layout),
@@ -83,7 +83,7 @@ when isMainModule:
                     xaxis: Axis(title:"my x-axis"),
                     yaxis:Axis(title: "y-axis too"),
                     autosize:false)
-    p = Plot[int](layout: layout, datas: @[d])
+    p = Plot[int](layout: layout, traces: @[d])
   echo p.save()
   p.show()
 
@@ -119,7 +119,7 @@ when isMainModule:
     let layout = Layout(title: "saw the sin", width: 1200, height: 400,
                         xaxis: Axis(title:"my x-axis"),
                         yaxis: Axis(title: "y-axis too"), autosize: false)
-    Plot[float64](layout: layout, datas: @[d]).show()
+    Plot[float64](layout: layout, traces: @[d]).show()
 
   block:
     const text = @["a", "b", "c", "d"]
@@ -145,7 +145,7 @@ when isMainModule:
                           text: text, name: "just markers")
     d5.marker = Marker[float64](size: @[25'f64])
 
-    Plot[float64](layout: layout, datas: @[d1, d2, d3, d4, d5]).show()
+    Plot[float64](layout: layout, traces: @[d1, d2, d3, d4, d5]).show()
 
 
   block:
@@ -170,4 +170,4 @@ when isMainModule:
                       yaxis: Axis(title:"sin"),
                       yaxis2: Axis(title:"cos", side: PlotSide.Right), autosize: false)
 
-    Plot[float64](layout: layout, datas: @[t1, t2]).show()
+    Plot[float64](layout: layout, traces: @[t1, t2]).show()

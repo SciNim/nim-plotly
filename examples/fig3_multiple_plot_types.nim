@@ -25,4 +25,4 @@ let
                       text: text, name: "just markers")
 d5.marker = Marker[float64](size: @[25'f64])
 
-Plot[float64](layout:layout, datas: @[d1, d2, d3, d4, d5]).show()
+Plot[float64](layout:layout, traces: @[d1, d2, d3, d4, d5]).show()

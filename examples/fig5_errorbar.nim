@@ -42,6 +42,6 @@ let
   layout = Layout(title: "testing", width: 1200, height: 400,
                   xaxis: Axis(title: "my x-axis"),
                   yaxis: Axis(title: "y-axis too"), autosize: false)
-  p = Plot[float](layout: layout, datas: @[d])
+  p = Plot[float](layout: layout, traces: @[d])
 echo p.save()
 p.show()
