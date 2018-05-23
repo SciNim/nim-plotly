@@ -20,7 +20,7 @@ let
   d3 = Trace[float64](mode: PlotMode.LinesMarkers, `type`: PlotType.Bar, ys: y3,
                       text: text, name: "third group")
   d4 = Trace[float64](mode: PlotMode.LinesMarkers, `type`: PlotType.ScatterGL, ys: y3,
-                      text: text, name: "scatter")
+                      text: text, name: "scatter", fill: PlotFill.ToZeroY)
   d5 = Trace[float64](mode: PlotMode.Markers, `type`: PlotType.ScatterGL, ys: y,
                       text: text, name: "just markers")
 d5.marker = Marker[float64](size: @[25'f64])

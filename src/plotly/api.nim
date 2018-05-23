@@ -107,6 +107,9 @@ func `%`*(t: Trace): JsonNode =
   if t.opacity != 0:
     fields["opacity"] = % t.opacity
 
+  if $t.fill != "":
+    fields["fill"] = % t.fill
+
   if t.ys != nil:
     fields["y"] = % t.ys
 

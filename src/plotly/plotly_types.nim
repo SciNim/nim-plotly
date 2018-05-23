@@ -9,6 +9,11 @@ type
     Bar = "bar"
     Histogram = "histogram"
 
+  PlotFill* {.pure.} = enum
+    Unset = ""
+    ToNextY = "tonexty"
+    ToZeroY = "tozeroy"
+
   PlotMode* {.pure.} = enum
     Lines = "lines"
     Markers = "markers"
@@ -73,6 +78,7 @@ type
     opacity*: float
     mode*: PlotMode
     `type`*: PlotType
+    fill*: PlotFill
     name*: string
     yaxis*: string
 
