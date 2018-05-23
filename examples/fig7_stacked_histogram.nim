@@ -18,8 +18,8 @@ for i in 0..40:
 
 let
   layout = Layout(title: "stacked histogram", width: 1200, height: 400,
-                  xaxis: Axis(title:"values"),
-                  yaxis: Axis(title: "frequency"),
+                  yaxis: Axis(title:"values"),
+                  xaxis: Axis(title: "count"),
                   barmode: BarMode.Stack,
                   #barmode: BarMode.Overlay,
                   autosize: false)

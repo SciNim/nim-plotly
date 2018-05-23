@@ -58,7 +58,7 @@ be interactive.
 
 [source](https://github.com/brentp/nim-plotly/blob/master/examples/fig7_stacked_histogram.nim)
 
-![stacked histogram](https://user-images.githubusercontent.com/1739/40436705-cea3ad0e-5e70-11e8-841c-6616dd7cfff8.png)
+![stacked histogram](https://user-images.githubusercontent.com/1739/40438473-66ce8a6e-5e75-11e8-8f27-79cef2752e52.png)
 
 #### Other examples 
 
