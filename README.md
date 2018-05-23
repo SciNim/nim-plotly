@@ -54,6 +54,12 @@ be interactive.
 
 ![multiple plot types](https://user-images.githubusercontent.com/1739/39875825-e62d5c0a-542e-11e8-83be-cdbfa18cfec9.png)
 
+#### Stacked Histogram
+
+[source](https://github.com/brentp/nim-plotly/blob/master/examples/fig7_stacked_histogram.nim)
+
+![stacked histogram](https://user-images.githubusercontent.com/1739/40436705-cea3ad0e-5e70-11e8-841c-6616dd7cfff8.png)
+
 #### Other examples 
 
 [in examples](https://github.com/brentp/nim-plotly/blob/master/examples/)

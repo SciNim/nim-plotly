@@ -3,3 +3,5 @@ import fig2_scatter_colors_sizes
 import fig3_multiple_plot_types
 import fig4_multiple_axes
 import fig5_errorbar
+import fig6_histogram
+import fig7_stacked_histogram

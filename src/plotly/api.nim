@@ -48,6 +48,8 @@ func `%`*(l: Layout): JsonNode =
     fields["yaxis"] = % l.yaxis
   if l.yaxis2 != nil:
     fields["yaxis2"] = % l.yaxis2
+  if $l.barmode != "":
+    fields["barmode"] = % l.barmode
 
   result = JsonNode(kind:Jobject, fields:  fields)
 
@@ -95,13 +97,18 @@ func `%`*(b: ErrorBar): JsonNode =
 func `%`*(t: Trace): JsonNode =
   var fields = initOrderedTable[string, JsonNode](8)
   if t.xs == nil or t.xs.len == 0:
-    if t.text != nil:
+    if t.text != nil and t.`type` != PlotType.Histogram:
       fields["x"] = % t.text
   else:
     fields["x"] = % t.xs
   if t.yaxis != "":
     fields["yaxis"] = % t.yaxis
-  fields["y"] = % t.ys
+
+  if t.opacity != 0:
+    fields["opacity"] = % t.opacity
+
+  if t.ys != nil:
+    fields["y"] = % t.ys
 
   if t.xs_err != nil:
     fields["error_x"] = % t.xs_err

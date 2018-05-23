@@ -7,11 +7,17 @@ type
     Scatter = "scatter"
     ScatterGL = "scattergl"
     Bar = "bar"
+    Histogram = "histogram"
 
   PlotMode* {.pure.} = enum
     Lines = "lines"
     Markers = "markers"
     LinesMarkers = "lines+markers"
+
+  BarMode* {.pure.} = enum
+    Unset = ""
+    Stack = "stack"
+    Overlay = "overlay"
 
   PlotSide* {.pure.} = enum
     Unset = ""
@@ -64,6 +70,7 @@ type
     ys_err*: ErrorBar[T]
     marker*: Marker[T]
     text*: seq[string]
+    opacity*: float
     mode*: PlotMode
     `type`*: PlotType
     name*: string
@@ -89,3 +96,4 @@ type
     xaxis*: Axis
     yaxis*: Axis
     yaxis2*: Axis
+    barmode*: BarMode
