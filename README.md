@@ -3,8 +3,9 @@
 [![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](http://brentp.github.io/nim-plotly/plotly.html)
 [![Build Status](https://travis-ci.org/brentp/nim-plotly.svg?branch=master)](https://travis-ci.org/brentp/nim-plotly)
 
-this is a relatively minimal version of a plotting library with some functionality
-so I can get feedback before proceeding.
+This is a functioning plotting library. It supports, *line* (with fill below), *scatter* (with errors), *bar*
+, *histogram*, and combinations of those plot types. More standard types can be added on request.
+
 
 This is **not** specifically for the javascript nim target.
 
