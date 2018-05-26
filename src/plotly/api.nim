@@ -36,6 +36,8 @@ func `%`*(a: Axis): JsonNode =
 
 func `%`*(l: Layout): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
+  if l == nil:
+    return JsonNode(kind:Jobject, fields:  fields)
   if l.title != "":
     fields["title"] = % l.title
   if l.width != 0:

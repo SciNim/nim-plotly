@@ -50,8 +50,15 @@ proc save*(p: Plot, path = "", html_template = defaultTmplPath): string =
     jsons = mapIt(p.traces, it.json(as_pretty = true))
     data_string = "[" & join(jsons, ",") & "]"
     # read the HTML template and insert data, layout and title strings
-    s = ($readFile(html_template)) % ["data", data_string, "layout", $(%p.layout),
-                                      "title", p.layout.title]
+  var 
+    slayout = "{}"
+    title = ""
+  if p.layout != nil:
+    slayout = $(%p.layout)
+    title = p.layout.title
+
+  var s = ($readFile(html_template)) % ["data", data_string, "layout", slayout,
+                                      "title", title]
   var
     f: File
   if not open(f, result, fmWrite):

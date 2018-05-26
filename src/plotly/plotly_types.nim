@@ -8,6 +8,7 @@ type
     ScatterGL = "scattergl"
     Bar = "bar"
     Histogram = "histogram"
+    Box = "box"
 
   PlotFill* {.pure.} = enum
     Unset = ""
