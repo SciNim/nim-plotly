@@ -1243,10 +1243,17 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#PlotType"
     title="PlotType = enum
-  Scatter = &quot;scatter&quot;, ScatterGL = &quot;scattergl&quot;, Bar = &quot;bar&quot;"><wbr />Plot<wbr />Type<span class="attachedType" style="visibility:hidden"></span></a></li>
+  Scatter = &quot;scatter&quot;, ScatterGL = &quot;scattergl&quot;, Bar = &quot;bar&quot;, Histogram = &quot;histogram&quot;,
+  Box = &quot;box&quot;"><wbr />Plot<wbr />Type<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#PlotFill"
+    title="PlotFill = enum
+  Unset = &quot;&quot;, ToNextY = &quot;tonexty&quot;, ToZeroY = &quot;tozeroy&quot;"><wbr />Plot<wbr />Fill<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#PlotMode"
     title="PlotMode = enum
   Lines = &quot;lines&quot;, Markers = &quot;markers&quot;, LinesMarkers = &quot;lines+markers&quot;"><wbr />Plot<wbr />Mode<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#BarMode"
+    title="BarMode = enum
+  Unset = &quot;&quot;, Stack = &quot;stack&quot;, Overlay = &quot;overlay&quot;"><wbr />Bar<wbr />Mode<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#PlotSide"
     title="PlotSide = enum
   Unset = &quot;&quot;, Left = &quot;left&quot;, Right = &quot;right&quot;"><wbr />Plot<wbr />Side<span class="attachedType" style="visibility:hidden"></span></a></li>
@@ -1296,8 +1303,10 @@ function main() {
   ys_err*: ErrorBar[T]
   marker*: Marker[T]
   text*: seq[string]
+  opacity*: float
   mode*: PlotMode
   `type`*: PlotType
+  fill*: PlotFill
   name*: string
   yaxis*: string"><wbr />Trace<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#Font"
@@ -1320,7 +1329,8 @@ function main() {
   showlegend*: bool
   xaxis*: Axis
   yaxis*: Axis
-  yaxis2*: Axis"><wbr />Layout<span class="attachedType" style="visibility:hidden"></span></a></li>
+  yaxis2*: Axis
+  barmode*: BarMode"><wbr />Layout<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1340,13 +1350,26 @@ function main() {
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
 <dt id="PlotType"><a name="PlotType"></a><pre><span class="Identifier">PlotType</span> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">Scatter</span> <span class="Other">=</span> <span class="StringLit">&quot;scatter&quot;</span><span class="Other">,</span> <span class="Identifier">ScatterGL</span> <span class="Other">=</span> <span class="StringLit">&quot;scattergl&quot;</span><span class="Other">,</span> <span class="Identifier">Bar</span> <span class="Other">=</span> <span class="StringLit">&quot;bar&quot;</span></pre></dt>
+  <span class="Identifier">Scatter</span> <span class="Other">=</span> <span class="StringLit">&quot;scatter&quot;</span><span class="Other">,</span> <span class="Identifier">ScatterGL</span> <span class="Other">=</span> <span class="StringLit">&quot;scattergl&quot;</span><span class="Other">,</span> <span class="Identifier">Bar</span> <span class="Other">=</span> <span class="StringLit">&quot;bar&quot;</span><span class="Other">,</span> <span class="Identifier">Histogram</span> <span class="Other">=</span> <span class="StringLit">&quot;histogram&quot;</span><span class="Other">,</span>
+  <span class="Identifier">Box</span> <span class="Other">=</span> <span class="StringLit">&quot;box&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<dt id="PlotFill"><a name="PlotFill"></a><pre><span class="Identifier">PlotFill</span> <span class="Other">=</span> <span class="Keyword">enum</span>
+  <span class="Identifier">Unset</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">,</span> <span class="Identifier">ToNextY</span> <span class="Other">=</span> <span class="StringLit">&quot;tonexty&quot;</span><span class="Other">,</span> <span class="Identifier">ToZeroY</span> <span class="Other">=</span> <span class="StringLit">&quot;tozeroy&quot;</span></pre></dt>
 <dd>
 
 
 </dd>
 <dt id="PlotMode"><a name="PlotMode"></a><pre><span class="Identifier">PlotMode</span> <span class="Other">=</span> <span class="Keyword">enum</span>
   <span class="Identifier">Lines</span> <span class="Other">=</span> <span class="StringLit">&quot;lines&quot;</span><span class="Other">,</span> <span class="Identifier">Markers</span> <span class="Other">=</span> <span class="StringLit">&quot;markers&quot;</span><span class="Other">,</span> <span class="Identifier">LinesMarkers</span> <span class="Other">=</span> <span class="StringLit">&quot;lines+markers&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<dt id="BarMode"><a name="BarMode"></a><pre><span class="Identifier">BarMode</span> <span class="Other">=</span> <span class="Keyword">enum</span>
+  <span class="Identifier">Unset</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">,</span> <span class="Identifier">Stack</span> <span class="Other">=</span> <span class="StringLit">&quot;stack&quot;</span><span class="Other">,</span> <span class="Identifier">Overlay</span> <span class="Other">=</span> <span class="StringLit">&quot;overlay&quot;</span></pre></dt>
 <dd>
 
 
@@ -1414,8 +1437,10 @@ function main() {
   <span class="Identifier">ys_err</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">ErrorBar</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span>
   <span class="Identifier">marker</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Marker</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span>
   <span class="Identifier">text</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">opacity</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
   <span class="Identifier">mode</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">PlotMode</span>
   <span class="Other">`</span><span class="Keyword">type</span><span class="Other">`</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">PlotType</span>
+  <span class="Identifier">fill</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">PlotFill</span>
   <span class="Identifier">name</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
   <span class="Identifier">yaxis</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
 </pre></dt>
@@ -1451,6 +1476,7 @@ function main() {
   <span class="Identifier">xaxis</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Axis</span>
   <span class="Identifier">yaxis</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Axis</span>
   <span class="Identifier">yaxis2</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Axis</span>
+  <span class="Identifier">barmode</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">BarMode</span>
 </pre></dt>
 <dd>
 
@@ -1466,7 +1492,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-05-17 10:12:05 UTC</small>
+        <small>Made with Nim. Generated: 2018-05-29 07:34:57 UTC</small>
       </div>
     </div>
   </div>

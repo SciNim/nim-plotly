@@ -12,7 +12,7 @@ import plotly/plotly_types
 export plotly_types
 import plotly/errorbar
 export errorbar
-import plotly/browser
+import browsers
 
 type
   Plot*[T:SomeNumber] = ref object
@@ -38,7 +38,8 @@ proc add*[T](p: Plot, d: Trace[T]) =
 
 proc show*(p: Plot, path = "", html_template = defaultTmplPath) =
   let path = p.save(path, html_template)
-  browser.open(path)
+  browsers.openDefaultBrowser(path)
+  sleep(1000)
   removeFile(path)
 
 proc save*(p: Plot, path = "", html_template = defaultTmplPath): string =
