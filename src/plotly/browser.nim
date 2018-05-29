@@ -7,7 +7,7 @@ proc hasExe*(cmd: string): bool =
   let (outp, _) = execCmdEx(cmd)
   return not ("not found" in outp)
 
-const options = @["xdg-open", "mozilla-firefox", "firefox", "chromium", "google-chrome", "chromium-browser"]
+const options = @["xdg-open", "open", "mozilla-firefox", "firefox", "chromium", "google-chrome", "chromium-browser"]
 var browsers = newSeq[string]()
 
 for o in options:
