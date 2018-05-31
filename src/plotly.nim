@@ -1,7 +1,7 @@
 when not defined(js):
   # not available on JS backend
   import os
-  
+
 import strutils
 import json
 import chroma
@@ -43,7 +43,14 @@ proc add*[T](p: Plot, d: Trace[T]) =
     p.traces = newSeq[Trace[float64]]()
   p.traces.add(d)
 
-  
+proc parseTraces*[T](traces: seq[Trace[T]]): string =
+  ## parses the traces of a Plot object to strings suitable
+  ## for plotly by concating the json representations
+  let
+    # call `json` for each element of `Plot.traces`
+    jsons = mapIt(traces, it.json(as_pretty = false))
+  result = "[" & join(jsons, ",") & "]"
+
 when not defined(js):
   # `show` and `save` are only used for the C target
   proc show*(p: Plot, path = "", html_template = defaultTmplPath) =
@@ -56,18 +63,17 @@ when not defined(js):
     result = path
     if result == "":
       result = "/tmp/x.html"
-    let
-      # call `json` for each element of `Plot.traces`
-      jsons = mapIt(p.traces, it.json(as_pretty = true))
-      data_string = "[" & join(jsons, ",") & "]"
-      # read the HTML template and insert data, layout and title strings
-    var 
+
+    let data_string = parseTraces(p.traces)
+
+    var
       slayout = "{}"
       title = ""
     if p.layout != nil:
       slayout = $(%p.layout)
       title = p.layout.title
 
+    # read the HTML template and insert data, layout and title strings
     var s = ($readFile(html_template)) % ["data", data_string, "layout", slayout,
                                         "title", title]
     var
