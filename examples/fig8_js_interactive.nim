@@ -5,36 +5,33 @@ import dom
 import json
 import sequtils, strutils
 
+# compile this file with
+# nim js fig8_js_javascript.nim
+# and then open the `index_javascript.html` with a browser
+
 proc animate*(p: Plot) =
     let
-      # call `json` for each element of `Plot.traces`
-      jsons = mapIt(p.traces, it.json(as_pretty = false))
-      #data_string = mapIt(jsons, toJs(it))
-      data_string = parseJsonToJs("[" & join(jsons, ",") & "]")
-      #layout_Js = toJs("[" & pretty(% p.layout) & "]")
-      layout_Js = parseJsonToJs(pretty(% p.layout))
+      # create JsObjects from data and layout
+      data = parseJsonToJs(parseTraces(p.traces))
+      layout = parseJsonToJs($(% p.layout))
 
     # create a new `Plotly` object
     let plotly = newPlotly()
-    plotly.newPlot("lineplot", data_string, layout_Js)#jss)
+    plotly.newPlot("lineplot", data, layout)
     var i = 0
-    proc doAgain() =
-      let layout = layout_Js
-      #document.write("i is " & $i)
-      let data_new = @[1, 2, 1, 9, i]
-      var tr = p.traces[0]
-      tr.ys = data_new
-      var pnew = p
-      pnew.traces[0] = tr
-      let
-        jnew = mapIt(pnew.traces, it.json(as_pretty = false))
-        dnew = parseJsonToJs("[" & join(jnew, ",") & "]")
-
-      plotly.react("lineplot", dnew, layout)
+    proc loop() =
+      # update the data we plot
+      let update = @[1, 2, 1, 9, i]
+      # get first Trace and set new data
+      p.traces[0].ys = update
+      let dataNew = parseJsonToJs(parseTraces(p.traces))
+      # using react we update the plot contained in the `lineplot` div of
+      # the index_javascript.html
+      plotly.react("lineplot", dataNew, layout)
       inc i
 
     # using setInterval we update the plot every 100ms with an increased last datapoint
-    discard window.setInterval(doAgain, 100)
+    discard window.setInterval(loop, 100)
 
 when isMainModule:
   const colors = @[Color(r:0.9, g:0.4, b:0.0, a: 1.0),
