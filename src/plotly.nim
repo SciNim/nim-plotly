@@ -1,4 +1,7 @@
-import os
+when not defined(js):
+  # not available on JS backend
+  import os
+  
 import strutils
 import json
 import chroma
@@ -12,18 +15,18 @@ import plotly/plotly_types
 export plotly_types
 import plotly/errorbar
 export errorbar
-import browsers
-
-when defined(js):
-  import plotly/plotly_js.nim
+when not defined(js):
+  import browsers
+  # default template path not needed for JS target
+  const defaultTmplPath = currentSourcePath().parentDir / "tmpl.html"
+else:
+  import plotly/plotly_js
   export plotly_js
 
 type
   Plot*[T:SomeNumber] = ref object
     traces* : seq[Trace[T]]
     layout*: Layout
-
-const defaultTmplPath = currentSourcePath().parentDir / "tmpl.html"
 
 proc newPlot*(xlabel = "", ylabel = "", title = ""): Plot[float64] =
   ## create a plot with sane default layout.
