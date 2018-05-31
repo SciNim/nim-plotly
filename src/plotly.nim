@@ -14,6 +14,10 @@ import plotly/errorbar
 export errorbar
 import browsers
 
+when defined(js):
+  import plotly/plotly_js.nim
+  export plotly_js
+
 type
   Plot*[T:SomeNumber] = ref object
     traces* : seq[Trace[T]]
@@ -36,36 +40,39 @@ proc add*[T](p: Plot, d: Trace[T]) =
     p.traces = newSeq[Trace[float64]]()
   p.traces.add(d)
 
-proc show*(p: Plot, path = "", html_template = defaultTmplPath) =
-  let path = p.save(path, html_template)
-  browsers.openDefaultBrowser(path)
-  sleep(1000)
-  removeFile(path)
+  
+when not defined(js):
+  # `show` and `save` are only used for the C target
+  proc show*(p: Plot, path = "", html_template = defaultTmplPath) =
+    let path = p.save(path, html_template)
+    browsers.openDefaultBrowser(path)
+    sleep(1000)
+    removeFile(path)
 
-proc save*(p: Plot, path = "", html_template = defaultTmplPath): string =
-  result = path
-  if result == "":
-    result = "/tmp/x.html"
-  let
-    # call `json` for each element of `Plot.traces`
-    jsons = mapIt(p.traces, it.json(as_pretty = true))
-    data_string = "[" & join(jsons, ",") & "]"
-    # read the HTML template and insert data, layout and title strings
-  var 
-    slayout = "{}"
-    title = ""
-  if p.layout != nil:
-    slayout = $(%p.layout)
-    title = p.layout.title
+  proc save*(p: Plot, path = "", html_template = defaultTmplPath): string =
+    result = path
+    if result == "":
+      result = "/tmp/x.html"
+    let
+      # call `json` for each element of `Plot.traces`
+      jsons = mapIt(p.traces, it.json(as_pretty = true))
+      data_string = "[" & join(jsons, ",") & "]"
+      # read the HTML template and insert data, layout and title strings
+    var 
+      slayout = "{}"
+      title = ""
+    if p.layout != nil:
+      slayout = $(%p.layout)
+      title = p.layout.title
 
-  var s = ($readFile(html_template)) % ["data", data_string, "layout", slayout,
-                                      "title", title]
-  var
-    f: File
-  if not open(f, result, fmWrite):
-    quit "could not open file for json"
-  f.write(s)
-  f.close()
+    var s = ($readFile(html_template)) % ["data", data_string, "layout", slayout,
+                                        "title", title]
+    var
+      f: File
+    if not open(f, result, fmWrite):
+      quit "could not open file for json"
+    f.write(s)
+    f.close()
 
 when isMainModule:
   import math

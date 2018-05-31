@@ -9,6 +9,7 @@ type
     Bar = "bar"
     Histogram = "histogram"
     Box = "box"
+    HeatMap = "heatmap"
 
   PlotFill* {.pure.} = enum
     Unset = ""
@@ -29,6 +30,26 @@ type
     Unset = ""
     Left = "left"
     Right = "right"
+
+  ColorMap* {.pure.} = enum
+    Greys = "Greys"
+    YlGnBu = "YlGnBu"
+    Greens = "Greens"
+    YlOrRd = "YlOrRd"
+    Bluered = "Bluered"
+    RdBu = "RdBu"
+    Reds = "Reds"
+    Blues = "Blues"
+    Picnic = "Picnic"
+    Rainbow = "Rainbow"
+    Portland = "Portland"
+    Jet = "Jet"
+    Hot = "Hot"
+    Blackbody = "Blackbody"
+    Earth = "Earth"
+    Electric = "Electric"
+    Viridis = "Viridis"
+    Cividis = "Cividis"
 
   ErrorBarKind* = enum   # different error bar kinds (from constant value, array,...)
     ebkConstantSym,      # constant symmetric error
@@ -72,16 +93,23 @@ type
   Trace*[T: SomeNumber] = ref object
     xs*: seq[T]
     ys*: seq[T]
+    zs*: seq[seq[T]]
     xs_err*: ErrorBar[T]
     ys_err*: ErrorBar[T]
     marker*: Marker[T]
     text*: seq[string]
     opacity*: float
     mode*: PlotMode
-    `type`*: PlotType
     fill*: PlotFill
     name*: string
     yaxis*: string
+    # case on `type`, since we only need ColorMap for
+    # PlotType.HeatMap
+    case `type`*: PlotType
+    of HeatMap:
+      colormap*: ColorMap
+    else:
+      discard
 
   Font* = ref object
     family*: string

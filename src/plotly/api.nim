@@ -105,15 +105,24 @@ func `%`*(t: Trace): JsonNode =
     fields["x"] = % t.xs
   if t.yaxis != "":
     fields["yaxis"] = % t.yaxis
-
+    
   if t.opacity != 0:
     fields["opacity"] = % t.opacity
 
   if $t.fill != "":
     fields["fill"] = % t.fill
 
-  if t.ys != nil:
-    fields["y"] = % t.ys
+  # now check variant object to fill correct fields
+  case t.`type`
+  of PlotType.HeatMap:
+    # heatmap stores data in z only
+    if t.zs != nil:
+      fields["z"] = % t.zs
+      
+    fields["colorscale"] = % t.colormap
+  else:
+    if t.ys != nil:
+      fields["y"] = % t.ys
 
   if t.xs_err != nil:
     fields["error_x"] = % t.xs_err
@@ -128,6 +137,7 @@ func `%`*(t: Trace): JsonNode =
     fields["text"] = % t.text
   if t.marker != nil:
     fields["marker"] = % t.marker
+
   result = JsonNode(kind:Jobject, fields: fields)
 
 func `%`*(m: Marker): JsonNode =
