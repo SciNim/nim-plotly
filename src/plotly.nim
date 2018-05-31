@@ -17,8 +17,7 @@ import plotly/errorbar
 export errorbar
 when not defined(js):
   import browsers
-  # default template path not needed for JS target
-  const defaultTmplPath = currentSourcePath().parentDir / "tmpl.html"
+  include plotly/tmpl_html
 else:
   import plotly/plotly_js
   export plotly_js
@@ -53,13 +52,13 @@ proc parseTraces*[T](traces: seq[Trace[T]]): string =
 
 when not defined(js):
   # `show` and `save` are only used for the C target
-  proc show*(p: Plot, path = "", html_template = defaultTmplPath) =
+  proc show*(p: Plot, path = "", html_template = defaultTmplString) =
     let path = p.save(path, html_template)
     browsers.openDefaultBrowser(path)
     sleep(1000)
     removeFile(path)
 
-  proc save*(p: Plot, path = "", html_template = defaultTmplPath): string =
+  proc save*(p: Plot, path = "", html_template = defaultTmplString): string =
     result = path
     if result == "":
       result = "/tmp/x.html"
@@ -74,7 +73,7 @@ when not defined(js):
       title = p.layout.title
 
     # read the HTML template and insert data, layout and title strings
-    var s = ($readFile(html_template)) % ["data", data_string, "layout", slayout,
+    var s = html_template % ["data", data_string, "layout", slayout,
                                         "title", title]
     var
       f: File
