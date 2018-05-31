@@ -10,6 +10,7 @@ type
     Histogram = "histogram"
     Box = "box"
     HeatMap = "heatmap"
+    HeatMapGL = "heatmapgl"
 
   PlotFill* {.pure.} = enum
     Unset = ""
@@ -106,7 +107,7 @@ type
     # case on `type`, since we only need ColorMap for
     # PlotType.HeatMap
     case `type`*: PlotType
-    of HeatMap:
+    of HeatMap, HeatMapGL:
       colormap*: ColorMap
     else:
       discard

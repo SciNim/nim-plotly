@@ -114,7 +114,7 @@ func `%`*(t: Trace): JsonNode =
 
   # now check variant object to fill correct fields
   case t.`type`
-  of PlotType.HeatMap:
+  of PlotType.HeatMap, PlotType.HeatMapGL:
     # heatmap stores data in z only
     if t.zs != nil:
       fields["z"] = % t.zs
