@@ -158,7 +158,7 @@ func `$`*(d: Trace): string =
   var j = % d
   result = $j
 
-func json*(d: Trace, as_pretty=true): string =
+func json*(d: Trace, as_pretty=false): string =
   var j = % d
   if as_pretty:
     result = pretty(j)
