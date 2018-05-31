@@ -1,4 +1,7 @@
-import os
+when not defined(js):
+  # not available on JS backend
+  import os
+
 import strutils
 import json
 import chroma
@@ -12,14 +15,18 @@ import plotly/plotly_types
 export plotly_types
 import plotly/errorbar
 export errorbar
-import browsers
+when not defined(js):
+  import browsers
+  # default template path not needed for JS target
+  const defaultTmplPath = currentSourcePath().parentDir / "tmpl.html"
+else:
+  import plotly/plotly_js
+  export plotly_js
 
 type
   Plot*[T:SomeNumber] = ref object
     traces* : seq[Trace[T]]
     layout*: Layout
-
-const defaultTmplPath = currentSourcePath().parentDir / "tmpl.html"
 
 proc newPlot*(xlabel = "", ylabel = "", title = ""): Plot[float64] =
   ## create a plot with sane default layout.
@@ -36,36 +43,45 @@ proc add*[T](p: Plot, d: Trace[T]) =
     p.traces = newSeq[Trace[float64]]()
   p.traces.add(d)
 
-proc show*(p: Plot, path = "", html_template = defaultTmplPath) =
-  let path = p.save(path, html_template)
-  browsers.openDefaultBrowser(path)
-  sleep(1000)
-  removeFile(path)
-
-proc save*(p: Plot, path = "", html_template = defaultTmplPath): string =
-  result = path
-  if result == "":
-    result = "/tmp/x.html"
+proc parseTraces*[T](traces: seq[Trace[T]]): string =
+  ## parses the traces of a Plot object to strings suitable
+  ## for plotly by concating the json representations
   let
     # call `json` for each element of `Plot.traces`
-    jsons = mapIt(p.traces, it.json(as_pretty = true))
-    data_string = "[" & join(jsons, ",") & "]"
-    # read the HTML template and insert data, layout and title strings
-  var 
-    slayout = "{}"
-    title = ""
-  if p.layout != nil:
-    slayout = $(%p.layout)
-    title = p.layout.title
+    jsons = mapIt(traces, it.json(as_pretty = false))
+  result = "[" & join(jsons, ",") & "]"
 
-  var s = ($readFile(html_template)) % ["data", data_string, "layout", slayout,
-                                      "title", title]
-  var
-    f: File
-  if not open(f, result, fmWrite):
-    quit "could not open file for json"
-  f.write(s)
-  f.close()
+when not defined(js):
+  # `show` and `save` are only used for the C target
+  proc show*(p: Plot, path = "", html_template = defaultTmplPath) =
+    let path = p.save(path, html_template)
+    browsers.openDefaultBrowser(path)
+    sleep(1000)
+    removeFile(path)
+
+  proc save*(p: Plot, path = "", html_template = defaultTmplPath): string =
+    result = path
+    if result == "":
+      result = "/tmp/x.html"
+
+    let data_string = parseTraces(p.traces)
+
+    var
+      slayout = "{}"
+      title = ""
+    if p.layout != nil:
+      slayout = $(%p.layout)
+      title = p.layout.title
+
+    # read the HTML template and insert data, layout and title strings
+    var s = ($readFile(html_template)) % ["data", data_string, "layout", slayout,
+                                        "title", title]
+    var
+      f: File
+    if not open(f, result, fmWrite):
+      quit "could not open file for json"
+    f.write(s)
+    f.close()
 
 when isMainModule:
   import math
