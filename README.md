@@ -7,8 +7,7 @@ This is a functioning plotting library. It supports, *line* (with fill below), *
 , *histogram*, and combinations of those plot types. More standard types can be added on request.
 
 
-This is **not** specifically for the javascript nim target (but the
-javascript target is supported!).
+This is **not** specifically for the javascript nim target.
 
 Internally, it serializes typed `nim` datastructures to JSON that matches what [plotly](https://plot.ly/javascript/) expects.
 
@@ -66,22 +65,6 @@ be interactive.
 
 [in examples](https://github.com/brentp/nim-plotly/blob/master/examples/)
 
-
-## Note about C & JS targets / interactive plots
-
-The library supports both the `C` as well as `Javascript` targets of
-Nim. In case of the `C` target, the data and layout is statically
-parsed and inserted into a template Html file, which is stored in
-`/tmp/x.html`. A call to the default browser is made, which loads said
-file. The file is deleted thereafter. 
-
-This static nature has the implication that it is not possible to
-update the data in the plots. However, thanks to Nim's ability to
-compile to Javascript, this can still be achieved if needed. When
-compiling to the `JS` target the native plotly functions are
-available, including `react` and `restyle`, which allow to change the
-data and / or layout of a plot defined in a `div` container. See the
-`fig8_js_interactive.nim` for such an example.
 
 ## TODO
 
