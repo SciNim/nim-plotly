@@ -52,6 +52,10 @@ func `%`*(l: Layout): JsonNode =
     fields["yaxis2"] = % l.yaxis2
   if $l.barmode != "":
     fields["barmode"] = % l.barmode
+  # default to closest because other modes suck.
+  fields["hovermode"] = % "closest"
+  if $l.hovermode != "":
+    fields["hovermode"] = % l.hovermode
 
   result = JsonNode(kind:Jobject, fields:  fields)
 

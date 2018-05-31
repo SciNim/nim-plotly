@@ -27,6 +27,12 @@ type
     Stack = "stack"
     Overlay = "overlay"
 
+  HoverMode* {.pure.} = enum
+    Closest = "closest"
+    X = "x"
+    Y = "y"
+    False = "false"
+
   PlotSide* {.pure.} = enum
     Unset = ""
     Left = "left"
@@ -127,6 +133,7 @@ type
     title*: string
     width*: int
     height*: int
+    hovermode*: HoverMode
     autosize*: bool
     showlegend*: bool
     xaxis*: Axis
