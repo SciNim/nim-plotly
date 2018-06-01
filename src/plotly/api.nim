@@ -124,6 +124,11 @@ func `%`*(t: Trace): JsonNode =
       fields["z"] = % t.zs
       
     fields["colorscale"] = % t.colormap
+  of PlotType.Candlestick:
+    fields["open"] = % t.open
+    fields["high"] = % t.high
+    fields["low"] = % t.low
+    fields["close"] = % t.close
   else:
     if t.ys != nil:
       fields["y"] = % t.ys
