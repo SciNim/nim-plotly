@@ -131,11 +131,15 @@ type
     size*: int
     color*: Color
 
+  RangeSlider* = ref object
+    visible*: bool
+
   Axis* = ref object
     title*: string
     font*: Font
     domain*: seq[float64]
     side*: PlotSide
+    rangeslider*: RangeSlider
 
   Layout* = ref object
     title*: string
@@ -144,6 +148,7 @@ type
     hovermode*: HoverMode
     autosize*: bool
     showlegend*: bool
+    rangeslider*: bool
     xaxis*: Axis
     yaxis*: Axis
     yaxis2*: Axis

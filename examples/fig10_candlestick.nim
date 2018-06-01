@@ -15,7 +15,7 @@ d.close = lc[float32(x) | (x <- @[7, 22, 7, 105, 55], float32(x) > 0), float32]
 
 let
   layout = Layout(title: "Candlestick example", width: 800, height: 800,
-                  xaxis: Axis(title: "x-axis"),
+                  xaxis: Axis(title: "x-axis", rangeslider: RangeSlider(visible: false)),
                   yaxis: Axis(title: "y-axis"), autosize: false)
   p = Plot[float32](layout: layout, traces: @[d])
 echo p.save()

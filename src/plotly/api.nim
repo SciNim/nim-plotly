@@ -31,6 +31,8 @@ func `%`*(a: Axis): JsonNode =
   if a.side != PlotSide.Unset:
     fields["side"] = % a.side
     fields["overlaying"] = % "y"
+  if a.rangeslider != nil:
+    fields["rangeslider"] = % a.rangeslider
 
   result = JsonNode(kind:Jobject, fields:  fields)
 
