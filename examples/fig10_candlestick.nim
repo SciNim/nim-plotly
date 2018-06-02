@@ -1,6 +1,5 @@
 import plotly
 import chroma
-import random
 import sequtils
 
 var d = Trace[float32](mode: PlotMode.Lines, `type`: PlotType.Candlestick)
