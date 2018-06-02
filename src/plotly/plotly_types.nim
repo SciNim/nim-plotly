@@ -148,7 +148,6 @@ type
     hovermode*: HoverMode
     autosize*: bool
     showlegend*: bool
-    rangeslider*: bool
     xaxis*: Axis
     yaxis*: Axis
     yaxis2*: Axis
