@@ -11,6 +11,7 @@ type
     Box = "box"
     HeatMap = "heatmap"
     HeatMapGL = "heatmapgl"
+    Candlestick = "candlestick"
 
   PlotFill* {.pure.} = enum
     Unset = ""
@@ -115,6 +116,13 @@ type
     case `type`*: PlotType
     of HeatMap, HeatMapGL:
       colormap*: ColorMap
+    # case on `type`, since we only need Close,High,Low,Open for
+    # PlotType.Candlestick
+    of Candlestick:
+      open*: seq[T]
+      high*: seq[T]
+      low*: seq[T]
+      close*: seq[T]
     else:
       discard
 
@@ -123,11 +131,15 @@ type
     size*: int
     color*: Color
 
+  RangeSlider* = ref object
+    visible*: bool
+
   Axis* = ref object
     title*: string
     font*: Font
     domain*: seq[float64]
     side*: PlotSide
+    rangeslider*: RangeSlider
 
   Layout* = ref object
     title*: string

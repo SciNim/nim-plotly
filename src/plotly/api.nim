@@ -31,6 +31,8 @@ func `%`*(a: Axis): JsonNode =
   if a.side != PlotSide.Unset:
     fields["side"] = % a.side
     fields["overlaying"] = % "y"
+  if a.rangeslider != nil:
+    fields["rangeslider"] = % a.rangeslider
 
   result = JsonNode(kind:Jobject, fields:  fields)
 
@@ -124,6 +126,11 @@ func `%`*(t: Trace): JsonNode =
       fields["z"] = % t.zs
       
     fields["colorscale"] = % t.colormap
+  of PlotType.Candlestick:
+    fields["open"] = % t.open
+    fields["high"] = % t.high
+    fields["low"] = % t.low
+    fields["close"] = % t.close
   else:
     if t.ys != nil:
       fields["y"] = % t.ys
