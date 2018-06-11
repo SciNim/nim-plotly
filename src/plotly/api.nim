@@ -1,11 +1,41 @@
 import tables
 import json
 import chroma
+import strformat
+import sequtils
 
 # plotly internal modules
 import plotly_types
 import color
 import errorbar
+
+func parseHistogramFields[T](fields: var OrderedTable[string, JsonNode], t: Trace[T]) = 
+  ## parse the fields of the histogram type. Usese a separate proc
+  ## for clarity.
+  fields["cumulative"] = %* {
+    "enabled" : % t.cumulative
+  }
+  fields["histfunc"] = % t.histFunc
+  fields["histnorm"] = % t.histNorm
+
+  # string to store direction of bars, used to assign
+  # the fields without explcitily naming 'x' or 'y' fields
+  var bars = "x"
+  if t.xs == nil or t.xs.len == 0:
+    bars = "y"
+
+  # if either nbins or start / stop range given, disable auto binning
+  if anyIt([t.nbins.float, t.bins.start, t.bins.stop], it > 0.0):
+    fields[&"autobins{bars}"] = % false
+
+  if t.nbins > 0:
+    fields[&"nbins{bars}"] = % t.nbins    
+  elif t.bins.start != t.bins.stop:
+    fields[&"{bars}bins"] = %* {
+      "start" : % t.bins.start,
+      "end" : % t.bins.stop,
+      "size" : % t.binSize
+    }
 
 func `%`*(c: Color): string =
   result = c.toHtmlHex()
@@ -18,7 +48,7 @@ func `%`*(f: Font): JsonNode =
     fields["color"] = % f.color.toHtmlHex()
   if f.family != nil and f.family != "":
     fields["family"] = % f.family
-  result = JsonNode(kind:Jobject, fields:  fields)
+  result = JsonNode(kind: Jobject, fields: fields)
 
 func `%`*(a: Axis): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
@@ -34,12 +64,12 @@ func `%`*(a: Axis): JsonNode =
   if a.rangeslider != nil:
     fields["rangeslider"] = % a.rangeslider
 
-  result = JsonNode(kind:Jobject, fields:  fields)
+  result = JsonNode(kind:Jobject, fields: fields)
 
 func `%`*(l: Layout): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if l == nil:
-    return JsonNode(kind:Jobject, fields:  fields)
+    return JsonNode(kind: Jobject, fields: fields)
   if l.title != "":
     fields["title"] = % l.title
   if l.width != 0:
@@ -59,7 +89,7 @@ func `%`*(l: Layout): JsonNode =
   if $l.hovermode != "":
     fields["hovermode"] = % l.hovermode
 
-  result = JsonNode(kind:Jobject, fields:  fields)
+  result = JsonNode(kind: Jobject, fields: fields)
 
 func `%`*(b: ErrorBar): JsonNode =
   ## creates a JsonNode from an `ErrorBar` object depending on the object variant
@@ -131,6 +161,10 @@ func `%`*(t: Trace): JsonNode =
     fields["high"] = % t.high
     fields["low"] = % t.low
     fields["close"] = % t.close
+  of PlotType.Histogram:
+    fields.parseHistogramFields(t)
+    if t.ys != nil:
+      fields["y"] = % t.ys
   else:
     if t.ys != nil:
       fields["y"] = % t.ys
@@ -149,7 +183,7 @@ func `%`*(t: Trace): JsonNode =
   if t.marker != nil:
     fields["marker"] = % t.marker
 
-  result = JsonNode(kind:Jobject, fields: fields)
+  result = JsonNode(kind: Jobject, fields: fields)
 
 func `%`*(m: Marker): JsonNode =
   var fields = initOrderedTable[string, JsonNode](8)
@@ -163,7 +197,7 @@ func `%`*(m: Marker): JsonNode =
       fields["color"] = % m.color[0].toHtmlHex()
     else:
       fields["color"] = % m.color.toHtmlHex()
-  result = JsonNode(kind:Jobject, fields:  fields)
+  result = JsonNode(kind: Jobject, fields: fields)
 
 func `$`*(d: Trace): string =
   var j = % d
