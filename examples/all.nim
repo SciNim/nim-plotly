@@ -7,3 +7,4 @@ import fig6_histogram
 import fig7_stacked_histogram
 import fig9_heatmap
 import fig10_candlestick
+import fig11_histogram_settings
