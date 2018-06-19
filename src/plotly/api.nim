@@ -9,7 +9,7 @@ import plotly_types
 import color
 import errorbar
 
-func parseHistogramFields[T](fields: var OrderedTable[string, JsonNode], t: Trace[T]) = 
+func parseHistogramFields[T](fields: var OrderedTable[string, JsonNode], t: Trace[T]) =
   ## parse the fields of the histogram type. Usese a separate proc
   ## for clarity.
   fields["cumulative"] = %* {
@@ -29,7 +29,7 @@ func parseHistogramFields[T](fields: var OrderedTable[string, JsonNode], t: Trac
     # if nbins is set, this provides the maximum number of bins allowed to be
     # calculated by the autobins algorithm
     fields[&"autobin{bars}"] = % true
-    
+
   elif t.bins.start != t.bins.stop:
     fields[&"{bars}bins"] = %* {
       "start" : % t.bins.start,
@@ -63,6 +63,14 @@ func `%`*(a: Axis): JsonNode =
   if a.side != PlotSide.Unset:
     fields["side"] = % a.side
     fields["overlaying"] = % "y"
+
+  if a.range.start != a.range.stop:
+    fields["autorange"] = % false
+    # range is given as an array of two elements, start and stop
+    fields["range"] = % [a.range.start, a.range.stop]
+  else:
+    fields["autorange"] = % true
+
   if a.rangeslider != nil:
     fields["rangeslider"] = % a.rangeslider
 
@@ -143,7 +151,7 @@ func `%`*(t: Trace): JsonNode =
     fields["x"] = % t.xs
   if t.yaxis != "":
     fields["yaxis"] = % t.yaxis
-    
+
   if t.opacity != 0:
     fields["opacity"] = % t.opacity
 
@@ -156,7 +164,7 @@ func `%`*(t: Trace): JsonNode =
     # heatmap stores data in z only
     if t.zs != nil:
       fields["z"] = % t.zs
-      
+
     fields["colorscale"] = % t.colormap
   of PlotType.Candlestick:
     fields["open"] = % t.open

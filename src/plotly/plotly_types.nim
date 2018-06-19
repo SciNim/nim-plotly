@@ -165,6 +165,8 @@ type
     domain*: seq[float64]
     side*: PlotSide
     rangeslider*: RangeSlider
+    # setting no range implies plotly's `autorange` true
+    range*: tuple[start, stop: float]
 
   Layout* = ref object
     title*: string
