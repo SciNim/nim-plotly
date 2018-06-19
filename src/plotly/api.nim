@@ -24,18 +24,20 @@ func parseHistogramFields[T](fields: var OrderedTable[string, JsonNode], t: Trac
   if t.xs == nil or t.xs.len == 0:
     bars = "y"
 
-  # if either nbins or start / stop range given, disable auto binning
-  if anyIt([t.nbins.float, t.bins.start, t.bins.stop], it > 0.0):
-    fields[&"autobins{bars}"] = % false
-
   if t.nbins > 0:
-    fields[&"nbins{bars}"] = % t.nbins    
+    fields[&"nbins{bars}"] = % t.nbins
+    # if nbins is set, this provides the maximum number of bins allowed to be
+    # calculated by the autobins algorithm
+    fields[&"autobin{bars}"] = % true
+    
   elif t.bins.start != t.bins.stop:
     fields[&"{bars}bins"] = %* {
       "start" : % t.bins.start,
       "end" : % t.bins.stop,
       "size" : % t.binSize
     }
+    # in case bins are set manually, disable autobins
+    fields[&"autobin{bars}"] = % false
 
 func `%`*(c: Color): string =
   result = c.toHtmlHex()
