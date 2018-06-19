@@ -13,6 +13,21 @@ type
     HeatMapGL = "heatmapgl"
     Candlestick = "candlestick"
 
+  HistFunc* {.pure.} = enum
+    # count is plotly.js default
+    Count = "count"
+    Sum = "sum"
+    Avg = "avg"
+    Min = "min"
+    Max = "max"
+
+  HistNorm* {.pure.} = enum
+    None = ""
+    Percent = "percent"
+    Probability = "probability"
+    Density = "density"
+    ProbabilityDensity = "probability density"
+
   PlotFill* {.pure.} = enum
     Unset = ""
     ToNextY = "tonexty"
@@ -123,6 +138,16 @@ type
       high*: seq[T]
       low*: seq[T]
       close*: seq[T]
+    of Histogram:
+      histFunc*: HistFunc
+      histNorm*: HistNorm
+      # TODO: include increasing and decreasing distinction?
+      cumulative*: bool
+      # if `nBins` is set, the `bins` tuple and `binSize` will be ignored
+      nBins*: int
+      bins*: tuple[start, stop: float]
+      # `binSize` is optional, even if `bins` is given.
+      binSize*: float
     else:
       discard
 
@@ -140,6 +165,8 @@ type
     domain*: seq[float64]
     side*: PlotSide
     rangeslider*: RangeSlider
+    # setting no range implies plotly's `autorange` true
+    range*: tuple[start, stop: float]
 
   Layout* = ref object
     title*: string

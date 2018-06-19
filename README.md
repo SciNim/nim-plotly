@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/brentp/nim-plotly.svg?branch=master)](https://travis-ci.org/brentp/nim-plotly)
 
 This is a functioning plotting library. It supports, *line* (with fill below), *scatter* (with errors), *bar*
-, *histogram*, and combinations of those plot types. More standard types can be added on request.
+, *histogram*, *heatmap*, *candlestick* and combinations of those plot types. More standard types can be added on request.
 
 
 This is **not** specifically for the javascript nim target (but the
