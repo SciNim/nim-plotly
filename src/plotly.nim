@@ -61,7 +61,9 @@ when not defined(js):
   proc save*(p: Plot, path = "", html_template = defaultTmplString): string =
     result = path
     if result == "":
-      result = "/tmp/x.html"
+      let tempDir = parentDir(currentSourcePath()) / "tmp"
+      createDir(tempDir)
+      result = tempDir / "x.html"
 
     let data_string = parseTraces(p.traces)
 
