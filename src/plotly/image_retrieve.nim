@@ -15,7 +15,7 @@ type
 
 proc parseImageType*(filename: string): string =
   let
-    (dir, file, ext) = filename.splitFile  
+    (dir, file, ext) = filename.splitFile
     filetype = ext.strip(chars = {'.'})
   # now check for the given type
   case filetype
@@ -62,7 +62,7 @@ proc cb(req: Request) {.async.} =
   let regex = re(r"data:image\/(\w+)[;+].*")
   # receive the filename from the channel
   let filename = filenameChannel.recv()
-  
+
   # now await the connection of the websocket client
   let (ws, error) = await verifyWebsocketRequest(req)
 

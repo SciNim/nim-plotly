@@ -58,17 +58,21 @@ when not defined(js):
     var path: string
     # if we are handed a filename, the user wants to save the file to disk. Start
     # a websocket server to receive the image data
-    # create and run the websocket server
+    var thr: Thread[string]
     if filename.len > 0:
-      var thr: Thread[string]
-      thr.createThread(listenForImage, filename)
       # wait a short while to make sure the server is up and running
-      sleep(100)
+      thr.createThread(listenForImage, filename)
 
     path = p.save(path, html_template, filename)
     browsers.openDefaultBrowser(path)
     sleep(1000)
+
+    if filename.len > 0:
+      # wait for thread to join
+      thr.joinThread
+    # remove file after thread is finished
     removeFile(path)
+
 
   proc save*(p: Plot, path = "", html_template = defaultTmplString, filename = ""): string =
     result = path
