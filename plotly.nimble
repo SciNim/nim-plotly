@@ -6,7 +6,7 @@ description   = "plotting library for nim"
 license       = "MIT"
 
 
-requires "nim >= 0.18.0", "chroma"
+requires "nim >= 0.18.0", "chroma", "websocket"
 srcDir = "src"
 
 skipDirs = @["tests"]
