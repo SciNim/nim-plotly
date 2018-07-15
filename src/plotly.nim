@@ -112,6 +112,12 @@ when not defined(js):
     f.write(s)
     f.close()
 
+  proc saveImage*(p: Plot, filename: string) =
+    ## saves the image under the given filename
+    ## supported filetypes:
+    ## - jpg, png, svg, webp
+    p.show(filename = filename)
+
 when isMainModule:
   import math
 

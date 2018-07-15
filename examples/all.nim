@@ -8,3 +8,4 @@ import fig7_stacked_histogram
 import fig9_heatmap
 import fig10_candlestick
 import fig11_histogram_settings
+import fig12_save_figure
