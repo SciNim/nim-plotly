@@ -44,7 +44,11 @@ const urlTmpl = r"data:image/$#+xml,"
 # use a channel to hand the filename to the callback function
 var
   filenameChannel: Channel[string]
+  stopServerChannel: Channel[bool]
 filenameChannel.open(1)
+# used by the callback function to stop the server when the file has
+# been written or an error occured
+stopServerChannel.open(1)
 
 template parseFileType(header: string, regex: Regex): string =
   # template due to GC safety. Just have it replaced in code below
@@ -108,9 +112,30 @@ proc cb(req: Request) {.async.} =
   except IOError:
     echo "Warning: file could not be written to ", filename
 
-proc listenForImage*(filename: string) = 
+  # write ``true`` to the channel to let the server know it can be closed
+  stopServerChannel.send(true)
+
+proc listenForImage*(filename: string) =
+
   let server = newAsyncHttpServer()
   echo "Saving plot to file ", filename
   filenameChannel.send(filename)
-  waitFor server.serve(Port(8080), cb)
-  
+  # start the async server
+  asyncCheck server.serve(Port(8080), cb)
+  # two booleans to keep track of whether we should poll or
+  # can close the server. The callback writes to a channel once
+  # its
+  var
+    stopAvailable = false
+    stop = false
+  echo "Waiting for stop"
+  while not stopAvailable:
+    # we try to receive data from the stop channel. Once we do
+    # check it's actually ``true`` and stop the server
+    (stopAvailable, stop) = stopServerChannel.tryRecv
+    if stop:
+      echo "Closing server"
+      server.close()
+      break
+    # else poll for events, i.e. let the callback work
+    poll(500)
