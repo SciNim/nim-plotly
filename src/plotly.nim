@@ -59,11 +59,11 @@ when not defined(js):
     # if we are handed a filename, the user wants to save the file to disk. Start
     # a websocket server to receive the image data
     # create and run the websocket server
-    var thr: Thread[string]
-    thr.createThread(listenForImage, filename)
-
-    # wait a short while to make sure the server is up and running
-    sleep(100)
+    if filename.len > 0:
+      var thr: Thread[string]
+      thr.createThread(listenForImage, filename)
+      # wait a short while to make sure the server is up and running
+      sleep(100)
 
     path = p.save(path, html_template, filename)
     browsers.openDefaultBrowser(path)
