@@ -18,6 +18,8 @@ export errorbar
 when not defined(js):
   import browsers
   include plotly/tmpl_html
+  import plotly/image_retrieve
+  import threadpool
 else:
   import plotly/plotly_js
   export plotly_js
@@ -52,13 +54,23 @@ proc parseTraces*[T](traces: seq[Trace[T]]): string =
 
 when not defined(js):
   # `show` and `save` are only used for the C target
-  proc show*(p: Plot, path = "", html_template = defaultTmplString) =
-    let path = p.save(path, html_template)
+  proc show*(p: Plot, path = "", html_template = defaultTmplString, filename = "") =
+    var path: string
+    # if we are handed a filename, the user wants to save the file to disk. Start
+    # a websocket server to receive the image data
+    # create and run the websocket server
+    var thr: Thread[string]
+    thr.createThread(listenForImage, filename)
+
+    # wait a short while to make sure the server is up and running
+    sleep(100)
+
+    path = p.save(path, html_template, filename)
     browsers.openDefaultBrowser(path)
     sleep(1000)
     removeFile(path)
 
-  proc save*(p: Plot, path = "", html_template = defaultTmplString): string =
+  proc save*(p: Plot, path = "", html_template = defaultTmplString, filename = ""): string =
     result = path
     if result == "":
       result = "/tmp/x.html"
@@ -73,8 +85,26 @@ when not defined(js):
       title = p.layout.title
 
     # read the HTML template and insert data, layout and title strings
-    var s = html_template % ["data", data_string, "layout", slayout,
-                                        "title", title]
+    var s = ""
+    if filename.len > 0:
+      # prepare save image code
+      let filetype = parseImageType(filename)
+      let swidth = $p.layout.width
+      let sheight = $p.layout.height
+      # here we use numbering of elements to replace in template
+      # named replacements don't like the characters around
+      let imageInject = injectImageCode % [filetype,
+                                           filetype,
+                                           swidth,
+                                           sheight,
+                                           filetype,
+                                           swidth,
+                                           sheight]
+      s = html_template % ["data", data_string, "layout", slayout,
+                               "title", title, "saveImage", imageInject]
+    else:
+      s = html_template % ["data", data_string, "layout", slayout,
+                               "title", title, "saveImage", ""]
     var
       f: File
     if not open(f, result, fmWrite):
