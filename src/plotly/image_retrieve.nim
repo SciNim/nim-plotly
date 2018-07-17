@@ -115,6 +115,7 @@ proc cb(req: Request) {.async.} =
     echo "Warning: Unsupported filetype :", filetype
   try:
     # try to write the filename the user requested
+    echo "Saving plot to file ", filename
     writeFile(filename, image)
   except IOError:
     echo "Warning: file could not be written to ", filename
