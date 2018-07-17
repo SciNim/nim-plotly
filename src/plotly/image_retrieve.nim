@@ -13,6 +13,12 @@ type
   Message {.pure.} = enum
     Connected = "connected"
 
+template withDebug(actions: untyped) =
+  # use this template to echo statements, if the
+  # -d:DEBUG compile flag is set
+  when defined(DEBUG):
+    actions
+
 proc parseImageType*(filename: string): string =
   let
     (dir, file, ext) = filename.splitFile
@@ -79,7 +85,8 @@ proc cb(req: Request) {.async.} =
     # receive connection successful package
     let (opcodeConnect, dataConnect) = await ws.readData()
     if dataConnect == $Message.Connected:
-      echo "Plotly connected successfully!"
+      withDebug:
+        debugEcho "Plotly connected successfully!"
     else:
       echo "Connection broken :/"
       return
@@ -116,9 +123,9 @@ proc cb(req: Request) {.async.} =
   stopServerChannel.send(true)
 
 proc listenForImage*(filename: string) =
-
+  withDebug:
+    debugEcho "Starting server"
   let server = newAsyncHttpServer()
-  echo "Saving plot to file ", filename
   filenameChannel.send(filename)
   # start the async server
   asyncCheck server.serve(Port(8080), cb)
@@ -128,13 +135,13 @@ proc listenForImage*(filename: string) =
   var
     stopAvailable = false
     stop = false
-  echo "Waiting for stop"
   while not stopAvailable:
     # we try to receive data from the stop channel. Once we do
     # check it's actually ``true`` and stop the server
     (stopAvailable, stop) = stopServerChannel.tryRecv
     if stop:
-      echo "Closing server"
+      withDebug:
+        debugEcho "Closing server"
       server.close()
       break
     # else poll for events, i.e. let the callback work
