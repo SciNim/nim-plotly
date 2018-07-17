@@ -25,3 +25,5 @@ let
 # p.show(filename = "HelloImage.png")
 # alternatively call the `saveImage` proc instead of show
 p.saveImage("HelloImage.svg")
+# NOTE: if we compile this without --threads:on support, we'll get
+# an error at compile time that thread support is needed.
