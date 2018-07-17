@@ -64,9 +64,9 @@ when not defined(js):
     # some violation of DRY for the sake of better error messages at
     # compile time
     proc show*(p: Plot,
+               filename: string,
                path = "",
-               html_template = defaultTmplString,
-               filename = "") =
+               html_template = defaultTmplString) =
       {.fatal: "`filename` argument to save plot only supported if compiled " &
         "with --threads:on!".}
 
@@ -81,7 +81,7 @@ when not defined(js):
 
   else:
     # if compiled with --threads:on
-    proc show*(p: Plot, path = "", html_template = defaultTmplString, filename = "") =
+    proc show*(p: Plot, filename = "", path = "", html_template = defaultTmplString) =
       ## creates the temporary Html file using `save`, and opens the user's
       ## default browser
       # if we are handed a filename, the user wants to save the file to disk. Start
