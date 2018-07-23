@@ -16,7 +16,19 @@ export plotly_types
 import plotly/errorbar
 export errorbar
 when not defined(js):
-  import browsers
+  # normally just import browsers module. Howver, in case we run
+  # tests on travis, we need a way to open a browser, which is
+  # non-blocking. For some reason `xdg-open` does not return immediately
+  # on travis.
+  when not defined(travis):
+    import browsers
+  else:
+    proc openDefaultBrowser(url: string) =
+      # patched version of Nim's `openDefaultBrowser` which always
+      # returns immediately
+      var u = quoteShell(url)
+      discard execShellCmd("xdg-open " & u & " &")
+
   include plotly/tmpl_html
 else:
   import plotly/plotly_js
@@ -74,7 +86,7 @@ when not defined(js):
       ## creates the temporary Html file using `save`, and opens the user's
       ## default browser
       let tmpfile = p.save(path, html_template)
-      browsers.openDefaultBrowser(tmpfile)
+      openDefaultBrowser(tmpfile)
       sleep(1000)
       # remove file after thread is finished
       removeFile(tmpfile)
@@ -92,7 +104,7 @@ when not defined(js):
         thr.createThread(listenForImage, filename)
 
       let tmpfile = p.save(path, html_template, filename)
-      browsers.openDefaultBrowser(tmpfile)
+      openDefaultBrowser(tmpfile)
       sleep(1000)
 
       if filename.len > 0:

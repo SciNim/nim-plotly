@@ -1,9 +1,35 @@
 sudo: required
-services:
-  - docker
-before_install:
-  - docker pull nimlang/nim:0.18.0-alpine
+
+os:
+  - linux
+
+language: c
+
+cache:
+  directories:
+    - "$HOME/.nimble"
+    - "$HOME/.choosenim"
+
+addons:
+  firefox: "60.0.1"
+
+before_script:
+  # start a virtual X server using xvfb in which we run firefox
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
+
+install:
+  - export CHOOSENIM_CHOOSE_VERSION="#f92d61b1f4e193bd"
+  - |
+      curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
+      sh init.sh -y
+  - export PATH=$HOME/.nimble/bin:$PATH
+  - nimble refresh -y
 
 script:
-  - docker run nimlang/nim:0.18.0-alpine nim --version
-  - docker run -v "$(pwd):/project" -w /project nimlang/nim:0.18.0-alpine sh -c "apk add --no-cache  libcrypto1.0 openssl-dev && nimble install -y && nimble test"
+  # set firefox as default browser. Otherwise google-chrome is picked for some
+  # reason
+  - export BROWSER=firefox
+  - nimble install -y
+  - nimble -y travisTest
