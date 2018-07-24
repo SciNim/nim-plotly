@@ -157,7 +157,10 @@ when not defined(js):
   proc save*(p: Plot, path = "", html_template = defaultTmplString, filename = ""): string =
     result = path
     if result == "":
-      result = "/tmp/x.html"
+      when defined(Windows):
+        result = getEnv("TEMP") / "x.html"
+      else:
+        result = "/tmp/x.html"
 
     let
       # convert traces to data suitable for plotly and fill Html template
