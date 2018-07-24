@@ -61,7 +61,10 @@ when not defined(js):
   proc save*(p: Plot, path = "", html_template = defaultTmplString): string =
     result = path
     if result == "":
-      result = "/tmp/x.html"
+      when defined(Windows):
+        result = getEnv("TEMP") / "x.html"
+      else:
+        result = "/tmp/x.html"
 
     let data_string = parseTraces(p.traces)
 
