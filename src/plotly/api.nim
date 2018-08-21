@@ -21,7 +21,7 @@ func parseHistogramFields[T](fields: var OrderedTable[string, JsonNode], t: Trac
   # string to store direction of bars, used to assign
   # the fields without explcitily naming 'x' or 'y' fields
   var bars = "x"
-  if t.xs == nil or t.xs.len == 0:
+  if t.xs.len == 0:
     bars = "y"
 
   if t.nbins > 0:
@@ -48,17 +48,17 @@ func `%`*(f: Font): JsonNode =
     fields["size"] = % f.size
   if f.color.empty:
     fields["color"] = % f.color.toHtmlHex()
-  if f.family != nil and f.family != "":
+  if f.family.len > 0:
     fields["family"] = % f.family
   result = JsonNode(kind: Jobject, fields: fields)
 
 func `%`*(a: Axis): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
-  if a.title != nil and a.title != "":
+  if a.title.len > 0:
     fields["title"] = % a.title
   if a.font != nil:
     fields["titlefont"] = % a.font
-  if a.domain != nil:
+  if a.domain.len > 0:
     fields["domain"] = % a.domain
   if a.side != PlotSide.Unset:
     fields["side"] = % a.side
@@ -144,8 +144,8 @@ func `%`*(b: ErrorBar): JsonNode =
 
 func `%`*(t: Trace): JsonNode =
   var fields = initOrderedTable[string, JsonNode](8)
-  if t.xs == nil or t.xs.len == 0:
-    if t.text != nil and t.`type` != PlotType.Histogram:
+  if t.xs.len == 0:
+    if t.text.len > 0 and t.`type` != PlotType.Histogram:
       fields["x"] = % t.text
   else:
     fields["x"] = % t.xs
@@ -162,7 +162,7 @@ func `%`*(t: Trace): JsonNode =
   case t.`type`
   of PlotType.HeatMap, PlotType.HeatMapGL:
     # heatmap stores data in z only
-    if t.zs != nil:
+    if t.zs.len > 0:
       fields["z"] = % t.zs
 
     fields["colorscale"] = % t.colormap
@@ -173,10 +173,10 @@ func `%`*(t: Trace): JsonNode =
     fields["close"] = % t.close
   of PlotType.Histogram:
     fields.parseHistogramFields(t)
-    if t.ys != nil:
+    if t.ys.len > 0:
       fields["y"] = % t.ys
   else:
-    if t.ys != nil:
+    if t.ys.len > 0:
       fields["y"] = % t.ys
 
   if t.xs_err != nil:
@@ -186,9 +186,9 @@ func `%`*(t: Trace): JsonNode =
 
   fields["mode"] = % t.mode
   fields["type"] = % t.`type`
-  if t.name != nil:
+  if t.name.len > 0:
     fields["name"] = % t.name
-  if t.text != nil:
+  if t.text.len > 0:
     fields["text"] = % t.text
   if t.marker != nil:
     fields["marker"] = % t.marker
@@ -197,12 +197,12 @@ func `%`*(t: Trace): JsonNode =
 
 func `%`*(m: Marker): JsonNode =
   var fields = initOrderedTable[string, JsonNode](8)
-  if m.size != nil:
+  if m.size.len > 0:
     if m.size.len == 1:
       fields["size"] = % m.size[0]
     else:
       fields["size"] = % m.size
-  if m.color != nil:
+  if m.color.len > 0:
     if m.color.len == 1:
       fields["color"] = % m.color[0].toHtmlHex()
     else:
