@@ -63,6 +63,8 @@ func `%`*(a: Axis): JsonNode =
   if a.side != PlotSide.Unset:
     fields["side"] = % a.side
     fields["overlaying"] = % "y"
+  if a.hideticklabels:
+    fields["showticklabels"] = % false
 
   if a.range.start != a.range.stop:
     fields["autorange"] = % false

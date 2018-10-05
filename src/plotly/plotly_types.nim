@@ -1,7 +1,6 @@
 import chroma
 
 # this module contains all types used in the plotly module
-
 type
   PlotType* {.pure.} = enum
     Scatter = "scatter"
@@ -167,6 +166,8 @@ type
     rangeslider*: RangeSlider
     # setting no range implies plotly's `autorange` true
     range*: tuple[start, stop: float]
+    # oposite of showticklabels
+    hideticklabels*: bool
 
   Layout* = ref object
     title*: string
