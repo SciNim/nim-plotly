@@ -20,7 +20,7 @@ before_script:
   - sleep 3 # give xvfb some time to start
 
 install:
-  - export CHOOSENIM_CHOOSE_VERSION="#f92d61b1f4e193bd"
+  - export CHOOSENIM_CHOOSE_VERSION="#d2f7ecb80"
   - |
       curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
       sh init.sh -y
