@@ -43,6 +43,16 @@ type
     Stack = "stack"
     Overlay = "overlay"
 
+  BarAlign* {.pure.} = enum
+    None,
+    Edge,
+    Center
+
+  Orientation* {.pure.} = enum
+    None = ""
+    Vertical = "v"
+    Horizontal = "h"
+
   HoverMode* {.pure.} = enum
     Closest = "closest"
     X = "x"
@@ -154,6 +164,18 @@ type
       bins*: tuple[start, stop: float]
       # `binSize` is optional, even if `bins` is given.
       binSize*: float
+    of Bar:
+      # manually set bin width via scalar
+      width*: T
+      # or seq (widths.len == xs.len), overwritten by `width`
+      widths*: seq[T]
+      # calculate bin widths automaticlly to leave no space between
+      # overwritten by `width`, `widths`
+      autoWidth*: bool
+      # align bins left or center (default)
+      align*: BarAlign
+      # orientation of bars, vertical or horizontal
+      orientation*: Orientation
     else:
       discard
 
