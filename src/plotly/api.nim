@@ -151,6 +151,10 @@ func `%`*(t: Trace): JsonNode =
       fields["x"] = % t.text
   else:
     fields["x"] = % t.xs
+
+  if t.ys.len > 0:
+    fields["y"] = % t.ys
+
   if t.yaxis != "":
     fields["yaxis"] = % t.yaxis
 
@@ -168,6 +172,25 @@ func `%`*(t: Trace): JsonNode =
       fields["z"] = % t.zs
 
     fields["colorscale"] = % t.colormap
+  of PlotType.Contour:
+    if t.zs.len > 0: fields["z"] = % t.zs
+    fields["colorscale"] = % t.colorscale
+    if t.contours.start != t.contours.stop:
+      fields["autocontour"] = % false
+      fields["contours"] = %* {
+        "start" : % t.contours.start,
+        "end" : % t.contours.stop,
+        "size" : % t.contours.size
+      }
+    else:
+      fields["autocontour"] = % true
+      fields["contours"] = %* {}
+    if t.heatmap:
+      fields["contours"]["coloring"] = % "heatmap"
+    if t.smoothing > 0:
+      fields["line"] = %* {
+        "smoothing": % t.smoothing
+      }
   of PlotType.Candlestick:
     fields["open"] = % t.open
     fields["high"] = % t.high
@@ -175,11 +198,8 @@ func `%`*(t: Trace): JsonNode =
     fields["close"] = % t.close
   of PlotType.Histogram:
     fields.parseHistogramFields(t)
-    if t.ys.len > 0:
-      fields["y"] = % t.ys
   else:
-    if t.ys.len > 0:
-      fields["y"] = % t.ys
+    discard
 
   if t.xs_err != nil:
     fields["error_x"] = % t.xs_err

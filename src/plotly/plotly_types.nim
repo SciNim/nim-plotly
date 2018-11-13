@@ -11,6 +11,7 @@ type
     HeatMap = "heatmap"
     HeatMapGL = "heatmapgl"
     Candlestick = "candlestick"
+    Contour = "contour"
 
   HistFunc* {.pure.} = enum
     # count is plotly.js default
@@ -130,6 +131,12 @@ type
     case `type`*: PlotType
     of HeatMap, HeatMapGL:
       colormap*: ColorMap
+    of Contour:
+      colorscale*: ColorMap
+      # setting no contours implies `autocontour` true
+      contours*: tuple[start, stop, size: float]
+      heatmap*: bool
+      smoothing*: float
     # case on `type`, since we only need Close,High,Low,Open for
     # PlotType.Candlestick
     of Candlestick:
