@@ -39,6 +39,68 @@ func parseHistogramFields[T](fields: var OrderedTable[string, JsonNode], t: Trac
     # in case bins are set manually, disable autobins
     fields[&"autobin{bars}"] = % false
 
+func calcBinWidth[T](t: Trace[T]): seq[float] =
+  ## returns the correct bin width according to the bin width priority
+  ## explained in `setWidthField`.
+  ## `xs` may contain `ys.len + 1` elements, i.e. the last right edge of
+  ## all bars is given too.
+  ## Returns an empty seq, if sequence not needed further
+  if t.width.float > 0.0:
+    result = repeat(t.width.float, t.ys.len)
+  elif t.widths.len > 0:
+    when T isnot float:
+      result = t.widths.mapIt(it.float)
+    else:
+      result = t.widths
+  elif t.align == BarAlign.Edge or t.autoWidth:
+    # have to calculate from `t.xs` bar locations
+    result = newSeq[float](t.ys.len)
+    for i in 0 ..< t.xs.high:
+      result[i] = (t.xs[i+1] - t.xs[i]).float
+    if t.xs.len == t.ys.len:
+      # duplicate last element
+      result[^1] = result[^2]
+
+func setWidthField[T](fields: var OrderedTable[string, JsonNode],
+                      t: Trace[T], widths: seq[float] = @[]) =
+  ## Bar width priority:
+  ## 1. width  <- single value
+  ## 2. widths <- sequence of values
+  ## 3. autoWidth <- if neither given
+  ## If all 3 are empty, let Plotly calculate widths automatically
+  if t.width.float > 0.0:
+    fields["width"] = % t.width
+  elif t.widths.len > 0:
+    fields["width"] = % t.widths
+  elif t.autoWidth:
+    fields["width"] = % widths
+
+func shiftToLeftEdge[T](t: Trace[T], widths: seq[float]): seq[float] =
+  ## calculates the new bars if left aligned bars are selected
+  # `xs` values represent *left* edge of bins
+  result = newSeq[float](t.ys.len)
+  for i in 0 .. widths.high:
+    result[i] = t.xs[i].float + (widths[i] / 2.0)
+
+func parseBarFields[T](fields: var OrderedTable[string, JsonNode], t: Trace[T]) =
+  ## parses the `Trace` fields for the Bar kind
+  # calculate width of needed bars
+  let widths = calcBinWidth(t)
+  fields.setWidthField(t, widths)
+  case t.align
+  of BarAlign.Edge:
+    # need bin width
+    fields["x"] = % shiftToLeftEdge(t, widths)
+  of BarAlign.Center:
+    # given data are bar positions already
+    fields["x"] = % t.xs
+  else: discard
+
+  case t.orientation
+  of Orientation.Vertical, Orientation.Horizontal:
+    fields["orientation"] = % t.orientation
+  else: discard
+
 func `%`*(c: Color): string =
   result = c.toHtmlHex()
 
@@ -198,6 +260,10 @@ func `%`*(t: Trace): JsonNode =
     fields["close"] = % t.close
   of PlotType.Histogram:
     fields.parseHistogramFields(t)
+  of PlotType.Bar:
+    # if `xs` not given, user wants `string` named bars
+    if t.xs.len > 0:
+      fields.parseBarFields(t)
   else:
     discard
 

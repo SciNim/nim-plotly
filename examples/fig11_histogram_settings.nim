@@ -60,7 +60,7 @@ block:
     layout = Layout(title: "cumulative histogram in range (0.0 / 1.0) with specific max number of bins",
                     width: 1200, height: 800,
                     # set the range of the axis manually. If not, plotly may not show
-                    # empty bins in its range                    
+                    # empty bins in its range
                     xaxis: Axis(title:"values", range: (0.0, 1.0)),
                     yaxis: Axis(title: "counts"),
                     autosize: false)
