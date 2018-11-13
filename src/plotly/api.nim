@@ -46,7 +46,7 @@ func calcBinWidth[T](t: Trace[T]): seq[float] =
   ## all bars is given too.
   ## Returns an empty seq, if sequence not needed further
   if t.width.float > 0.0:
-    result = repeat(t.width.float, t.xs.high)
+    result = repeat(t.width.float, t.ys.len)
   elif t.widths.len > 0:
     when T isnot float:
       result = t.widths.mapIt(it.float)

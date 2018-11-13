@@ -93,7 +93,7 @@ block:
                      align: BarAlign.Center)
 
   let
-    layout = Layout(title: "Bar plot with left aligned bins, single manual bin width",
+    layout = Layout(title: "Bar plot with centered bins, single manual bin width",
                     width: 1200, height: 800,
                     autosize: false)
     p = Plot[float](layout: layout, traces: @[d])
