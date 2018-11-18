@@ -65,6 +65,7 @@ type
     Right = "right"
 
   ColorMap* {.pure.} = enum
+    None = ""
     Greys = "Greys"
     YlGnBu = "YlGnBu"
     Greens = "Greens"
