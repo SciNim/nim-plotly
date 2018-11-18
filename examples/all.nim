@@ -11,3 +11,4 @@ import fig11_histogram_settings
 import fig13_contour
 import fig14_autoBarWidth
 import fig15_horizontalBarPlot
+import fig16_plotly_sugar
