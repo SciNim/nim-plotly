@@ -296,6 +296,11 @@ func `%`*(m: Marker): JsonNode =
       fields["color"] = % m.color[0].toHtmlHex()
     else:
       fields["color"] = % m.color.toHtmlHex()
+  elif m.colorVals.len > 0:
+    fields["color"] = % m.colorVals
+    fields["colorscale"] = % m.colormap
+    fields["showscale"] = % true
+
   result = JsonNode(kind: Jobject, fields: fields)
 
 func `$`*(d: Trace): string =

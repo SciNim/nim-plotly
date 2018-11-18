@@ -122,6 +122,10 @@ type
   Marker*[T: SomeNumber] = ref object
     size*: seq[T]
     color*: seq[Color]
+    # alternatively use sequence of values defining color based on one of
+    # the color maps
+    colorVals*: seq[T]
+    colormap*: ColorMap
 
   Trace*[T: SomeNumber] = ref object
     xs*: seq[T]
