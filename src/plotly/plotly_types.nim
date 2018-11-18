@@ -1,7 +1,12 @@
 import chroma
 
 # this module contains all types used in the plotly module
+
 type
+  Plot*[T: SomeNumber] = ref object
+    traces* : seq[Trace[T]]
+    layout*: Layout
+
   PlotType* {.pure.} = enum
     Scatter = "scatter"
     ScatterGL = "scattergl"

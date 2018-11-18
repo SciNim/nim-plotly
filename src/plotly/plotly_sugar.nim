@@ -1,4 +1,4 @@
-import plotly
+import plotly_types
 import sugar
 import sequtils
 import chroma

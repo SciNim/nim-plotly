@@ -43,11 +43,6 @@ when hasThreadSupport and not defined(js):
   import threadpool
   import plotly/image_retrieve
 
-type
-  Plot*[T:SomeNumber] = ref object
-    traces* : seq[Trace[T]]
-    layout*: Layout
-
 proc newPlot*(xlabel = "", ylabel = "", title = ""): Plot[float64] =
   ## create a plot with sane default layout.
   result = Plot[float64]()
