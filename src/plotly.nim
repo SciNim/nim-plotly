@@ -15,6 +15,8 @@ import plotly/plotly_types
 export plotly_types
 import plotly/errorbar
 export errorbar
+import plotly/plotly_sugar
+export plotly_sugar
 when not defined(js):
   # normally just import browsers module. Howver, in case we run
   # tests on travis, we need a way to open a browser, which is

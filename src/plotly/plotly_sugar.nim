@@ -1,4 +1,3 @@
-import nimdata
 import plotly
 import sugar
 import sequtils
