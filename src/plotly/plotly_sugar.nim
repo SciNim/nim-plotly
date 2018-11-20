@@ -9,15 +9,6 @@ proc roundOrIdent*[T: SomeNumber](x: T): T =
   else:
     x.round
 
-template mutPlot*(plt: typed, actions: untyped): untyped =
-  ## helper template which wraps the code using `mplt` (= mutable `plt`)
-  ## in a block and returns it
-  ## We need it to overwrite parameters of a plot and have it stick.
-  block:
-    var mplt {.inject.} = plt
-    actions
-    mplt
-
 template barPlot*(x, y: untyped): untyped =
   type xType = type(x[0])
   type yType = type(y[0])
@@ -62,9 +53,9 @@ template heatmap*(x, y, z: untyped): untyped =
   var zs = newSeqWith(max(xData).roundOrIdent.int + 1,
                       newSeq[xType](max(yData).roundOrIdent.int + 1))
   for i in 0 .. xData.high:
-    let x = xData[i].roundOrIdent.int
-    let y = yData[i].roundOrIdent.int
-    zs[x][y] += zData[i]
+    let xIdx = xData[i].roundOrIdent.int
+    let yIdx = yData[i].roundOrIdent.int
+    zs[xIdx][yIdx] += zData[i]
   let title = "Heatmap of " & astToStr(x) & " vs. " & astToStr(y) & " on " & astToStr(z)
   let plLayout = Layout(title: title,
                         width: 800, height: 800,
@@ -106,7 +97,7 @@ template scatterPlot*(x, y: untyped): untyped =
                         autosize: false)
   let tr = Trace[xType](mode: PlotMode.Markers,
                         marker: Marker[xType](),
-                        `type`: PlotType.ScatterGL,
+                        `type`: PlotType.Scatter,
                         xs: xData,
                         ys: yData)
   var plt = Plot[xType](traces: @[tr], layout: plLayout)
@@ -126,77 +117,85 @@ template scatterColor*(x, y, z: untyped): untyped =
                  map = ColorMap.Viridis)
   plt
 
-template text*[T](plt: Plot[T], val: untyped): untyped =
-  mutPlot(plt):
-    when type(val) is string:
-      mplt.traces[0].text = @[val]
+proc title*[T](plt: Plot[T], t: string): Plot[T] =
+  result = plt
+  result.layout.title = t
+
+proc width*[T, U: SomeNumber](plt: Plot[T], width: U): Plot[T] =
+  result = plt
+  result.layout.width = U.roundOrIdent.int
+
+proc height*[T, U: SomeNumber](plt: Plot[T], height: U): Plot[T] =
+  result = plt
+  result.layout.height = height.roundOrIdent.int
+
+proc text*[T; U: string | seq[string]](plt: Plot[T],
+                                       val: U,
+                                       idx = 0): Plot[T] =
+  result = plt
+  when type(val) is string:
+    result.traces[idx].text = @[val]
+  else:
+    result.traces[idx].text = val
+
+proc markersize*[T](plt: Plot[T],
+                    val: SomeNumber,
+                    idx = 0): Plot[T] =
+  result = plt
+  result.traces[idx].marker.size = @[T(val)]
+
+
+proc markersizes*[T](plt: Plot[T],
+                     sizes: seq[T],
+                     idx = 0): Plot[T] =
+  result = plt
+  result.traces[idx].marker.size = sizes
+
+proc markercolor*[T](plt: Plot[T],
+                     colors: seq[Color] | seq[T] = @[],
+                     map: ColorMap = ColorMap.None,
+                     idx = 0): Plot[T] =
+  result = plt
+  if colors.len > 0:
+    when type(colors[idx]) is Color:
+      result.traces[idx].marker.color = colors
     else:
-      mplt.traces[0].text = val
+      result.traces[idx].marker.colorVals = colors
+  if map != ColorMap.None:
+    result.traces[idx].marker.colormap = map
 
+proc mode*[T](plt: Plot[T], m: PlotMode, idx = 0): Plot[T] =
+  result = plt
+  result.traces[idx].mode = PlotMode.m
 
-template markersize*[T](plt: Plot[T],
-                        val: SomeNumber): untyped =
-  mutPlot(plt):
-    mplt.traces[0].marker.size = @[T(val)]
-
-
-template markersizes*[T](plt: Plot[T],
-                         sizes: seq[T]): untyped =
-  mutPlot(plt):
-    mplt.traces[0].marker.size = sizes
-
-template markercolor*[T](plt: Plot[T],
-                         colors: seq[Color] | seq[T] = @[],
-                         map: ColorMap = ColorMap.None): untyped =
-  mutPlot(plt):
-    if colors.len > 0:
-      when type(colors[0]) is Color:
-        mplt.traces[0].marker.color = colors
-      else:
-        mplt.traces[0].marker.colorVals = colors
-    if map != ColorMap.None:
-      mplt.traces[0].marker.colormap = map
-
-template mode*[T](plt: Plot[T], m: PlotMode, id = 0): untyped =
-  # for some reason need to create a mutable copy of `plt` to change
-  # the mode
-  mutPlot(plt):
-    mplt.traces[0].mode = PlotMode.m
-
-template markerSize*[T](plt: Plot[T], val: untyped): untyped =
-  mutPlot(plt):
-    mplt.traces[0].marker.size = @[T(val)]
-
+proc markerSize*[T, U: SomeNumber](plt: Plot[T], val: U, idx = 0): Plot[T] =
+  result = plt
+  result.traces[idx].marker.size = @[T(val)]
 
 template pltLabel*(plt: untyped,
                    axis: untyped,
                    label: string): untyped =
   plt.layout.axis.title = label
 
-template xlabel*[T](plt: Plot[T], label: string): untyped =
-  mutPlot(plt):
-    mplt.pltLabel(xaxis, label)
+proc xlabel*[T](plt: Plot[T], label: string): Plot[T] =
+  result = plt
+  result.pltLabel(xaxis, label)
 
-template ylabel*[T](plt: Plot[T], label: string): untyped =
-  mutPlot(plt):
-    mplt.pltLabel(yaxis, label)
+proc ylabel*[T](plt: Plot[T], label: string): Plot[T] =
+  result = plt
+  result.pltLabel(yaxis, label)
 
-template nbins*[T](plt: Plot[T], nbins: int): untyped =
-  mutPlot(plt):
-    doAssert mplt.traces[0].`type` == PlotType.Histogram
-    mplt.traces[0].nbins = nbins
+proc nbins*[T](plt: Plot[T], nbins: int, idx = 0): Plot[T] =
+  result = plt
+  doAssert result.traces[idx].`type` == PlotType.Histogram
+  result.traces[idx].nbins = nbins
 
-template binSize*[T](plt: Plot[T], size: float): untyped =
-  mutPlot(plt):
-    doAssert mplt.traces[0].`type` == PlotType.Histogram
-    mplt.traces[0].binSize = size
+proc binSize*[T](plt: Plot[T], size: float, idx = 0): Plot[T] =
+  result = plt
+  doAssert result.traces[idx].`type` == PlotType.Histogram
+  result.traces[idx].binSize = size
 
-template binRange*[T](plt: Plot[T], start, stop: float): untyped =
-  mutPlot(plt):
-    doAssert mplt.traces[0].`type` == PlotType.Histogram
-    mplt.traces[0].bins = (start, stop)
-
-
-template title*[T](plt: Plot[T], s: string): untyped =
-  mutPlot(plt):
-    mplt.layout.title = s
+proc binRange*[T](plt: Plot[T], start, stop: float, idx = 0): Plot[T] =
+  result = plt
+  doAssert result.traces[idx].`type` == PlotType.Histogram
+  result.traces[idx].bins = (start, stop)
