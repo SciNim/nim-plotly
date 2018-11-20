@@ -166,7 +166,7 @@ proc markercolor*[T](plt: Plot[T],
 
 proc mode*[T](plt: Plot[T], m: PlotMode, idx = 0): Plot[T] =
   result = plt
-  result.traces[idx].mode = PlotMode.m
+  result.traces[idx].mode = m
 
 proc markerSize*[T, U: SomeNumber](plt: Plot[T], val: U, idx = 0): Plot[T] =
   result = plt
