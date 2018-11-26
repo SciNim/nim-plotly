@@ -15,6 +15,8 @@ import plotly/plotly_types
 export plotly_types
 import plotly/errorbar
 export errorbar
+import plotly/plotly_sugar
+export plotly_sugar
 when not defined(js):
   # normally just import browsers module. Howver, in case we run
   # tests on travis, we need a way to open a browser, which is
@@ -40,11 +42,6 @@ const hasThreadSupport = compileOption("threads")
 when hasThreadSupport and not defined(js):
   import threadpool
   import plotly/image_retrieve
-
-type
-  Plot*[T:SomeNumber] = ref object
-    traces* : seq[Trace[T]]
-    layout*: Layout
 
 proc newPlot*(xlabel = "", ylabel = "", title = ""): Plot[float64] =
   ## create a plot with sane default layout.
