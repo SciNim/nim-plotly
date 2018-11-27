@@ -162,8 +162,19 @@ func `%`*(l: Layout): JsonNode =
   fields["hovermode"] = % "closest"
   if $l.hovermode != "":
     fields["hovermode"] = % l.hovermode
-
+  if 0 < l.annotations.len:
+    fields["annotations"] = % l.annotations
   result = JsonNode(kind: Jobject, fields: fields)
+
+func `%`*(a: Annotation): JsonNode =
+  ## creates a JsonNode from an `Annotations` object depending on the object variant
+  result = %[ ("x", %a.x)
+            , ("xshift", %a.xshift)
+            , ("y", %a.y)
+            , ("yshift", %a.yshift)
+            , ("text", %a.text)
+            , ("showarrow", %a.showarrow)
+            ]
 
 func `%`*(b: ErrorBar): JsonNode =
   ## creates a JsonNode from an `ErrorBar` object depending on the object variant
