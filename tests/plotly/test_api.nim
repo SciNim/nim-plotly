@@ -60,7 +60,6 @@ suite "Layout Json tests":
     check r == expected
   test "Layout without Annotations":
     let
-        a = Annotation(x:1, xshift:10, y:2, yshift:20, text:"text")
         layout = Layout(title: "title", width: 10, height: 10,
                         xaxis: Axis(title: "x"),
                         yaxis: Axis(title: "y"),
