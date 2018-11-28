@@ -180,7 +180,7 @@ func `%`*(b: ErrorBar): JsonNode =
   ## creates a JsonNode from an `ErrorBar` object depending on the object variant
   var fields = initOrderedTable[string, JsonNode](4)
   fields["visible"] = % b.visible
-  if b.color != empty():
+  if not b.color.empty:
     fields["color"] = % b.color.toHtmlHex
   if b.thickness > 0:
     fields["thickness"] = % b.thickness
