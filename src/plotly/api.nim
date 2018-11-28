@@ -112,7 +112,7 @@ func `%`*(f: Font): JsonNode =
     fields["color"] = % f.color
   if f.family.len > 0:
     fields["family"] = % f.family
-  result = JsonNode(kind: Jobject, fields: fields)
+  result = JsonNode(kind: JObject, fields: fields)
 
 func `%`*(a: Axis): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
@@ -138,12 +138,13 @@ func `%`*(a: Axis): JsonNode =
   if a.rangeslider != nil:
     fields["rangeslider"] = % a.rangeslider
 
-  result = JsonNode(kind:Jobject, fields: fields)
+
+  result = JsonNode(kind: JObject, fields: fields)
 
 func `%`*(l: Layout): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if l == nil:
-    return JsonNode(kind: Jobject, fields: fields)
+    return JsonNode(kind: JObject, fields: fields)
   if l.title != "":
     fields["title"] = % l.title
   if l.width != 0:
@@ -164,7 +165,8 @@ func `%`*(l: Layout): JsonNode =
     fields["hovermode"] = % l.hovermode
   if 0 < l.annotations.len:
     fields["annotations"] = % l.annotations
-  result = JsonNode(kind: Jobject, fields: fields)
+
+  result = JsonNode(kind: JObject, fields: fields)
 
 func `%`*(a: Annotation): JsonNode =
   ## creates a JsonNode from an `Annotations` object depending on the object variant
@@ -293,7 +295,7 @@ func `%`*(t: Trace): JsonNode =
   if t.marker != nil:
     fields["marker"] = % t.marker
 
-  result = JsonNode(kind: Jobject, fields: fields)
+  result = JsonNode(kind: JObject, fields: fields)
 
 func `%`*(m: Marker): JsonNode =
   var fields = initOrderedTable[string, JsonNode](8)
@@ -304,15 +306,15 @@ func `%`*(m: Marker): JsonNode =
       fields["size"] = % m.size
   if m.color.len > 0:
     if m.color.len == 1:
-      fields["color"] = % m.color[0].toHtmlHex()
+      fields["color"] = % m.color[0]
     else:
-      fields["color"] = % m.color.toHtmlHex()
+      fields["color"] = % m.color
   elif m.colorVals.len > 0:
     fields["color"] = % m.colorVals
     fields["colorscale"] = % m.colormap
     fields["showscale"] = % true
 
-  result = JsonNode(kind: Jobject, fields: fields)
+  result = JsonNode(kind: JObject, fields: fields)
 
 func `$`*(d: Trace): string =
   var j = % d
