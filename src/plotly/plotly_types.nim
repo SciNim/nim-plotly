@@ -216,6 +216,16 @@ type
     text*: string
     showarrow*: bool
 
+  Legend* = ref object
+    # location in x, y in relative coordinategs of the layout in [-2, 3]
+    x*: float
+    y*: float
+    font*: Font
+    bgcolor*: Color
+    bordercolor*: Color
+    borderwidth*: int # border width in pixels
+    orientation*: Orientation
+
   Layout* = ref object
     title*: string
     width*: int
@@ -224,6 +234,7 @@ type
     annotations*: seq[Annotation]
     autosize*: bool
     showlegend*: bool
+    legend*: Legend
     xaxis*: Axis
     yaxis*: Axis
     yaxis2*: Axis

@@ -141,6 +141,27 @@ func `%`*(a: Axis): JsonNode =
 
   result = JsonNode(kind: JObject, fields: fields)
 
+func `%`*(l: Legend): JsonNode =
+  var fields = initOrderedTable[string, JsonNode](4)
+  if l.font != nil:
+    fields["font"] = % l.font
+  if not l.bgcolor.empty:
+    fields["bgcolor"] = % l.bgcolor
+  if not l.bordercolor.empty:
+    fields["bordercolor"] = % l.bordercolor
+  if l.borderwidth != 0:
+    fields["borderwidth"] = % l.borderwidth
+  case l.orientation
+  of Orientation.Vertical, Orientation.Horizontal:
+    fields["orientation"] = % l.orientation
+  else: discard
+  # fields for x and y are used always. Zero initialized means that if no
+  # x, y given, but colors / width set, location will be at x / y == 0 / 0
+  # alternative would be to check for != 0 on both, which would disallow 0 / 0!
+  fields["x"] = % l.x
+  fields["y"] = % l.y
+  result = JsonNode(kind: JObject, fields: fields)
+
 func `%`*(l: Layout): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if l == nil:
@@ -159,6 +180,9 @@ func `%`*(l: Layout): JsonNode =
     fields["yaxis2"] = % l.yaxis2
   if $l.barmode != "":
     fields["barmode"] = % l.barmode
+  if l.legend != nil:
+    fields["legend"] = % l.legend
+    fields["showlegend"] = % l.showlegend
   # default to closest because other modes suck.
   fields["hovermode"] = % "closest"
   if $l.hovermode != "":
