@@ -138,6 +138,10 @@ func `%`*(a: Axis): JsonNode =
   if a.rangeslider != nil:
     fields["rangeslider"] = % a.rangeslider
 
+  if not a.gridColor.empty:
+    fields["gridcolor"] = % a.gridColor
+  if a.gridWidth != 0:
+    fields["gridwidth"] = % a.gridWidth
 
   result = JsonNode(kind: JObject, fields: fields)
 
