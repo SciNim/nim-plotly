@@ -101,8 +101,8 @@ func parseBarFields[T](fields: var OrderedTable[string, JsonNode], t: Trace[T]) 
     fields["orientation"] = % t.orientation
   else: discard
 
-func `%`*(c: Color): string =
-  result = c.toHtmlHex()
+func `%`*(c: Color): JsonNode =
+  result = % c.toHtmlHex()
 
 func `%`*(f: Font): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
