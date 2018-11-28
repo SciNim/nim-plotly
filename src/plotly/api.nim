@@ -108,8 +108,8 @@ func `%`*(f: Font): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if f.size != 0:
     fields["size"] = % f.size
-  if f.color.empty:
-    fields["color"] = % f.color.toHtmlHex()
+  if not f.color.empty:
+    fields["color"] = % f.color
   if f.family.len > 0:
     fields["family"] = % f.family
   result = JsonNode(kind: Jobject, fields: fields)
