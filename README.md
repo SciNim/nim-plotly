@@ -14,6 +14,8 @@ Internally, it serializes typed `nim` datastructures to JSON that matches what [
 
 ## Examples
 
+See a collection of real-world examples in the [wiki](https://github.com/brentp/nim-plotly/wiki/Examples)
+
 #### Simple Scatter plot
 
 ```Nim
