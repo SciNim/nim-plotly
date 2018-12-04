@@ -193,10 +193,10 @@ func `%`*(l: Layout): JsonNode =
     fields["hovermode"] = % l.hovermode
   if 0 < l.annotations.len:
     fields["annotations"] = % l.annotations
-  if not l.plotBgColor.empty:
-    fields["plot_bgcolor"] = % l.plotBgColor
-  if not l.paperBgColor.empty:
-    fields["paper_bgcolor"] = % l.paperBgColor
+  if not l.backgroundColor.empty:
+    fields["plot_bgcolor"] = % l.backgroundColor
+  if not l.paperColor.empty:
+    fields["paper_bgcolor"] = % l.paperColor
 
   result = JsonNode(kind: JObject, fields: fields)
 

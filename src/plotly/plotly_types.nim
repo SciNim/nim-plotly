@@ -241,5 +241,5 @@ type
     yaxis*: Axis
     yaxis2*: Axis
     barmode*: BarMode
-    plotBgColor*: Color # background of plot
-    paperBgColor*: Color # background of paper / canvas
+    backgroundColor*: Color # background of plot
+    paperColor*: Color # background of paper / canvas
