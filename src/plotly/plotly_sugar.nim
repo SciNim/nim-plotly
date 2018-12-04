@@ -184,6 +184,8 @@ proc markerSize*[T, U: SomeNumber](plt: Plot[T], val: U, idx = 0): Plot[T] =
 template pltLabel*(plt: untyped,
                    axis: untyped,
                    label: string): untyped =
+  if plt.layout.axis == nil:
+    plt.layout.axis = Axis()
   plt.layout.axis.title = label
 
 proc xlabel*[T](plt: Plot[T], label: string): Plot[T] =
@@ -208,3 +210,76 @@ proc binRange*[T](plt: Plot[T], start, stop: float, idx = 0): Plot[T] =
   result = plt
   doAssert result.traces[idx].`type` == PlotType.Histogram
   result.traces[idx].bins = (start, stop)
+
+proc legend*[T](plt: Plot[T], legend: Legend): Plot[T] =
+  result = plt
+  result.layout.legend = legend
+
+proc legendLocation*[T](plt: Plot[T], x, y: float): Plot[T] =
+  result = plt
+  if result.layout.legend == nil:
+    result.layout.legend = Legend()
+  result.layout.legend.x = x
+  result.layout.legend.y = y
+
+proc legendBgColor*[T](plt: Plot[T], color: Color): Plot[T] =
+  result = plt
+  if result.layout.legend == nil:
+    result.layout.legend = Legend()
+  result.layout.legend.bgcolor = color
+
+proc legendBorderColor*[T](plt: Plot[T], color: Color): Plot[T] =
+  result = plt
+  if result.layout.legend == nil:
+    result.layout.legend = Legend()
+  result.layout.legend.borderColor = color
+
+proc legendBorderWidth*[T](plt: Plot[T], width: int): Plot[T] =
+  result = plt
+  if result.layout.legend == nil:
+    result.layout.legend = Legend()
+  result.layout.legend.borderWidth = width
+
+proc legendOrientation*[T](plt: Plot[T], orientation: Orientation): Plot[T] =
+  result = plt
+  if result.layout.legend == nil:
+    result.layout.legend = Legend()
+  result.layout.legend.orientation = orientation
+
+proc gridWidthX*[T](plt: Plot[T], width: int): Plot[T] =
+  result = plt
+  if result.layout.xaxis == nil:
+    result.layout.xaxis = Axis()
+  result.layout.xaxis.gridWidth = width
+
+proc gridWidthY*[T](plt: Plot[T], width: int): Plot[T] =
+  result = plt
+  if result.layout.xaxis == nil:
+    result.layout.xaxis = Axis()
+  result.layout.yaxis.gridWidth = width
+
+proc gridWidth*[T](plt: Plot[T], width: int): Plot[T] =
+  result = plt.gridWidthX(width).gridWidthY(width)
+
+proc gridColorX*[T](plt: Plot[T], color: Color): Plot[T] =
+  result = plt
+  if result.layout.xaxis == nil:
+    result.layout.xaxis = Axis()
+  result.layout.xaxis.gridColor = color
+
+proc gridColorY*[T](plt: Plot[T], color: Color): Plot[T] =
+  result = plt
+  if result.layout.xaxis == nil:
+    result.layout.xaxis = Axis()
+  result.layout.yaxis.gridColor = color
+
+proc gridColor*[T](plt: Plot[T], color: Color): Plot[T] =
+  result = plt.gridColorX(color).gridColorY(color)
+
+proc backgroundColor*[T](plt: Plot[T], color: Color): Plot[T] =
+  result = plt
+  result.layout.backgroundColor = color
+
+proc paperColor*[T](plt: Plot[T], color: Color): Plot[T] =
+  result = plt
+  result.layout.paperColor = color
