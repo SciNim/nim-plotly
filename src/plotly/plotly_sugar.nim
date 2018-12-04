@@ -196,6 +196,10 @@ proc ylabel*[T](plt: Plot[T], label: string): Plot[T] =
   result = plt
   result.pltLabel(yaxis, label)
 
+proc name*[T](plt: Plot[T], name: string, idx = 0): Plot[T] =
+  result = plt
+  result.traces[idx].name = name
+
 proc nbins*[T](plt: Plot[T], nbins: int, idx = 0): Plot[T] =
   result = plt
   doAssert result.traces[idx].`type` == PlotType.Histogram
