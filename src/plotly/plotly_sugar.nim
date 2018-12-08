@@ -12,10 +12,6 @@ proc newPlot*(xlabel = "", ylabel = "", title = ""): Plot[float64] =
                          yaxis: Axis(title: ylabel),
                          autosize: false)
 
-proc add*[T](p: Plot[T], d: Trace[T]) =
-  ## add a new data set to a plot.
-  p.traces.add(d)
-
 proc roundOrIdent*[T: SomeNumber](x: T): T =
   when T is SomeInteger:
     x
