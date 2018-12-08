@@ -57,12 +57,9 @@ when hasThreadSupport and not defined(js):
 
 
 proc parseTraces*[T](traces: seq[Trace[T]]): string =
-  ## parses the traces of a Plot object to strings suitable
-  ## for plotly by concating the json representations
-  let
-    # call `json` for each element of `Plot.traces`
-    jsons = mapIt(traces, it.json(as_pretty = false))
-  result = "[" & join(jsons, ",") & "]"
+  ## parses the traces of a Plot object to strings suitable for
+  ## plotly by creating a JsonNode and converting to string repr
+  result.toUgly(% traces)
 
 when not defined(js):
   # `show` and `save` are only used for the C target
