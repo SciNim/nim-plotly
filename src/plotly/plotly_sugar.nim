@@ -3,6 +3,15 @@ import sugar
 import sequtils
 import chroma
 
+proc newPlot*(xlabel = "", ylabel = "", title = ""): Plot[float64] =
+  ## create a plot with sane default layout.
+  result = Plot[float64]()
+  result.traces = newSeq[Trace[float64]]()
+  result.layout = Layout(title: title, width: 600, height: 600,
+                         xaxis: Axis(title: xlabel),
+                         yaxis: Axis(title: ylabel),
+                         autosize: false)
+
 proc roundOrIdent*[T: SomeNumber](x: T): T =
   when T is SomeInteger:
     x
