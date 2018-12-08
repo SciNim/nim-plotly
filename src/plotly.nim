@@ -43,20 +43,6 @@ when hasThreadSupport and not defined(js):
   import threadpool
   import plotly/image_retrieve
 
-proc newPlot*(xlabel = "", ylabel = "", title = ""): Plot[float64] =
-  ## create a plot with sane default layout.
-  result = Plot[float64]()
-  result.traces = newSeq[Trace[float64]]()
-  result.layout = Layout(title: title, width: 600, height: 600,
-                         xaxis: Axis(title: xlabel),
-                         yaxis: Axis(title: ylabel),
-                         autosize: false)
-
-proc add*[T](p: Plot, d: Trace[T]) =
-  ## add a new data set to a plot.
-  if p.traces == nil:
-    p.traces = newSeq[Trace[float64]]()
-  p.traces.add(d)
 
 proc parseTraces*[T](traces: seq[Trace[T]]): string =
   ## parses the traces of a Plot object to strings suitable
