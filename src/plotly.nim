@@ -17,6 +17,10 @@ import plotly/errorbar
 export errorbar
 import plotly/plotly_sugar
 export plotly_sugar
+
+when defined(webview):
+  import webview
+
 when not defined(js):
   # normally just import browsers module. Howver, in case we run
   # tests on travis, we need a way to open a browser, which is
@@ -24,12 +28,20 @@ when not defined(js):
   # on travis.
   when not defined(travis):
     import browsers
-  else:
-    proc openDefaultBrowser(url: string) =
+
+  proc showPlot(file: string) =
+    when defined(travis):
       # patched version of Nim's `openDefaultBrowser` which always
       # returns immediately
       var u = quoteShell(url)
       discard execShellCmd("xdg-open " & u & " &")
+    elif defined(webview):
+      let w = newWebView("Nim Plotly", "file://" & file)
+      w.run()
+      w.exit()
+    else:
+      # default normal browser
+      openDefaultBrowser(file)
 
   include plotly/tmpl_html
 else:
