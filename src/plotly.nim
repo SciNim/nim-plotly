@@ -32,7 +32,7 @@ when not defined(js):
     when defined(travis):
       # patched version of Nim's `openDefaultBrowser` which always
       # returns immediately
-      var u = quoteShell(url)
+      var u = quoteShell(file)
       discard execShellCmd("xdg-open " & u & " &")
     elif defined(webview):
       let w = newWebView("Nim Plotly", "file://" & file)
