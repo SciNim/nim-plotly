@@ -1,7 +1,3 @@
-when not defined(js):
-  # not available on JS backend
-  import os
-
 import strutils
 import json
 import chroma
@@ -22,6 +18,9 @@ when defined(webview):
   import webview
 
 when not defined(js):
+  # not available on JS backend
+  import os
+
   # normally just import browsers module. Howver, in case we run
   # tests on travis, we need a way to open a browser, which is
   # non-blocking. For some reason `xdg-open` does not return immediately
@@ -55,7 +54,6 @@ when hasThreadSupport and not defined(js):
   import threadpool
   import plotly/image_retrieve
 
-
 proc parseTraces*[T](traces: seq[Trace[T]]): string =
   ## parses the traces of a Plot object to strings suitable for
   ## plotly by creating a JsonNode and converting to string repr
@@ -63,47 +61,6 @@ proc parseTraces*[T](traces: seq[Trace[T]]): string =
 
 when not defined(js):
   # `show` and `save` are only used for the C target
-
-  when not hasThreadSupport:
-    # some violation of DRY for the sake of better error messages at
-    # compile time
-    proc show*(p: Plot,
-               filename: string,
-               path = "",
-               html_template = defaultTmplString) =
-      {.fatal: "`filename` argument to save plot only supported if compiled " &
-        "with --threads:on!".}
-
-    proc show*(p: Plot, path = "", html_template = defaultTmplString) =
-      ## creates the temporary Html file using `save`, and opens the user's
-      ## default browser
-      let tmpfile = p.save(path, html_template)
-      openDefaultBrowser(tmpfile)
-      sleep(1000)
-      # remove file after thread is finished
-      removeFile(tmpfile)
-
-  else:
-    # if compiled with --threads:on
-    proc show*(p: Plot, filename = "", path = "", html_template = defaultTmplString) =
-      ## creates the temporary Html file using `save`, and opens the user's
-      ## default browser
-      # if we are handed a filename, the user wants to save the file to disk. Start
-      # a websocket server to receive the image data
-      var thr: Thread[string]
-      if filename.len > 0:
-        # wait a short while to make sure the server is up and running
-        thr.createThread(listenForImage, filename)
-
-      let tmpfile = p.save(path, html_template, filename)
-      openDefaultBrowser(tmpfile)
-      sleep(1000)
-
-      if filename.len > 0:
-        # wait for thread to join
-        thr.joinThread
-      removeFile(tmpfile)
-
   proc fillImageInjectTemplate(filetype, width, height: string): string =
     ## fill the image injection code with the correct fields
     ## Here we use numbering of elements to replace in the template.
@@ -166,19 +123,51 @@ when not defined(js):
     f.write(html)
     f.close()
 
-  when hasThreadSupport:
-    # only supported with thread support
+  when not hasThreadSupport:
+    # some violation of DRY for the sake of better error messages at
+    # compile time
+    proc show*(p: Plot,
+               filename: string,
+               path = "",
+               html_template = defaultTmplString) =
+      {.fatal: "`filename` argument to save plot only supported if compiled " &
+        "with --threads:on!".}
+
+    proc show*(p: Plot, path = "", html_template = defaultTmplString) =
+      ## creates the temporary Html file using `save`, and opens the user's
+      ## default browser
+      let tmpfile = p.save(path, html_template)
+
+      showPlot(tmpfile)
+      sleep(1000)
+      ## remove file after thread is finished
+      removeFile(tmpfile)
+
+    proc saveImage*(p: Plot, filename: string) =
+      {.fatal: "`saveImage` only supported if compiled with --threads:on!".}
+
+  else:
+    # if compiled with --threads:on
+    proc show*(p: Plot, filename = "", path = "", html_template = defaultTmplString) =
+      ## creates the temporary Html file using `save`, and opens the user's
+      ## default browser
+      # if we are handed a filename, the user wants to save the file to disk.
+      # Start a websocket server to receive the image data
+      var thr: Thread[string]
+      if filename.len > 0:
+        # wait a short while to make sure the server is up and running
+        thr.createThread(listenForImage, filename)
+
+      let tmpfile = p.save(path, html_template, filename)
+      showPlot(tmpfile)
+      if filename.len > 0:
+        # wait for thread to join
+        thr.joinThread
+      removeFile(tmpfile)
+
     proc saveImage*(p: Plot, filename: string) =
       ## saves the image under the given filename
       ## supported filetypes:
       ## - jpg, png, svg, webp
+      ## Note: only supported if compiled with --threads:on!
       p.show(filename = filename)
-  else:
-    proc saveImage*(p: Plot, filename: string) =
-      {.fatal: "`saveImage` only supported if compiled with --threads:on!".}
-
-
-
-
-
-
