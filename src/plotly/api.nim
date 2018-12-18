@@ -149,12 +149,12 @@ func `%`*(l: Legend): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if l.font != nil:
     fields["font"] = % l.font
-  if not l.bgcolor.empty:
-    fields["bgcolor"] = % l.bgcolor
+  if not l.backgroundColor.empty:
+    fields["bgcolor"] = % l.backgroundColor
   if not l.bordercolor.empty:
-    fields["bordercolor"] = % l.bordercolor
+    fields["bordercolor"] = % l.borderColor
   if l.borderwidth != 0:
-    fields["borderwidth"] = % l.borderwidth
+    fields["borderwidth"] = % l.borderWidth
   case l.orientation
   of Orientation.Vertical, Orientation.Horizontal:
     fields["orientation"] = % l.orientation

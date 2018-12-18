@@ -219,13 +219,13 @@ type
     showarrow*: bool
 
   Legend* = ref object
-    # location in x, y in relative coordinategs of the layout in [-2, 3]
+    # location in x, y in relative coordinates of the layout in [-2, 3]
     x*: float
     y*: float
     font*: Font
-    bgcolor*: Color
-    bordercolor*: Color
-    borderwidth*: int # border width in pixels
+    backgroundColor*: Color
+    borderColor*: Color
+    borderWidth*: int # border width in pixels
     orientation*: Orientation
 
   Layout* = ref object
