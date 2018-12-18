@@ -204,6 +204,13 @@ type
   RangeSlider* = ref object
     visible*: bool
 
+  # tuple types to set location of subplots within a plot
+  # given in relative coordinates of the plot [0, 1] canvas
+  Domain* = tuple
+    left, bottom, width, height: float
+  DomainAlt* = tuple
+    left, bottom, right, top: float
+
   Axis* = ref object
     title*: string
     font*: Font
