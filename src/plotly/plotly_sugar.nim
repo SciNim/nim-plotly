@@ -235,6 +235,7 @@ proc binRange*[T](plt: Plot[T], start, stop: float, idx = 0): Plot[T] =
 proc legend*[T](plt: Plot[T], legend: Legend): Plot[T] =
   result = plt
   result.layout.legend = legend
+  result.layout.showLegend = true
 
 proc legendLocation*[T](plt: Plot[T], x, y: float): Plot[T] =
   result = plt
