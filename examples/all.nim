@@ -12,3 +12,4 @@ import fig13_contour
 import fig14_autoBarWidth
 import fig15_horizontalBarPlot
 import fig16_plotly_sugar
+import fig17_color_font_legend

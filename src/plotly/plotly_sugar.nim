@@ -85,7 +85,7 @@ proc heatmapTrace*[T](z: seq[seq[T]]): Trace[T] =
   type hType = type(z[0])
   result = Trace[hType](`type`: PlotType.Heatmap,
                         colorMap: ColorMap.Viridis,
-                        xs: hist)
+                        xs: z)
 
 template heatmap*[T](z: seq[seq[T]]): untyped =
   type zType = type(z[0][0])
