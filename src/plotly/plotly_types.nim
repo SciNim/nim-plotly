@@ -1,4 +1,4 @@
-import chroma
+import chroma, json
 
 # this module contains all types used in the plotly module
 
