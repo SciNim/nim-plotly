@@ -149,7 +149,7 @@ proc title*[T](plt: Plot[T], t: string): Plot[T] =
 
 proc width*[T, U: SomeNumber](plt: Plot[T], width: U): Plot[T] =
   result = plt
-  result.layout.width = U.roundOrIdent.int
+  result.layout.width = width.roundOrIdent.int
 
 proc height*[T, U: SomeNumber](plt: Plot[T], height: U): Plot[T] =
   result = plt
