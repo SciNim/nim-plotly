@@ -76,7 +76,7 @@ when not defined(js):
 
   proc fillHtmlTemplate(html_template,
                         data_string: string,
-                        p: Plot,
+                        p: SomePlot,
                         filename = ""): string =
     ## fills the HTML template with the correct strings and, if compiled with
     ## ``--threads:on``, inject the save image HTML code and fills that
@@ -84,8 +84,12 @@ when not defined(js):
       slayout = "{}"
       title = ""
     if p.layout != nil:
-      slayout = $(%p.layout)
-      title = p.layout.title
+      when type(p) is Plot:
+        slayout = $(%p.layout)
+        title = p.layout.title
+      else:
+        slayout = $p.layout
+        title = p.layout{"title"}.getStr
 
     # read the HTML template and insert data, layout and title strings
     # imageInject is will be filled iff the user compiles with ``--threads:on``
@@ -95,15 +99,19 @@ when not defined(js):
       if filename.len > 0:
         # prepare save image code
         let filetype = parseImageType(filename)
-        let swidth = $p.layout.width
-        let sheight = $p.layout.height
+        when type(p) is Plot:
+          let swidth = $p.layout.width
+          let sheight = $p.layout.height
+        else:
+          let swidth = $p.layout{"width"}
+          let sheight = $p.layout{"height"}
         imageInject = fillImageInjectTemplate(filetype, swidth, sheight)
 
     # now fill all values into the html template
     result = html_template % ["data", data_string, "layout", slayout,
                               "title", title, "saveImage", imageInject]
 
-  proc save*(p: Plot, path = "", html_template = defaultTmplString, filename = ""): string =
+  proc save*(p: SomePlot, path = "", html_template = defaultTmplString, filename = ""): string =
     result = path
     if result == "":
       when defined(Windows):
@@ -111,10 +119,12 @@ when not defined(js):
       else:
         result = "/tmp/x.html"
 
-    let
+    when type(p) is Plot:
       # convert traces to data suitable for plotly and fill Html template
-      data_string = parseTraces(p.traces)
-      html = html_template.fillHtmlTemplate(data_string, p, filename)
+      let data_string = parseTraces(p.traces)
+    else:
+      let data_string = $p.traces
+    let html = html_template.fillHtmlTemplate(data_string, p, filename)
 
     var
       f: File
@@ -126,14 +136,14 @@ when not defined(js):
   when not hasThreadSupport:
     # some violation of DRY for the sake of better error messages at
     # compile time
-    proc show*(p: Plot,
+    proc show*(p: SomePlot,
                filename: string,
                path = "",
                html_template = defaultTmplString) =
       {.fatal: "`filename` argument to save plot only supported if compiled " &
         "with --threads:on!".}
 
-    proc show*(p: Plot, path = "", html_template = defaultTmplString) =
+    proc show*(p: SomePlot, path = "", html_template = defaultTmplString) =
       ## creates the temporary Html file using `save`, and opens the user's
       ## default browser
       let tmpfile = p.save(path, html_template)
@@ -143,12 +153,12 @@ when not defined(js):
       ## remove file after thread is finished
       removeFile(tmpfile)
 
-    proc saveImage*(p: Plot, filename: string) =
+    proc saveImage*(p: SomePlot, filename: string) =
       {.fatal: "`saveImage` only supported if compiled with --threads:on!".}
 
   else:
     # if compiled with --threads:on
-    proc show*(p: Plot, filename = "", path = "", html_template = defaultTmplString) =
+    proc show*(p: SomePlot, filename = "", path = "", html_template = defaultTmplString) =
       ## creates the temporary Html file using `save`, and opens the user's
       ## default browser
       # if we are handed a filename, the user wants to save the file to disk.
@@ -165,7 +175,7 @@ when not defined(js):
         thr.joinThread
       removeFile(tmpfile)
 
-    proc saveImage*(p: Plot, filename: string) =
+    proc saveImage*(p: SomePlot, filename: string) =
       ## saves the image under the given filename
       ## supported filetypes:
       ## - jpg, png, svg, webp

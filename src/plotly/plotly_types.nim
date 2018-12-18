@@ -7,6 +7,12 @@ type
     traces* : seq[Trace[T]]
     layout*: Layout
 
+  PlotJson* = ref object
+    traces* : JsonNode
+    layout*: JsonNode
+
+  SomePlot* = Plot | PlotJson
+
   PlotType* {.pure.} = enum
     Scatter = "scatter"
     ScatterGL = "scattergl"
