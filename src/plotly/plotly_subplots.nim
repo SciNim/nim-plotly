@@ -1,4 +1,7 @@
-proc convertDomain(d: Domain | DomainAlt): Domain =
+import json, macros
+import plotly_types, plotly_sugar, api
+
+proc convertDomain*(d: Domain | DomainAlt): Domain =
   ## proc to convert a domain tuple from
   ## left, bottom, right, top
   ## notation to
@@ -107,9 +110,9 @@ proc handlePlotStmt(plt: NimNode): (NimNode, NimNode) =
       # is nameless tuple
       doAssert plt[i].len == 4, "Domain needs to consist of 4 elements!"
       domain.add handleDomain(ident"left", plt[i][0])
-      domain.add handleDomain(ident"bottom", plt[i][0])
-      domain.add handleDomain(ident"width", plt[i][0])
-      domain.add handleDomain(ident"height", plt[i][0])
+      domain.add handleDomain(ident"bottom", plt[i][1])
+      domain.add handleDomain(ident"width", plt[i][2])
+      domain.add handleDomain(ident"height", plt[i][3])
       # ignore what comes after
       break
     of nnkCall:
@@ -155,6 +158,11 @@ macro subplots*(stmts: untyped): untyped =
   ##
   ## will create a subplot of `plt1` on the left and `plt2` on the
   ## right.
+  ## This simply creates the following call to `combine`.
+  ## let subplt = combine(layout,
+  ##                      [plt1.toPlotJson, plt2.toPlotJson],
+  ##                      [(left: 0.0, bottom: 0.0, width: 0.45, height: 1.0),
+  ##                       (left: 0.55, bottom: 0.0, width: 0.45, height: 1.0)])
   var
     layout: NimNode
     # plots contain `Plot[T]` identifier and `domain`

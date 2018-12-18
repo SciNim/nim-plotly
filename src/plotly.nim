@@ -5,14 +5,12 @@ import sequtils
 
 # we now import the plotly modules and export them so that
 # the user sees them as a single module
-import plotly/api
+import plotly / [api, plotly_types, errorbar, plotly_sugar, plotly_subplots]
 export api
-import plotly/plotly_types
 export plotly_types
-import plotly/errorbar
 export errorbar
-import plotly/plotly_sugar
 export plotly_sugar
+export plotly_subplots
 
 when defined(webview):
   import webview
