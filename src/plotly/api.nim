@@ -229,6 +229,9 @@ func `%`*(t: Trace): JsonNode =
   if t.ys.len > 0:
     fields["y"] = % t.ys
 
+  if t.xaxis != "":
+    fields["xaxis"] = % t.xaxis
+
   if t.yaxis != "":
     fields["yaxis"] = % t.yaxis
 

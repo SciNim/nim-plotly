@@ -151,6 +151,7 @@ type
     mode*: PlotMode
     fill*: PlotFill
     name*: string
+    xaxis*: string
     yaxis*: string
     # case on `type`, since we only need ColorMap for
     # PlotType.HeatMap
