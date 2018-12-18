@@ -41,6 +41,11 @@ template barPlot*(x, y: untyped): untyped =
   let plt = Plot[yType](traces: @[tr], layout: plLayout)
   plt
 
+proc histTrace*[T](hist: seq[T]): Trace[T] =
+  type hType = type(hist[0])
+  result = Trace[hType](`type`: PlotType.Histogram,
+                        xs: hist)
+
 template histPlot*(hist: untyped): untyped =
   type hType = type(hist[0])
   let title = "Histogram of " & astToStr(hist)
@@ -49,8 +54,7 @@ template histPlot*(hist: untyped): untyped =
                         xaxis: Axis(title: astToStr(x)),
                         yaxis: Axis(title: "Counts"),
                         autosize: false)
-  let tr = Trace[hType](`type`: PlotType.Histogram,
-                        xs: hist)
+  let tr = histTrace(hist)
   var plt = Plot[hType](traces: @[tr], layout: plLayout)
   plt
 
@@ -77,6 +81,12 @@ template heatmap*(x, y, z: untyped): untyped =
   var plt = Plot[xType](traces: @[tr], layout: plLayout)
   plt
 
+proc heatmapTrace*[T](z: seq[seq[T]]): Trace[T] =
+  type hType = type(z[0])
+  result = Trace[hType](`type`: PlotType.Heatmap,
+                        colorMap: ColorMap.Viridis,
+                        xs: hist)
+
 template heatmap*[T](z: seq[seq[T]]): untyped =
   type zType = type(z[0][0])
   var zs = z
@@ -92,23 +102,26 @@ template heatmap*[T](z: seq[seq[T]]): untyped =
   var plt = Plot[zType](traces: @[tr], layout: plLayout)
   plt
 
-
-template scatterPlot*(x, y: untyped): untyped =
+proc scatterTrace*[T, U](x: seq[T], y: seq[U]): Trace[T] =
   type xType = type(x[0])
   let xData = x
   # make sure y has same dtype
   let yData = y.mapIt(xType(it))
+  result = Trace[xType](mode: PlotMode.Markers,
+                        marker: Marker[xType](),
+                        `type`: PlotType.Scatter,
+                        xs: xData,
+                        ys: yData)
+
+template scatterPlot*(x, y: untyped): untyped =
+  type xType = type(x[0])
   let title = "Scatter plot of " & astToStr(x) & " vs. " & astToStr(y)
   let plLayout = Layout(title: title,
                         width: 800, height: 600,
                         xaxis: Axis(title: astToStr(x)),
                         yaxis: Axis(title: astToStr(y)),
                         autosize: false)
-  let tr = Trace[xType](mode: PlotMode.Markers,
-                        marker: Marker[xType](),
-                        `type`: PlotType.Scatter,
-                        xs: xData,
-                        ys: yData)
+  let tr = scatterTrace(x, y)
   var plt = Plot[xType](traces: @[tr], layout: plLayout)
   plt
 
@@ -125,6 +138,10 @@ template scatterColor*(x, y, z: untyped): untyped =
     .markercolor(colors = zData,
                  map = ColorMap.Viridis)
   plt
+
+proc addTrace*[T](plt: Plot[T], t: Trace[T]): Plot[T] =
+  result = plt
+  result.traces.add t
 
 proc title*[T](plt: Plot[T], t: string): Plot[T] =
   result = plt
