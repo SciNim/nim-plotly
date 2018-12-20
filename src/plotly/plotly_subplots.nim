@@ -309,12 +309,10 @@ macro subplots*(stmts: untyped): untyped =
         `domainIdent`.convertDomain
 
   # call combine proc
-  echo grid.repr
   result = quote do:
     block:
       `grid`
       combine(`layout`, `pltArray`, `domainArray`, `gridIdent`)
-  echo result.repr
 
 when isMainModule:
   # test the calculation of rows and columns
