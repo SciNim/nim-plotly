@@ -1,5 +1,13 @@
-import json, macros
+import json, macros, math
 import plotly_types, plotly_sugar, api
+
+type
+  # subplot specific object, which stores intermediate information about
+  # the grid layout to use for multiple plots
+  Grid = object
+    useGrid: bool
+    rows: int
+    columns: int
 
 proc convertDomain*(d: Domain | DomainAlt): Domain =
   ## proc to convert a domain tuple from
@@ -14,21 +22,59 @@ proc convertDomain*(d: Domain | DomainAlt): Domain =
               width: d.right - d.left,
               height: d.top - d.bottom)
 
+proc assignDomain(plt: PlotJson, xaxis, yaxis: string, domain: Domain) =
+  ## assigns the `domain` to the plot described by `xaxis`, `yaxis`
+  let xdomain = @[domain.left, domain.left + domain.width]
+  let ydomain = @[domain.bottom, domain.bottom + domain.height]
+  plt.layout[xaxis]["domain"] = % xdomain
+  plt.layout[yaxis]["domain"] = % ydomain
+
+proc calcRowsColumns(rows, columns: int, nPlots: int): (int, int) =
+  ## Calculates the desired rows and columns for # of `nPlots` given the user's
+  ## input for `rows` and `columns`. If no input is given, calculate the next
+  ## possible rectangle of plots that favors columns over rows
+  if rows == 0 and columns == 0:
+    # calc square of plots
+    let sqPlt = sqrt(nPlots.float)
+    result[1] = sqPlt.ceil.int
+    result[0] = sqPlt.round.int
+  elif rows == 0 and columns > 0:
+    # 1 row, user desired # cols
+    result = (1, columns)
+  elif rows > 0 and columns == 0:
+    # user desired # row, 1 col
+    result = (rows, 1)
+  else:
+    result = (rows, columns)
+
+proc assignGrid(plt: PlotJson, grid: Grid) =
+  ## assigns the `grid` to the layout of `plt`
+  ## If a grid is desired, but the user does not specify rows and columns,
+  ## plots are aranged in a rectangular grid automatically.
+  ## If only either rows or columns is specified, the other is set to 1.
+  plt.layout["grid"] = newJObject()
+  plt.layout["grid"]["pattern"] = % "independent"
+  let (rows, columns) = calcRowsColumns(grid.rows, grid.columns, plt.traces.len)
+  plt.layout["grid"]["rows"] = % rows
+  plt.layout["grid"]["columns"] = % columns
+
 proc combine(baseLayout: Layout,
              plts: openArray[PlotJson],
-             domains: openArray[Domain]): PlotJson =
+             domains: openArray[Domain],
+             grid: Grid): PlotJson =
   # we need to combine the plots on a JsonNode level to avoid problems with
   # different plot types!
   var res = newPlot()
+  var useGrid = grid.useGrid
   result = res.toPlotJson
   result.layout = % baseLayout
-  doAssert plts.len == domains.len, "Every plot needs a domain!"
+  if not grid.useGrid and domains.len == 0:
+    useGrid = true
   for i, p in plts:
     #doAssert p.traces.len == 1
     let trIdx = result.traces.len
     # first add traces of `*each Plot*`, only afterwards flatten them!
     result.traces.add p.traces
-    let domain = domains[i]
     # first plot needs to be treated differently than all others
     let idx = result.traces.len
     var
@@ -40,10 +86,9 @@ proc combine(baseLayout: Layout,
 
     result.layout[xaxisStr] = p.layout["xaxis"]
     result.layout[yaxisStr] = p.layout["yaxis"]
-    let xdomain = @[domain.left, domain.left + domain.width]
-    let ydomain = @[domain.bottom, domain.bottom + domain.height]
-    result.layout[xaxisStr]["domain"] = % xdomain
-    result.layout[yaxisStr]["domain"] = % ydomain
+
+    if not useGrid:
+      result.assignDomain(xaxisStr, yaxisStr, domains[i])
 
     if i > 0:
       # anchor xaxis to y data and vice versa
@@ -53,6 +98,9 @@ proc combine(baseLayout: Layout,
   var i = 0
   # flatten traces and set correct axis for correct original plots
   var traces = newJArray()
+  if useGrid:
+    result.assignGrid(grid)
+
   for tr in mitems(result.traces):
     if i > 0:
       for t in tr:
@@ -122,13 +170,59 @@ proc handlePlotStmt(plt: NimNode): (NimNode, NimNode) =
       # for assignment RHS is single expr
       domain.add handleDomain(plt[i][0], plt[i][1])
     else:
-        error("Plot statement needs to consist of Plot ident, nnkCall or " &
-          "nnkAsgn. Line is " & plt[i].repr & " of kind " & $plt[i].kind)
+      # assume else the given content will probably return a valid domain
+      domain = plt[i]
+    #else:
+    #    error("Plot statement needs to consist of Plot ident, nnkCall or " &
+    #      "nnkAsgn. Line is " & plt[i].repr & " of kind " & $plt[i].kind)
     if domain.len == 4:
       # have a full domain, stop
       break
+  if domain.len != 4:
+    # replace by empty node, since user didn't specify domain
+    domain = newEmptyNode()
 
   result[1] = domain
+
+proc handleRowsCols(field, value: NimNode): NimNode =
+  ## handling of individual assignments for rows / columns for the
+  ## grid layout
+  case field.strVal
+  of "rows", "r":
+    result = nnkExprColonExpr.newTree(ident"rows", value)
+  of "columns", "cols", "c":
+    result = nnkExprColonExpr.newTree(ident"columns", value)
+  else:
+    error("Invalid field for grid layout description: " & $field &
+      "! Use only elements of  {\"rows\", \"r\"} and {\"columns\", \"cols\", \"c\"}.")
+
+proc handleGrid(stmt: NimNode): NimNode =
+  ## handles parsing of the grid layout description.
+  ## It looks like the following for example:
+  ## grid:
+  ##   rows: 2
+  ##   columns: 3
+  ## which is rewritten to an object constructor for a
+  ## `Grid` object storing the information.
+  let gridIdent = ident"gridImpl"
+  var gridVar = quote do:
+    var `gridIdent` = Grid()
+  var gridObj = nnkObjConstr.newTree(
+    bindSym"Grid",
+    nnkExprColonExpr.newTree(
+      ident"useGrid",
+      ident"true")
+  )
+  for el in stmt[1]:
+    case el.kind
+    of nnkCall, nnkAsgn:
+      gridObj.add handleRowsCols(el[0], el[1])
+    else:
+      error("Invalid statement in grid layout description: " & el.repr &
+        " of kind " & $el.kind)
+  # replace object constructor tree in `gridVar`
+  gridVar[0][2] = gridObj
+  result = gridVar
 
 macro subplots*(stmts: untyped): untyped =
   ## macro to create subplots from several `Plot[T]` objects
@@ -167,6 +261,11 @@ macro subplots*(stmts: untyped): untyped =
     layout: NimNode
     # plots contain `Plot[T]` identifier and `domain`
     plots: seq[(NimNode, NimNode)]
+    grid: NimNode
+  let gridIdent = ident"gridImpl"
+  grid = quote do:
+    var `gridIdent` = Grid(useGrid: false)
+
   for stmt in stmts:
     case stmt.kind
     of nnkCall:
@@ -176,8 +275,16 @@ macro subplots*(stmts: untyped): untyped =
       of "plot":
         # only interested in content of `plot:`, hence [1]
         plots.add handlePlotStmt(stmt[1])
+      of "grid":
+        grid = handleGrid(stmt)
+    of nnkIdent:
+      case stmt.strVal
+      of "grid":
+        grid = quote do:
+          var `gridIdent` = Grid(useGrid: true)
+
     else:
-      error("Statement needs to be `baseLayout` or `plot`! " &
+      error("Statement needs to be `baseLayout`, `plot`, `grid`! " &
         "Line `" & stmt.repr & "` is " & $stmt.kind)
 
   var
@@ -191,8 +298,29 @@ macro subplots*(stmts: untyped): untyped =
     let domainIdent = plt[1]
     pltArray.add quote do:
       `pltIdent`.toPlotJson
-    domainArray.add quote do:
-      `domainIdent`.convertDomain
+    if domainIdent.kind != nnkEmpty:
+      domainArray.add quote do:
+        `domainIdent`.convertDomain
+
   # call combine proc
+  echo grid.repr
   result = quote do:
-    combine(`layout`, `pltArray`, `domainArray`)
+    block:
+      `grid`
+      combine(`layout`, `pltArray`, `domainArray`, `gridIdent`)
+  echo result.repr
+
+when isMainModule:
+  # test the calculation of rows and columns
+  doAssert calcRowsColumns(2, 0, 4) == (2, 1)
+  doAssert calcRowsColumns(0, 2, 4) == (1, 2)
+  doAssert calcRowsColumns(7, 3, 1) == (7, 3)
+  doAssert calcRowsColumns(0, 0, 1) == (1, 1)
+  doAssert calcRowsColumns(0, 0, 2) == (1, 2)
+  doAssert calcRowsColumns(0, 0, 3) == (2, 2)
+  doAssert calcRowsColumns(0, 0, 4) == (2, 2)
+  doAssert calcRowsColumns(0, 0, 5) == (2, 3)
+  doAssert calcRowsColumns(0, 0, 6) == (2, 3)
+  doAssert calcRowsColumns(0, 0, 7) == (3, 3)
+  doAssert calcRowsColumns(0, 0, 8) == (3, 3)
+  doAssert calcRowsColumns(0, 0, 9) == (3, 3)

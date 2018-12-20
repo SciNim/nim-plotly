@@ -68,3 +68,16 @@ let pltCombined = subplots:
     right = 1.0
     top = 0.3
 pltCombined.show()
+
+let pltC2 = subplots:
+  baseLayout: baseLayout
+  grid:
+    rows: 3
+    columns: 1
+  plot:
+    plt1
+  plot:
+    plt2
+  plot:
+    plt3
+pltC2.show()
