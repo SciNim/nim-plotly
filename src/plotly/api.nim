@@ -9,6 +9,12 @@ import plotly_types
 import color
 import errorbar
 
+proc toPlotJson*[T](plt: Plot[T]): PlotJson =
+  ## converts a given `Plot[T]` object to a `PlotJson` object
+  result = new PlotJson
+  result.traces = % plt.traces
+  result.layout = % plt.layout
+
 func parseHistogramFields[T](fields: var OrderedTable[string, JsonNode], t: Trace[T]) =
   ## parse the fields of the histogram type. Usese a separate proc
   ## for clarity.
@@ -228,6 +234,9 @@ func `%`*(t: Trace): JsonNode =
 
   if t.ys.len > 0:
     fields["y"] = % t.ys
+
+  if t.xaxis != "":
+    fields["xaxis"] = % t.xaxis
 
   if t.yaxis != "":
     fields["yaxis"] = % t.yaxis

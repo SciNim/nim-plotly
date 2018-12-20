@@ -1,4 +1,4 @@
-import chroma
+import chroma, json
 
 # this module contains all types used in the plotly module
 
@@ -6,6 +6,12 @@ type
   Plot*[T: SomeNumber] = ref object
     traces* : seq[Trace[T]]
     layout*: Layout
+
+  PlotJson* = ref object
+    traces* : JsonNode
+    layout*: JsonNode
+
+  SomePlot* = Plot | PlotJson
 
   PlotType* {.pure.} = enum
     Scatter = "scatter"
@@ -145,6 +151,7 @@ type
     mode*: PlotMode
     fill*: PlotFill
     name*: string
+    xaxis*: string
     yaxis*: string
     # case on `type`, since we only need ColorMap for
     # PlotType.HeatMap
@@ -196,6 +203,15 @@ type
 
   RangeSlider* = ref object
     visible*: bool
+
+  # tuple types to set location of subplots within a plot
+  # given in relative coordinates of the plot [0, 1] canvas
+  Domain* = tuple
+    left, bottom, width, height: float
+  # alternative notation for a `Domain`. Instead of using width and height,
+  # directly set right and top edge of plot.
+  DomainAlt* = tuple
+    left, bottom, right, top: float
 
   Axis* = ref object
     title*: string
