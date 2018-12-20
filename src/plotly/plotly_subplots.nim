@@ -10,11 +10,12 @@ type
     columns: int
 
 proc convertDomain*(d: Domain | DomainAlt): Domain =
-  ## proc to convert a domain tuple from
+  ## proc to get a `Domain` from either a `Domain` or `DomainAlt` tuple.
+  ## That is a tuple of:
   ## left, bottom, right, top
-  ## notation to
+  ## notation to:
   ## left, bottom, width, height
-  when type(d) is tuple[left, bottom, width, height: float]:
+  when type(d) is Domain:
     result = d
   else:
     result = (left: d.left,

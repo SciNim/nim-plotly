@@ -208,6 +208,8 @@ type
   # given in relative coordinates of the plot [0, 1] canvas
   Domain* = tuple
     left, bottom, width, height: float
+  # alternative notation for a `Domain`. Instead of using width and height,
+  # directly set right and top edge of plot.
   DomainAlt* = tuple
     left, bottom, right, top: float
 
