@@ -20,7 +20,7 @@ for i in 0 .. y.high:
   sizes[i] = float64(10 + (i mod 10))
 
 let d = Trace[float64](mode: PlotMode.LinesMarkers, `type`: PlotType.ScatterGL,
-                       xs: x, ys: y)
+                       xs: x, ys: y, lineWidth: 10)
 let d2 = Trace[float64](mode: PlotMode.LinesMarkers, `type`: PlotType.ScatterGL,
                        xs: x2, ys: y2)
 d.marker = Marker[float64](size: sizes)
@@ -47,8 +47,10 @@ Plot[float64](layout: layout, traces: @[d, d2]).show()
 # scatterPlot(x, y)
 #   .addTrace(scatterTrace(x2, y2))
 #   .mode(LinesMarkers)
+#   .mode(LinesMarkers, idx = 1)
 #   .markerSizes(sizes)
 #   .legend(legend)
+#   .lineWidth(10, idx = 0)
 #   .xlabel("my x-axis")
 #   .ylabel("y-axis too")
 #   .backgroundColor(color(0.92, 0.92, 0.92))
