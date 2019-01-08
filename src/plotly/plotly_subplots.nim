@@ -173,14 +173,15 @@ proc handlePlotStmt(plt: NimNode): (NimNode, NimNode) =
     of nnkAsgn:
       # for assignment RHS is single expr
       domain.add handleDomain(plt[i][0], plt[i][1])
-    of nnkDotExpr:
-      # assume the user accesses some object storing a domain of
-      # either type `Domain` or `DomainAlt`, take as is
+    of nnkDotExpr, nnkBracketExpr, nnkIdent:
+      # assume the user accesses some object, array or identifier
+      # storing a domain of either type `Domain` or `DomainAlt`
       domain = plt[i]
       isSymbol = true
     else:
-        error("Plot statement needs to consist of Plot ident, nnkCall or " &
-          "nnkAsgn. Line is " & plt[i].repr & " of kind " & $plt[i].kind)
+      error("Domain description needs to be of node kind nnkIdent, nnkCall, " &
+        "nnkDotExpr, nnkBracketExpr or nnkAsgn. Line is " & plt[i].repr &
+        " of kind " & $plt[i].kind)
     if domain.len == 4:
       # have a full domain, stop
       break
