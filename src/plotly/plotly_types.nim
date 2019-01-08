@@ -186,6 +186,8 @@ type
       align*: BarAlign
       # orientation of bars, vertical or horizontal
       orientation*: Orientation
+    of Scatter, ScatterGL:
+      lineWidth*: int
     else:
       discard
 

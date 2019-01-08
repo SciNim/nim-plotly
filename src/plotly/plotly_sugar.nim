@@ -198,6 +198,11 @@ proc markerSize*[T, U: SomeNumber](plt: Plot[T], val: U, idx = 0): Plot[T] =
   result = plt
   result.traces[idx].marker.size = @[T(val)]
 
+proc lineWidth*[T](plt: Plot[T], val: SomeNumber, idx = 0): Plot[T] =
+  result = plt
+  doAssert plt.traces[idx].`type` in {Scatter, ScatterGL}
+  result.traces[idx].lineWidth = val.roundOrIdent.int
+
 template pltLabel*(plt: untyped,
                    axis: untyped,
                    label: string): untyped =

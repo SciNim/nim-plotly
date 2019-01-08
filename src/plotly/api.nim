@@ -310,6 +310,9 @@ func `%`*(t: Trace): JsonNode =
     # if `xs` not given, user wants `string` named bars
     if t.xs.len > 0:
       fields.parseBarFields(t)
+  of PlotType.Scatter, PlotType.ScatterGL:
+    if t.lineWidth > 0:
+      fields["line"] = %* {"width": t.lineWidth}
   else:
     discard
 
