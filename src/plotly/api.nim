@@ -107,18 +107,18 @@ func parseBarFields[T](fields: var OrderedTable[string, JsonNode], t: Trace[T]) 
     fields["orientation"] = % t.orientation
   else: discard
 
-func `%`*(c: Color): string =
-  result = c.toHtmlHex()
+func `%`*(c: Color): JsonNode =
+  result = % c.toHtmlHex()
 
 func `%`*(f: Font): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if f.size != 0:
     fields["size"] = % f.size
-  if f.color.empty:
-    fields["color"] = % f.color.toHtmlHex()
+  if not f.color.empty:
+    fields["color"] = % f.color
   if f.family.len > 0:
     fields["family"] = % f.family
-  result = JsonNode(kind: Jobject, fields: fields)
+  result = JsonNode(kind: JObject, fields: fields)
 
 func `%`*(a: Axis): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
@@ -144,12 +144,38 @@ func `%`*(a: Axis): JsonNode =
   if a.rangeslider != nil:
     fields["rangeslider"] = % a.rangeslider
 
-  result = JsonNode(kind:Jobject, fields: fields)
+  if not a.gridColor.empty:
+    fields["gridcolor"] = % a.gridColor
+  if a.gridWidth != 0:
+    fields["gridwidth"] = % a.gridWidth
+
+  result = JsonNode(kind: JObject, fields: fields)
+
+func `%`*(l: Legend): JsonNode =
+  var fields = initOrderedTable[string, JsonNode](4)
+  if l.font != nil:
+    fields["font"] = % l.font
+  if not l.backgroundColor.empty:
+    fields["bgcolor"] = % l.backgroundColor
+  if not l.bordercolor.empty:
+    fields["bordercolor"] = % l.borderColor
+  if l.borderwidth != 0:
+    fields["borderwidth"] = % l.borderWidth
+  case l.orientation
+  of Orientation.Vertical, Orientation.Horizontal:
+    fields["orientation"] = % l.orientation
+  else: discard
+  # fields for x and y are used always. Zero initialized means that if no
+  # x, y given, but colors / width set, location will be at x / y == 0 / 0
+  # alternative would be to check for != 0 on both, which would disallow 0 / 0!
+  fields["x"] = % l.x
+  fields["y"] = % l.y
+  result = JsonNode(kind: JObject, fields: fields)
 
 func `%`*(l: Layout): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if l == nil:
-    return JsonNode(kind: Jobject, fields: fields)
+    return JsonNode(kind: JObject, fields: fields)
   if l.title != "":
     fields["title"] = % l.title
   if l.width != 0:
@@ -164,13 +190,21 @@ func `%`*(l: Layout): JsonNode =
     fields["yaxis2"] = % l.yaxis2
   if $l.barmode != "":
     fields["barmode"] = % l.barmode
+  if l.legend != nil:
+    fields["legend"] = % l.legend
+    fields["showlegend"] = % l.showlegend
   # default to closest because other modes suck.
   fields["hovermode"] = % "closest"
   if $l.hovermode != "":
     fields["hovermode"] = % l.hovermode
   if 0 < l.annotations.len:
     fields["annotations"] = % l.annotations
-  result = JsonNode(kind: Jobject, fields: fields)
+  if not l.backgroundColor.empty:
+    fields["plot_bgcolor"] = % l.backgroundColor
+  if not l.paperColor.empty:
+    fields["paper_bgcolor"] = % l.paperColor
+
+  result = JsonNode(kind: JObject, fields: fields)
 
 func `%`*(a: Annotation): JsonNode =
   ## creates a JsonNode from an `Annotations` object depending on the object variant
@@ -186,7 +220,7 @@ func `%`*(b: ErrorBar): JsonNode =
   ## creates a JsonNode from an `ErrorBar` object depending on the object variant
   var fields = initOrderedTable[string, JsonNode](4)
   fields["visible"] = % b.visible
-  if b.color != empty():
+  if not b.color.empty:
     fields["color"] = % b.color.toHtmlHex
   if b.thickness > 0:
     fields["thickness"] = % b.thickness
@@ -285,6 +319,9 @@ func `%`*(t: Trace): JsonNode =
     # if `xs` not given, user wants `string` named bars
     if t.xs.len > 0:
       fields.parseBarFields(t)
+  of PlotType.Scatter, PlotType.ScatterGL:
+    if t.lineWidth > 0:
+      fields["line"] = %* {"width": t.lineWidth}
   else:
     discard
 
@@ -302,7 +339,7 @@ func `%`*(t: Trace): JsonNode =
   if t.marker != nil:
     fields["marker"] = % t.marker
 
-  result = JsonNode(kind: Jobject, fields: fields)
+  result = JsonNode(kind: JObject, fields: fields)
 
 func `%`*(m: Marker): JsonNode =
   var fields = initOrderedTable[string, JsonNode](8)
@@ -313,15 +350,15 @@ func `%`*(m: Marker): JsonNode =
       fields["size"] = % m.size
   if m.color.len > 0:
     if m.color.len == 1:
-      fields["color"] = % m.color[0].toHtmlHex()
+      fields["color"] = % m.color[0]
     else:
-      fields["color"] = % m.color.toHtmlHex()
+      fields["color"] = % m.color
   elif m.colorVals.len > 0:
     fields["color"] = % m.colorVals
     fields["colorscale"] = % m.colormap
     fields["showscale"] = % true
 
-  result = JsonNode(kind: Jobject, fields: fields)
+  result = JsonNode(kind: JObject, fields: fields)
 
 func `$`*(d: Trace): string =
   var j = % d

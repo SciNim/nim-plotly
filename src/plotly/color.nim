@@ -7,8 +7,9 @@ func empty*(): Color =
   result = Color(r: 0, g: 0, b: 0, a: 0)
 
 func empty*(c: Color): bool =
+  ## checks whether given color is black according to above
   # TODO: this is also black, but should never need black with alpha == 0
-  result = c.r == 0 and c.g == 0 and c.b == 0 and c.a == 0
+  result = c == empty()
 
 func toHtmlHex*(colors: seq[Color]): seq[string] =
   result = newSeq[string](len(colors))

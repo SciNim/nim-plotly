@@ -193,6 +193,8 @@ type
       align*: BarAlign
       # orientation of bars, vertical or horizontal
       orientation*: Orientation
+    of Scatter, ScatterGL:
+      lineWidth*: int
     else:
       discard
 
@@ -223,6 +225,8 @@ type
     range*: tuple[start, stop: float]
     # oposite of showticklabels
     hideticklabels*: bool
+    gridColor*: Color
+    gridWidth*: int
 
   Annotation* = ref object
     x*: float
@@ -232,6 +236,16 @@ type
     text*: string
     showarrow*: bool
 
+  Legend* = ref object
+    # location in x, y in relative coordinates of the layout in [-2, 3]
+    x*: float
+    y*: float
+    font*: Font
+    backgroundColor*: Color
+    borderColor*: Color
+    borderWidth*: int # border width in pixels
+    orientation*: Orientation
+
   Layout* = ref object
     title*: string
     width*: int
@@ -240,7 +254,10 @@ type
     annotations*: seq[Annotation]
     autosize*: bool
     showlegend*: bool
+    legend*: Legend
     xaxis*: Axis
     yaxis*: Axis
     yaxis2*: Axis
     barmode*: BarMode
+    backgroundColor*: Color # background of plot
+    paperColor*: Color # background of paper / canvas

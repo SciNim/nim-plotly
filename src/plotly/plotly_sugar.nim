@@ -41,6 +41,11 @@ template barPlot*(x, y: untyped): untyped =
   let plt = Plot[yType](traces: @[tr], layout: plLayout)
   plt
 
+proc histTrace*[T](hist: seq[T]): Trace[T] =
+  type hType = type(hist[0])
+  result = Trace[hType](`type`: PlotType.Histogram,
+                        xs: hist)
+
 template histPlot*(hist: untyped): untyped =
   type hType = type(hist[0])
   let title = "Histogram of " & astToStr(hist)
@@ -49,8 +54,7 @@ template histPlot*(hist: untyped): untyped =
                         xaxis: Axis(title: astToStr(x)),
                         yaxis: Axis(title: "Counts"),
                         autosize: false)
-  let tr = Trace[hType](`type`: PlotType.Histogram,
-                        xs: hist)
+  let tr = histTrace(hist)
   var plt = Plot[hType](traces: @[tr], layout: plLayout)
   plt
 
@@ -77,6 +81,12 @@ template heatmap*(x, y, z: untyped): untyped =
   var plt = Plot[xType](traces: @[tr], layout: plLayout)
   plt
 
+proc heatmapTrace*[T](z: seq[seq[T]]): Trace[T] =
+  type hType = type(z[0])
+  result = Trace[hType](`type`: PlotType.Heatmap,
+                        colorMap: ColorMap.Viridis,
+                        xs: z)
+
 template heatmap*[T](z: seq[seq[T]]): untyped =
   type zType = type(z[0][0])
   var zs = z
@@ -92,23 +102,26 @@ template heatmap*[T](z: seq[seq[T]]): untyped =
   var plt = Plot[zType](traces: @[tr], layout: plLayout)
   plt
 
-
-template scatterPlot*(x, y: untyped): untyped =
+proc scatterTrace*[T, U](x: seq[T], y: seq[U]): Trace[T] =
   type xType = type(x[0])
   let xData = x
   # make sure y has same dtype
   let yData = y.mapIt(xType(it))
+  result = Trace[xType](mode: PlotMode.Markers,
+                        marker: Marker[xType](),
+                        `type`: PlotType.Scatter,
+                        xs: xData,
+                        ys: yData)
+
+template scatterPlot*(x, y: untyped): untyped =
+  type xType = type(x[0])
   let title = "Scatter plot of " & astToStr(x) & " vs. " & astToStr(y)
   let plLayout = Layout(title: title,
                         width: 800, height: 600,
                         xaxis: Axis(title: astToStr(x)),
                         yaxis: Axis(title: astToStr(y)),
                         autosize: false)
-  let tr = Trace[xType](mode: PlotMode.Markers,
-                        marker: Marker[xType](),
-                        `type`: PlotType.Scatter,
-                        xs: xData,
-                        ys: yData)
+  let tr = scatterTrace(x, y)
   var plt = Plot[xType](traces: @[tr], layout: plLayout)
   plt
 
@@ -126,13 +139,17 @@ template scatterColor*(x, y, z: untyped): untyped =
                  map = ColorMap.Viridis)
   plt
 
+proc addTrace*[T](plt: Plot[T], t: Trace[T]): Plot[T] =
+  result = plt
+  result.traces.add t
+
 proc title*[T](plt: Plot[T], t: string): Plot[T] =
   result = plt
   result.layout.title = t
 
 proc width*[T, U: SomeNumber](plt: Plot[T], width: U): Plot[T] =
   result = plt
-  result.layout.width = U.roundOrIdent.int
+  result.layout.width = width.roundOrIdent.int
 
 proc height*[T, U: SomeNumber](plt: Plot[T], height: U): Plot[T] =
   result = plt
@@ -181,9 +198,16 @@ proc markerSize*[T, U: SomeNumber](plt: Plot[T], val: U, idx = 0): Plot[T] =
   result = plt
   result.traces[idx].marker.size = @[T(val)]
 
+proc lineWidth*[T](plt: Plot[T], val: SomeNumber, idx = 0): Plot[T] =
+  result = plt
+  doAssert plt.traces[idx].`type` in {Scatter, ScatterGL}
+  result.traces[idx].lineWidth = val.roundOrIdent.int
+
 template pltLabel*(plt: untyped,
                    axis: untyped,
                    label: string): untyped =
+  if plt.layout.axis == nil:
+    plt.layout.axis = Axis()
   plt.layout.axis.title = label
 
 proc xlabel*[T](plt: Plot[T], label: string): Plot[T] =
@@ -193,6 +217,10 @@ proc xlabel*[T](plt: Plot[T], label: string): Plot[T] =
 proc ylabel*[T](plt: Plot[T], label: string): Plot[T] =
   result = plt
   result.pltLabel(yaxis, label)
+
+proc name*[T](plt: Plot[T], name: string, idx = 0): Plot[T] =
+  result = plt
+  result.traces[idx].name = name
 
 proc nbins*[T](plt: Plot[T], nbins: int, idx = 0): Plot[T] =
   result = plt
@@ -208,3 +236,77 @@ proc binRange*[T](plt: Plot[T], start, stop: float, idx = 0): Plot[T] =
   result = plt
   doAssert result.traces[idx].`type` == PlotType.Histogram
   result.traces[idx].bins = (start, stop)
+
+proc legend*[T](plt: Plot[T], legend: Legend): Plot[T] =
+  result = plt
+  result.layout.legend = legend
+  result.layout.showLegend = true
+
+proc legendLocation*[T](plt: Plot[T], x, y: float): Plot[T] =
+  result = plt
+  if result.layout.legend == nil:
+    result.layout.legend = Legend()
+  result.layout.legend.x = x
+  result.layout.legend.y = y
+
+proc legendBgColor*[T](plt: Plot[T], color: Color): Plot[T] =
+  result = plt
+  if result.layout.legend == nil:
+    result.layout.legend = Legend()
+  result.layout.legend.bgcolor = color
+
+proc legendBorderColor*[T](plt: Plot[T], color: Color): Plot[T] =
+  result = plt
+  if result.layout.legend == nil:
+    result.layout.legend = Legend()
+  result.layout.legend.borderColor = color
+
+proc legendBorderWidth*[T](plt: Plot[T], width: int): Plot[T] =
+  result = plt
+  if result.layout.legend == nil:
+    result.layout.legend = Legend()
+  result.layout.legend.borderWidth = width
+
+proc legendOrientation*[T](plt: Plot[T], orientation: Orientation): Plot[T] =
+  result = plt
+  if result.layout.legend == nil:
+    result.layout.legend = Legend()
+  result.layout.legend.orientation = orientation
+
+proc gridWidthX*[T](plt: Plot[T], width: int): Plot[T] =
+  result = plt
+  if result.layout.xaxis == nil:
+    result.layout.xaxis = Axis()
+  result.layout.xaxis.gridWidth = width
+
+proc gridWidthY*[T](plt: Plot[T], width: int): Plot[T] =
+  result = plt
+  if result.layout.xaxis == nil:
+    result.layout.xaxis = Axis()
+  result.layout.yaxis.gridWidth = width
+
+proc gridWidth*[T](plt: Plot[T], width: int): Plot[T] =
+  result = plt.gridWidthX(width).gridWidthY(width)
+
+proc gridColorX*[T](plt: Plot[T], color: Color): Plot[T] =
+  result = plt
+  if result.layout.xaxis == nil:
+    result.layout.xaxis = Axis()
+  result.layout.xaxis.gridColor = color
+
+proc gridColorY*[T](plt: Plot[T], color: Color): Plot[T] =
+  result = plt
+  if result.layout.xaxis == nil:
+    result.layout.xaxis = Axis()
+  result.layout.yaxis.gridColor = color
+
+proc gridColor*[T](plt: Plot[T], color: Color): Plot[T] =
+  result = plt.gridColorX(color).gridColorY(color)
+
+proc backgroundColor*[T](plt: Plot[T], color: Color): Plot[T] =
+  result = plt
+  result.layout.backgroundColor = color
+
+proc paperColor*[T](plt: Plot[T], color: Color): Plot[T] =
+  result = plt
+  result.layout.paperColor = color
