@@ -164,24 +164,29 @@ proc text*[T; U: string | seq[string]](plt: Plot[T],
   else:
     result.traces[idx].text = val
 
-proc markersize*[T](plt: Plot[T],
+proc markerSize*[T](plt: Plot[T],
                     val: SomeNumber,
                     idx = 0): Plot[T] =
   result = plt
+  if result.traces[idx].marker.isNil:
+    result.traces[idx].marker = Marker[T]()
   result.traces[idx].marker.size = @[T(val)]
 
-
-proc markersizes*[T](plt: Plot[T],
+proc markerSizes*[T](plt: Plot[T],
                      sizes: seq[T],
                      idx = 0): Plot[T] =
   result = plt
+  if result.traces[idx].marker.isNil:
+    result.traces[idx].marker = Marker[T]()
   result.traces[idx].marker.size = sizes
 
-proc markercolor*[T](plt: Plot[T],
+proc markerColor*[T](plt: Plot[T],
                      colors: seq[Color] | seq[T] = @[],
                      map: ColorMap = ColorMap.None,
                      idx = 0): Plot[T] =
   result = plt
+  if result.traces[idx].marker.isNil:
+    result.traces[idx].marker = Marker[T]()
   if colors.len > 0:
     when type(colors[idx]) is Color:
       result.traces[idx].marker.color = colors
@@ -193,10 +198,6 @@ proc markercolor*[T](plt: Plot[T],
 proc mode*[T](plt: Plot[T], m: PlotMode, idx = 0): Plot[T] =
   result = plt
   result.traces[idx].mode = m
-
-proc markerSize*[T, U: SomeNumber](plt: Plot[T], val: U, idx = 0): Plot[T] =
-  result = plt
-  result.traces[idx].marker.size = @[T(val)]
 
 proc lineWidth*[T](plt: Plot[T], val: SomeNumber, idx = 0): Plot[T] =
   result = plt
@@ -296,8 +297,8 @@ proc gridColorX*[T](plt: Plot[T], color: Color): Plot[T] =
 
 proc gridColorY*[T](plt: Plot[T], color: Color): Plot[T] =
   result = plt
-  if result.layout.xaxis == nil:
-    result.layout.xaxis = Axis()
+  if result.layout.yaxis == nil:
+    result.layout.yaxis = Axis()
   result.layout.yaxis.gridColor = color
 
 proc gridColor*[T](plt: Plot[T], color: Color): Plot[T] =
