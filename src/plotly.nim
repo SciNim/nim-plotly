@@ -110,12 +110,16 @@ when not defined(js):
                               "title", title, "saveImage", imageInject]
 
   proc save*(p: SomePlot, path = "", html_template = defaultTmplString, filename = ""): string =
+    let tempName = "D20190125T182937.html"
+      # unlikely to conflict with other applications
+      # TODO: implement https://github.com/brentp/nim-plotly/issues/20
+
     result = path
     if result == "":
       when defined(Windows):
-        result = getEnv("TEMP") / "x.html"
+        result = getEnv("TEMP") / tempName
       else:
-        result = "/tmp/x.html"
+        result = "/tmp/" & tempName
 
     when type(p) is Plot:
       # convert traces to data suitable for plotly and fill Html template
@@ -123,13 +127,7 @@ when not defined(js):
     else:
       let data_string = $p.traces
     let html = html_template.fillHtmlTemplate(data_string, p, filename)
-
-    var
-      f: File
-    if not open(f, result, fmWrite):
-      quit "could not open file for json"
-    f.write(html)
-    f.close()
+    writeFile(result, html)
 
   when not hasThreadSupport:
     # some violation of DRY for the sake of better error messages at
@@ -149,7 +147,8 @@ when not defined(js):
       showPlot(tmpfile)
       sleep(1000)
       ## remove file after thread is finished
-      removeFile(tmpfile)
+      # commenting out is better; but do proper fix, see https://github.com/brentp/nim-plotly/issues/20
+      # removeFile(tmpfile)
 
     proc saveImage*(p: SomePlot, filename: string) =
       {.fatal: "`saveImage` only supported if compiled with --threads:on!".}
