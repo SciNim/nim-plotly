@@ -110,16 +110,14 @@ when not defined(js):
                               "title", title, "saveImage", imageInject]
 
   proc save*(p: SomePlot, path = "", html_template = defaultTmplString, filename = ""): string =
-    let tempName = "D20190125T182937.html"
-      # unlikely to conflict with other applications
-      # TODO: implement https://github.com/brentp/nim-plotly/issues/20
-
     result = path
     if result == "":
-      when defined(Windows):
-        result = getEnv("TEMP") / tempName
-      else:
-        result = "/tmp/" & tempName
+      let dir = getTempDir() / "nimplotly"
+      createDir dir
+      # TODO: this unlikely to conflict with other applications but should
+      # implement https://github.com/brentp/nim-plotly/issues/20
+      # to avoid interference with multiple instances of this library
+      result = dir / "D20190125T182937.html"
 
     when type(p) is Plot:
       # convert traces to data suitable for plotly and fill Html template
