@@ -143,10 +143,7 @@ when not defined(js):
       let tmpfile = p.save(path, html_template)
 
       showPlot(tmpfile)
-      sleep(1000)
-      ## remove file after thread is finished
-      # commenting out is better; but do proper fix, see https://github.com/brentp/nim-plotly/issues/20
-      # removeFile(tmpfile)
+      # todo: garbage collect `tmpfile`, see https://github.com/brentp/nim-plotly/issues/20
 
     proc saveImage*(p: SomePlot, filename: string) =
       {.fatal: "`saveImage` only supported if compiled with --threads:on!".}
@@ -168,7 +165,7 @@ when not defined(js):
       if filename.len > 0:
         # wait for thread to join
         thr.joinThread
-      removeFile(tmpfile)
+      # todo: garbage collect `tmpfile`, see https://github.com/brentp/nim-plotly/issues/20
 
     proc saveImage*(p: SomePlot, filename: string) =
       ## saves the image under the given filename
