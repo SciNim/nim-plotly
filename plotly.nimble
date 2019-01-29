@@ -6,10 +6,7 @@ description   = "plotting library for nim"
 license       = "MIT"
 
 
-requires "nim >= 0.18.0", "chroma", "jsbind", "webview"
-# get head to fix https://github.com/brentp/nim-plotly/issues/40
-# Remove once websocket has new version tag
-requires "https://github.com/niv/websocket.nim#head"
+requires "nim >= 0.18.0", "chroma", "jsbind", "webview", "websocket  >= 0.3.5"
 
 srcDir = "src"
 
