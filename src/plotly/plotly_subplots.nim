@@ -1,13 +1,19 @@
 import json, macros, math
-import plotly_types, plotly_sugar, api
+import plotly_types, plotly_sugar, api, plotly_display
 
 type
   # subplot specific object, which stores intermediate information about
   # the grid layout to use for multiple plots
-  Grid = object
+  GridLayout = object
     useGrid: bool
     rows: int
     columns: int
+
+  Grid* = object
+    # layout of the plot itself
+    layout*: Layout
+    numPlotsPerRow*: int
+    plots: seq[PlotJson]
 
 proc convertDomain*(d: Domain | DomainAlt): Domain =
   ## proc to get a `Domain` from either a `Domain` or `DomainAlt` tuple.
@@ -48,7 +54,7 @@ proc calcRowsColumns(rows, columns: int, nPlots: int): (int, int) =
   else:
     result = (rows, columns)
 
-proc assignGrid(plt: PlotJson, grid: Grid) =
+proc assignGrid(plt: PlotJson, grid: GridLayout) =
   ## assigns the `grid` to the layout of `plt`
   ## If a grid is desired, but the user does not specify rows and columns,
   ## plots are aranged in a rectangular grid automatically.
@@ -62,7 +68,7 @@ proc assignGrid(plt: PlotJson, grid: Grid) =
 proc combine(baseLayout: Layout,
              plts: openArray[PlotJson],
              domains: openArray[Domain],
-             grid: Grid): PlotJson =
+             grid: GridLayout): PlotJson =
   # we need to combine the plots on a JsonNode level to avoid problems with
   # different plot types!
   var res = newPlot()
@@ -210,12 +216,12 @@ proc handleGrid(stmt: NimNode): NimNode =
   ##   rows: 2
   ##   columns: 3
   ## which is rewritten to an object constructor for a
-  ## `Grid` object storing the information.
+  ## `GridLayout` object storing the information.
   let gridIdent = ident"gridImpl"
   var gridVar = quote do:
-    var `gridIdent` = Grid()
+    var `gridIdent` = GridLayout()
   var gridObj = nnkObjConstr.newTree(
-    bindSym"Grid",
+    bindSym"GridLayout",
     nnkExprColonExpr.newTree(
       ident"useGrid",
       ident"true")
@@ -271,7 +277,7 @@ macro subplots*(stmts: untyped): untyped =
     grid: NimNode
   let gridIdent = ident"gridImpl"
   grid = quote do:
-    var `gridIdent` = Grid(useGrid: false)
+    var `gridIdent` = GridLayout(useGrid: false)
 
   for stmt in stmts:
     case stmt.kind
@@ -288,7 +294,7 @@ macro subplots*(stmts: untyped): untyped =
       case stmt.strVal
       of "grid":
         grid = quote do:
-          var `gridIdent` = Grid(useGrid: true)
+          var `gridIdent` = GridLayout(useGrid: true)
 
     else:
       error("Statement needs to be `baseLayout`, `plot`, `grid`! " &
@@ -314,6 +320,63 @@ macro subplots*(stmts: untyped): untyped =
     block:
       `grid`
       combine(`layout`, `pltArray`, `domainArray`, `gridIdent`)
+
+proc createGrid*(numPlots: int, numPlotsPerRow = 0, layout = Layout()): Grid =
+  ## creates a `Grid` object with `numPlots` to which one can assign plots
+  ## at runtime. Optionally the number of desired plots per row of the grid
+  ## may be given. If left empty, the grid will attempt to produce a square,
+  ## resorting to more columns than rows if not possible.
+  result = Grid(layout: layout,
+                numPlotsPerRow: numPlotsPerRow,
+                plots: newSeq[PlotJson](numPlots))
+
+proc add*[T](grid: var Grid, plt: Plot[T]) =
+  ## add a new plot to the grid. Extends the number of plots stored in the
+  ## `Grid` by one.
+  ## NOTE: the given `Plot[T]` object is converted to a `PlotJson` object
+  ## upon assignment!
+  grid.plots.add plt.toPlotJson
+
+proc `[]=`*[T](grid: var Grid, idx: int, plt: Plot[T]) =
+  ## converts the given `Plot[T]` to a `PlotJson` and assigns to the given
+  ## index.
+  grid.plots[idx] = plt.toPlotJson
+
+proc `[]`*(grid: Grid, idx: int): PlotJson =
+  ## returns the plot at index `idx`.
+  ## NOTE: the plot is returned as a `PlotJson` object, not as the `Plot[T]`
+  ## originally put in!
+  result = grid.plots[idx]
+
+proc showImpl(grid: Grid): PlotJson =
+  ## helper proc containing the actual implementation that takes care of the
+  ## conversion of `Grid` to something we can plot
+  let
+    (rows, cols) = calcRowsColumns(rows = 0,
+                                   columns = grid.numPlotsPerRow,
+                                   nPlots = grid.plots.len)
+    gridLayout = GridLayout(useGrid: true, rows: rows, columns: cols)
+  result = combine(grid.layout, grid.plots, [], gridLayout)
+
+# show command for a `Grid`
+when not hasThreadSupport and not defined(js):
+  when false:
+    # NOTE: for some weird reason this currently always activates the
+    # fatal pragma if not compiled with `--threads:on`, even if it's not
+    # being called somewhere
+    proc show*(grid: Grid, filename: string) =
+      {.fatal: "`filename` argument to `show` only supported if compiled " &
+        "with --threads:on!".}
+
+  proc show*(grid: Grid) =
+    ## display the `Grid` plot. Converts the `grid` to a call to
+    ## `combine` and calls `show` on it.
+    grid.showImpl.show()
+elif not defined(js):
+  proc show*(grid: Grid, filename = "") =
+    ## display the `Grid` plot. Converts the `grid` to a call to
+    ## `combine` and calls `show` on it.
+    grid.showImpl.show(filename)
 
 when isMainModule:
   # test the calculation of rows and columns
