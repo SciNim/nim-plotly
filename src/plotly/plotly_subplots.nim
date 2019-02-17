@@ -348,7 +348,7 @@ proc `[]`*(grid: Grid, idx: int): PlotJson =
   ## originally put in!
   result = grid.plots[idx]
 
-proc showImpl(grid: Grid): PlotJson =
+proc showImpl*(grid: Grid): PlotJson =
   ## helper proc containing the actual implementation that takes care of the
   ## conversion of `Grid` to something we can plot
   let
