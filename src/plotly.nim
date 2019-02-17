@@ -15,3 +15,6 @@ export plotly_subplots
 when not defined(js):
   import plotly / plotly_display
   export plotly_display
+else:
+  import plotly / plotly_js
+  export plotly_js
