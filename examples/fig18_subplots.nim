@@ -126,7 +126,7 @@ var gridAlt = createGrid((rows: 2, cols: 2))
 gridAlt[(0, 0)] = plt1
 # or as named tuples
 gridAlt[(row: 0, col: 1)] = plt2
-gridAlt[(row: 0, col: 3)] = plt3
+gridAlt[(row: 1, col: 0)] = plt3
 # Assigning the third plot in a 2x2 grid to coord (1, 1) moves it to (1, 0),
 # i.e. the rows are always filled from left to right, if plots are missing!
 
