@@ -340,6 +340,10 @@ proc add*[T](grid: var Grid, plt: Plot[T]) =
 proc `[]=`*[T](grid: var Grid, idx: int, plt: Plot[T]) =
   ## converts the given `Plot[T]` to a `PlotJson` and assigns to the given
   ## index.
+  if idx > grid.plots.high:
+    raise newException(IndexError, "Index position " & $idx & " is out of " &
+      "bounds for grid with " & $grid.plots.len & " plots.")
+  grid.plots[idx] = plt.toPlotJson
   grid.plots[idx] = plt.toPlotJson
 
 proc `[]`*(grid: Grid, idx: int): PlotJson =
