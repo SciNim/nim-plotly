@@ -119,3 +119,17 @@ grid[1] = plt2
 # However, you may also extend the grid by using `add`
 grid.add plt3
 grid.show()
+
+# alternatively define grid using rows and columns directly:
+var gridAlt = createGrid((rows: 2, cols: 2))
+# to which you can assign also in tuples
+gridAlt[(0, 0)] = plt1
+# or as named tuples
+gridAlt[(row: 0, col: 1)] = plt2
+gridAlt[(row: 0, col: 3)] = plt3
+# Assigning the third plot in a 2x2 grid to coord (1, 1) moves it to (1, 0),
+# i.e. the rows are always filled from left to right, if plots are missing!
+
+# Note that the underlying `Grid` object is the same, so both can
+# be used interchangeably.
+gridAlt.show()

@@ -337,9 +337,17 @@ proc createGrid*(numPlots: int, numPlotsPerRow = 0, layout = Layout()): Grid =
   ## at runtime. Optionally the number of desired plots per row of the grid
   ## may be given. If left empty, the grid will attempt to produce a square,
   ## resorting to more columns than rows if not possible.
+  ## Optionally a base layout can be given for the grid.
   result = Grid(layout: layout,
                 numPlotsPerRow: numPlotsPerRow,
                 plots: newSeq[PlotJson](numPlots))
+
+proc createGrid*(size: tuple[rows, cols: int], layout = Layout()): Grid =
+  ## creates a `Grid` object with `rows` x `cols` plots to which one can assign
+  ## plots at runtime.
+  ## Optionally a base layout can be given for the grid.
+  let nPlots = size.rows * size.cols
+  result = createGrid(nPlots, size.cols, layout)
 
 proc add*[T](grid: var Grid, plt: Plot[T]) =
   ## add a new plot to the grid. Extends the number of plots stored in the
@@ -355,12 +363,30 @@ proc `[]=`*[T](grid: var Grid, idx: int, plt: Plot[T]) =
     raise newException(IndexError, "Index position " & $idx & " is out of " &
       "bounds for grid with " & $grid.plots.len & " plots.")
   grid.plots[idx] = plt.toPlotJson
+
+proc `[]=`*[T](grid: var Grid, coord: tuple[row, col: int], plt: Plot[T]) =
+  ## converts the given `Plot[T]` to a `PlotJson` and assigns to specified
+  ## (row, column) coordinate of the grid.
+  let idx = grid.numPlotsPerRow * coord.row + coord.col
+  if coord.col > grid.numPlotsPerRow:
+    raise newException(IndexError, "Column " & $coord.col & " is out of " &
+      "bounds for grid with " & $grid.numPlotsPerRow & " columns!")
+  if idx > grid.plots.high:
+    raise newException(IndexError, "Position (" & $coord.row & ", " & $coord.col &
+      ") is out of bounds for grid with " & $grid.plots.len & " plots.")
   grid.plots[idx] = plt.toPlotJson
 
 proc `[]`*(grid: Grid, idx: int): PlotJson =
   ## returns the plot at index `idx`.
   ## NOTE: the plot is returned as a `PlotJson` object, not as the `Plot[T]`
   ## originally put in!
+  result = grid.plots[idx]
+
+proc `[]`*(grid: Grid, coord: tuple[row, col: int]): PlotJson =
+  ## returns the plot at (row, column) coordinate `coord`.
+  ## NOTE: the plot is returned as a `PlotJson` object, not as the `Plot[T]`
+  ## originally put in!
+  let idx = grid.numPlotsPerRow * coord.row + coord.col
   result = grid.plots[idx]
 
 proc showImpl*(grid: Grid): PlotJson =
