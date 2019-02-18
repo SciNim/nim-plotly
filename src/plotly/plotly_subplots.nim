@@ -389,9 +389,9 @@ proc `[]`*(grid: Grid, coord: tuple[row, col: int]): PlotJson =
   let idx = grid.numPlotsPerRow * coord.row + coord.col
   result = grid.plots[idx]
 
-proc showImpl*(grid: Grid): PlotJson =
-  ## helper proc containing the actual implementation that takes care of the
-  ## conversion of `Grid` to something we can plot
+proc toPlotJson*(grid: Grid): PlotJson =
+  ## converts the `Grid` object to a `PlotJson` object ready to be plotted
+  ## via the normal `show` procedure.
   let
     (rows, cols) = calcRowsColumns(rows = -1,
                                    columns = grid.numPlotsPerRow,
@@ -412,12 +412,12 @@ when not hasThreadSupport and not defined(js):
   proc show*(grid: Grid) =
     ## display the `Grid` plot. Converts the `grid` to a call to
     ## `combine` and calls `show` on it.
-    grid.showImpl.show()
+    grid.toPlotJson.show()
 elif not defined(js):
   proc show*(grid: Grid, filename = "") =
     ## display the `Grid` plot. Converts the `grid` to a call to
     ## `combine` and calls `show` on it.
-    grid.showImpl.show(filename)
+    grid.toPlotJson.show(filename)
 
 when isMainModule:
   # test the calculation of rows and columns
