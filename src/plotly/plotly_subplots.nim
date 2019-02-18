@@ -38,13 +38,24 @@ proc assignDomain(plt: PlotJson, xaxis, yaxis: string, domain: Domain) =
 
 proc calcRowsColumns(rows, columns: int, nPlots: int): (int, int) =
   ## Calculates the desired rows and columns for # of `nPlots` given the user's
-  ## input for `rows` and `columns`. If no input is given, calculate the next
-  ## possible rectangle of plots that favors columns over rows
-  if rows == 0 and columns == 0:
+  ## input for `rows` and `columns`.
+  ## - If no input is given, calculate the next possible rectangle of plots
+  ##   that favors columns over rows.
+  ## - If either row or column is 0, sets this dimension to 1
+  ## - If either row or column is -1, calculate square of nPlots for rows / cols
+  ## - If both row and column is -1 or either -1 and the other 0, default back
+  ##   to the next possible square.
+  if rows <= 0 and columns <= 0:
     # calc square of plots
     let sqPlt = sqrt(nPlots.float)
     result[1] = sqPlt.ceil.int
     result[0] = sqPlt.round.int
+  elif rows == -1 and columns > 0:
+    result[0] = (nPlots.float / columns.float).ceil.int
+    result[1] = columns
+  elif rows > 0 and columns == -1:
+    result[0] = rows
+    result[1] = (nPlots.float / rows.float).ceil.int
   elif rows == 0 and columns > 0:
     # 1 row, user desired # cols
     result = (1, columns)
@@ -356,7 +367,7 @@ proc showImpl*(grid: Grid): PlotJson =
   ## helper proc containing the actual implementation that takes care of the
   ## conversion of `Grid` to something we can plot
   let
-    (rows, cols) = calcRowsColumns(rows = 0,
+    (rows, cols) = calcRowsColumns(rows = -1,
                                    columns = grid.numPlotsPerRow,
                                    nPlots = grid.plots.len)
     gridLayout = GridLayout(useGrid: true, rows: rows, columns: cols)
@@ -396,3 +407,6 @@ when isMainModule:
   doAssert calcRowsColumns(0, 0, 7) == (3, 3)
   doAssert calcRowsColumns(0, 0, 8) == (3, 3)
   doAssert calcRowsColumns(0, 0, 9) == (3, 3)
+  doAssert calcRowsColumns(-1, 2, 4) == (2, 2)
+  doAssert calcRowsColumns(-1, 0, 4) == (2, 2)
+  doAssert calcRowsColumns(2, -1, 4) == (2, 2)
