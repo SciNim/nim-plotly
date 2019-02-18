@@ -79,28 +79,28 @@ proc combine(baseLayout: Layout,
     useGrid = true
   for i, p in plts:
     #doAssert p.traces.len == 1
-    let trIdx = result.traces.len
     # first add traces of `*each Plot*`, only afterwards flatten them!
-    result.traces.add p.traces
-    # first plot needs to be treated differently than all others
-    let idx = result.traces.len
-    var
-      xaxisStr = "xaxis"
-      yaxisStr = "yaxis"
-    if i > 0:
-      xaxisStr &= $idx
-      yaxisStr &= $idx
+    if not p.isNil:
+      result.traces.add p.traces
+      # first plot needs to be treated differently than all others
+      let idx = result.traces.len
+      var
+        xaxisStr = "xaxis"
+        yaxisStr = "yaxis"
+      if i > 0:
+        xaxisStr &= $idx
+        yaxisStr &= $idx
 
-    result.layout[xaxisStr] = p.layout["xaxis"]
-    result.layout[yaxisStr] = p.layout["yaxis"]
+      result.layout[xaxisStr] = p.layout["xaxis"]
+      result.layout[yaxisStr] = p.layout["yaxis"]
 
-    if not useGrid:
-      result.assignDomain(xaxisStr, yaxisStr, domains[i])
+      if not useGrid:
+        result.assignDomain(xaxisStr, yaxisStr, domains[i])
 
-    if i > 0:
-      # anchor xaxis to y data and vice versa
-      result.layout[xaxisStr]["anchor"] = % ("y" & $idx)
-      result.layout[yaxisStr]["anchor"] = % ("x" & $idx)
+      if i > 0:
+        # anchor xaxis to y data and vice versa
+        result.layout[xaxisStr]["anchor"] = % ("y" & $idx)
+        result.layout[yaxisStr]["anchor"] = % ("x" & $idx)
 
   var i = 0
   # flatten traces and set correct axis for correct original plots
