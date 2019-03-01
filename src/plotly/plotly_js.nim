@@ -1,6 +1,7 @@
 import jsbind
 import jsffi
 import dom
+import plotly_types
 # defines some functions and types used for the JS target. In this case
 # we call the plotly.js functions directly.
 
