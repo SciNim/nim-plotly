@@ -1,5 +1,7 @@
 import json, macros, math
-import plotly_types, plotly_sugar, api, plotly_display
+import plotly_types, plotly_sugar, api
+when not defined(js):
+  from plotly_display import show
 
 type
   # subplot specific object, which stores intermediate information about
@@ -400,6 +402,7 @@ proc toPlotJson*(grid: Grid): PlotJson =
   result = combine(grid.layout, grid.plots, [], gridLayout)
 
 # show command for a `Grid`
+const hasThreadSupport = compileOption("threads")
 when not hasThreadSupport and not defined(js):
   when false:
     # NOTE: for some weird reason this currently always activates the
