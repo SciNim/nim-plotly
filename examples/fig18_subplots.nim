@@ -101,3 +101,35 @@ let pltC2 = subplots:
   plot:
     plt3
 pltC2.show()
+
+# Finally you may want to create a grid, to which you only add
+# plots at a later time, potentially at runtime. Use `createGrid` for this.
+# Note: internally the returned `Grid` object stores all plots already
+# converted to `PlotJson` (i.e. the `layout` and `traces` fields are
+# `JsonNodes`).
+var grid = createGrid(numPlots = 2) #,
+                      # allows to set the desired number of columns
+                      # if not set will try to arange in a square
+                      # numPlotsPerRow = 2,
+                      # optionally set a layout for the plots
+                      # layout = baseLayout)
+# the returned grid has space for 2 plots.
+grid[0] = plt1
+grid[1] = plt2
+# However, you may also extend the grid by using `add`
+grid.add plt3
+grid.show()
+
+# alternatively define grid using rows and columns directly:
+var gridAlt = createGrid((rows: 2, cols: 2))
+# to which you can assign also in tuples
+gridAlt[(0, 0)] = plt1
+# or as named tuples
+gridAlt[(row: 0, col: 1)] = plt2
+gridAlt[(row: 1, col: 0)] = plt3
+# Assigning the third plot in a 2x2 grid to coord (1, 1) moves it to (1, 0),
+# i.e. the rows are always filled from left to right, if plots are missing!
+
+# Note that the underlying `Grid` object is the same, so both can
+# be used interchangeably.
+gridAlt.show()

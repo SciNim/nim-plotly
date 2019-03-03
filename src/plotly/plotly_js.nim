@@ -1,6 +1,7 @@
 import jsbind
 import jsffi
 import dom
+import plotly_types
 # defines some functions and types used for the JS target. In this case
 # we call the plotly.js functions directly.
 
@@ -17,3 +18,7 @@ proc restyle*(p: PlotlyObj; divname: cstring, update: JsObject) {.jsimport.}
 # seems to behave differently
 proc parseJsonToJs*(json: cstring): JsObject {.jsimportgWithName: "JSON.parse".}
 
+proc parseTraces*[T](traces: seq[Trace[T]]): string =
+  ## parses the traces of a Plot object to strings suitable for
+  ## plotly by creating a JsonNode and converting to string repr
+  result.toUgly(% traces)
