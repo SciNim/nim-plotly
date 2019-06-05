@@ -51,7 +51,7 @@ template histPlot*(hist: untyped): untyped =
   let title = "Histogram of " & astToStr(hist)
   let plLayout = Layout(title: title,
                         width: 800, height: 600,
-                        xaxis: Axis(title: astToStr(x)),
+                        xaxis: Axis(title: astToStr(hist)),
                         yaxis: Axis(title: "Counts"),
                         autosize: false)
   let tr = histTrace(hist)
