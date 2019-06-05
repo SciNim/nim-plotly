@@ -255,6 +255,7 @@ type
     autosize*: bool
     showlegend*: bool
     legend*: Legend
+    font*: Font
     xaxis*: Axis
     yaxis*: Axis
     yaxis2*: Axis
