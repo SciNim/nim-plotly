@@ -254,7 +254,7 @@ proc legendBgColor*[T](plt: Plot[T], color: Color): Plot[T] =
   result = plt
   if result.layout.legend == nil:
     result.layout.legend = Legend()
-  result.layout.legend.bgcolor = color
+  result.layout.legend.backgroundColor = color
 
 proc legendBorderColor*[T](plt: Plot[T], color: Color): Plot[T] =
   result = plt
