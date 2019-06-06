@@ -1,9 +1,13 @@
 sudo: required
 
+
 os:
   - linux
 
 language: c
+dist: xenial
+services:
+  - xvfb
 
 cache:
   directories:
@@ -12,12 +16,6 @@ cache:
 
 addons:
   firefox: "60.0.1"
-
-before_script:
-  # start a virtual X server using xvfb in which we run firefox
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
 
 install:
   - export CHOOSENIM_CHOOSE_VERSION="#d2f7ecb80"
