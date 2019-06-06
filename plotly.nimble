@@ -22,7 +22,7 @@ task travisTest, "run the tests on travis":
   # define the `travis` flag to use our custom `xdg-open` based proc to open
   # firefox, which is non-blocking
   exec "nim c --lineDir:on -d:travis --debuginfo -r examples/all"
-  exec "nim c --lineDir:on -d:travis --debuginfo --threads:on -r examples/fig12_save_figure.nim"
+  exec "nim c --lineDir:on -d:travis -d:DEBUG --debuginfo -d:webview --threads:on -r examples/fig12_save_figure.nim"
 
 task docs, "Builds documentation":
   mkDir("docs"/"plotly")

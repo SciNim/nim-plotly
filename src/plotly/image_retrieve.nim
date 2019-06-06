@@ -83,6 +83,8 @@ proc cb(req: Request) {.async.} =
     return
   else:
     # receive connection successful package
+    withDebug:
+      debugEcho "Awaiting message"
     let (opcodeConnect, dataConnect) = await ws.readData()
     if dataConnect == $Message.Connected:
       withDebug:
@@ -144,6 +146,10 @@ proc listenForImage*(filename: string) =
       withDebug:
         debugEcho "Closing server"
       server.close()
-      break
+      withDebug:
+        debugEcho "Server closed!"
+      return
+      #break
     # else poll for events, i.e. let the callback work
     poll(500)
+  debugEcho "Broke from while loop!"

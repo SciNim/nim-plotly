@@ -7,7 +7,7 @@ import sequtils
 # the user sees them as a single module
 import api, plotly_types, plotly_subplots
 
-when defined(webview):
+when defined(webview) or defined(travis):
   import webview
 
 # normally just import browsers module. Howver, in case we run
@@ -17,28 +17,47 @@ when defined(webview):
 when not defined(travis):
   import browsers
 
-proc showPlot(file: string) =
-  when defined(travis):
-    # patched version of Nim's `openDefaultBrowser` which always
-    # returns immediately
-    var u = quoteShell(file)
-    discard execShellCmd("xdg-open " & u & " &")
-  elif defined(webview):
-    let w = newWebView("Nim Plotly", "file://" & file)
-    w.run()
-    w.exit()
-  else:
-    # default normal browser
-    openDefaultBrowser(file)
-
-include plotly/tmpl_html
-
 # check whether user is compiling with thread support. We can only compile
 # `saveImage` if the user compiles with it!
 const hasThreadSupport* = compileOption("threads")
 when hasThreadSupport:
   import threadpool
   import plotly/image_retrieve
+
+when hasThreadSupport:
+  proc showPlotThreaded(file: string, thr: Thread[string]) =
+    when defined(travis):
+      let w = newWebView("Nim Plotly", "file://" & file)
+      while thr.running:
+        discard w.loop(1)
+      thr.joinThread
+      w.exit()
+    elif defined(webview):
+      let w = newWebView("Nim Plotly", "file://" & file)
+      w.run()
+      w.exit()
+    else:
+      # default normal browser
+      openDefaultBrowser(file)
+else:
+  proc showPlot(file: string) =
+    when defined(webview):
+      let w = newWebView("Nim Plotly", "file://" & file)
+      w.run()
+      w.exit()
+    elif defined(travis):
+      # patched version of Nim's `openDefaultBrowser` which always
+      # returns immediately
+      var u = quoteShell(file)
+      let cmd = "xdg-open " & u & " &"
+      debugecho "Executing shell cmd: ", cmd
+      discard execShellCmd(cmd)
+      debugecho "returned"
+    else:
+      # default normal browser
+      openDefaultBrowser(file)
+
+include plotly/tmpl_html
 
 proc parseTraces*[T](traces: seq[Trace[T]]): string =
   ## parses the traces of a Plot object to strings suitable for
@@ -154,10 +173,14 @@ else:
       thr.createThread(listenForImage, filename)
 
     let tmpfile = p.save(path, html_template, filename)
-    showPlot(tmpfile)
+    showPlotThreaded(tmpfile, thr)
     if filename.len > 0:
       # wait for thread to join
+      debugecho "Waiting for thread to join"
       thr.joinThread
+      doAssert(not thr.running())
+
+    debugecho "removing file"
     removeFile(tmpfile)
 
   proc saveImage*(p: SomePlot, filename: string) =
