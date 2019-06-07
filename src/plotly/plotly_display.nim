@@ -25,16 +25,17 @@ when hasThreadSupport:
   import plotly/image_retrieve
 
 when hasThreadSupport:
-  proc showPlotThreaded(file: string, thr: Thread[string]) =
-    when defined(travis):
+  proc showPlotThreaded(file: string, thr: Thread[string], onlySave: static bool = false) =
+    when defined(webview) or defined(travis):
+      # on travis we use webview when saving files. We run the webview loop
+      # until the image saving thread is finished
       let w = newWebView("Nim Plotly", "file://" & file)
-      while thr.running:
-        discard w.loop(1)
-      thr.joinThread
-      w.exit()
-    elif defined(webview):
-      let w = newWebView("Nim Plotly", "file://" & file)
-      w.run()
+      when onlySave or defined(travis):
+        while thr.running:
+          discard w.loop(1)
+        thr.joinThread
+      else:
+        w.run()
       w.exit()
     else:
       # default normal browser
@@ -50,9 +51,7 @@ else:
       # returns immediately
       var u = quoteShell(file)
       let cmd = "xdg-open " & u & " &"
-      debugecho "Executing shell cmd: ", cmd
       discard execShellCmd(cmd)
-      debugecho "returned"
     else:
       # default normal browser
       openDefaultBrowser(file)
@@ -162,25 +161,27 @@ when not hasThreadSupport:
 
 else:
   # if compiled with --threads:on
-  proc show*(p: SomePlot, filename = "", path = "", html_template = defaultTmplString) =
+  proc show*(p: SomePlot,
+             filename = "",
+             path = "",
+             html_template = defaultTmplString,
+             onlySave: static bool = false) =
     ## creates the temporary Html file using `save`, and opens the user's
-    ## default browser
-    # if we are handed a filename, the user wants to save the file to disk.
-    # Start a websocket server to receive the image data
+    ## default browser.
+    ## If `onlySave` is true, the plot is only saved and "not shown". However
+    ## this only works on the `webview` target. And a webview window has to
+    ## be opened, but will be closed automatically the moment the plot is saved.
     var thr: Thread[string]
     if filename.len > 0:
-      # wait a short while to make sure the server is up and running
+      # start a second thread with a webview server to capture the image
       thr.createThread(listenForImage, filename)
 
     let tmpfile = p.save(path, html_template, filename)
-    showPlotThreaded(tmpfile, thr)
+    showPlotThreaded(tmpfile, thr, onlySave)
     if filename.len > 0:
       # wait for thread to join
-      debugecho "Waiting for thread to join"
       thr.joinThread
-      doAssert(not thr.running())
 
-    debugecho "removing file"
     removeFile(tmpfile)
 
   proc saveImage*(p: SomePlot, filename: string) =
@@ -188,4 +189,6 @@ else:
     ## supported filetypes:
     ## - jpg, png, svg, webp
     ## Note: only supported if compiled with --threads:on!
-    p.show(filename = filename)
+    ## If the `webview` target is used, the plot is ``only`` saved and not
+    ## shown (for long; webview closed after image saved correctly).
+    p.show(filename = filename, onlySave = true)

@@ -23,7 +23,9 @@ let
 # now call the show proc with the `filename` argument to save the
 # file with the given filetype
 # p.show(filename = "HelloImage.png")
-# alternatively call the `saveImage` proc instead of show
+# alternatively call the `saveImage` proc instead of show. If the webview target
+# is used, this will open a webview window, save the file and close the webview
+# window automatically.
 p.saveImage("HelloImage.svg")
 # NOTE: if we compile this without --threads:on support, we'll get
 # an error at compile time that thread support is needed.
