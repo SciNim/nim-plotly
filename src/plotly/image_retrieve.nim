@@ -145,5 +145,6 @@ proc listenForImage*(filename: string) =
         debugEcho "Closing server"
       server.close()
       break
+      #break
     # else poll for events, i.e. let the callback work
     poll(500)

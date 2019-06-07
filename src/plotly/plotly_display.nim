@@ -7,7 +7,7 @@ import sequtils
 # the user sees them as a single module
 import api, plotly_types, plotly_subplots
 
-when defined(webview):
+when defined(webview) or defined(travis):
   import webview
 
 # normally just import browsers module. Howver, in case we run
@@ -17,28 +17,46 @@ when defined(webview):
 when not defined(travis):
   import browsers
 
-proc showPlot(file: string) =
-  when defined(travis):
-    # patched version of Nim's `openDefaultBrowser` which always
-    # returns immediately
-    var u = quoteShell(file)
-    discard execShellCmd("xdg-open " & u & " &")
-  elif defined(webview):
-    let w = newWebView("Nim Plotly", "file://" & file)
-    w.run()
-    w.exit()
-  else:
-    # default normal browser
-    openDefaultBrowser(file)
-
-include plotly/tmpl_html
-
 # check whether user is compiling with thread support. We can only compile
 # `saveImage` if the user compiles with it!
 const hasThreadSupport* = compileOption("threads")
 when hasThreadSupport:
   import threadpool
   import plotly/image_retrieve
+
+when hasThreadSupport:
+  proc showPlotThreaded(file: string, thr: Thread[string], onlySave: static bool = false) =
+    when defined(webview) or defined(travis):
+      # on travis we use webview when saving files. We run the webview loop
+      # until the image saving thread is finished
+      let w = newWebView("Nim Plotly", "file://" & file)
+      when onlySave or defined(travis):
+        while thr.running:
+          discard w.loop(1)
+        thr.joinThread
+      else:
+        w.run()
+      w.exit()
+    else:
+      # default normal browser
+      openDefaultBrowser(file)
+else:
+  proc showPlot(file: string) =
+    when defined(webview):
+      let w = newWebView("Nim Plotly", "file://" & file)
+      w.run()
+      w.exit()
+    elif defined(travis):
+      # patched version of Nim's `openDefaultBrowser` which always
+      # returns immediately
+      var u = quoteShell(file)
+      let cmd = "xdg-open " & u & " &"
+      discard execShellCmd(cmd)
+    else:
+      # default normal browser
+      openDefaultBrowser(file)
+
+include plotly/tmpl_html
 
 proc parseTraces*[T](traces: seq[Trace[T]]): string =
   ## parses the traces of a Plot object to strings suitable for
@@ -143,21 +161,27 @@ when not hasThreadSupport:
 
 else:
   # if compiled with --threads:on
-  proc show*(p: SomePlot, filename = "", path = "", html_template = defaultTmplString) =
+  proc show*(p: SomePlot,
+             filename = "",
+             path = "",
+             html_template = defaultTmplString,
+             onlySave: static bool = false) =
     ## creates the temporary Html file using `save`, and opens the user's
-    ## default browser
-    # if we are handed a filename, the user wants to save the file to disk.
-    # Start a websocket server to receive the image data
+    ## default browser.
+    ## If `onlySave` is true, the plot is only saved and "not shown". However
+    ## this only works on the `webview` target. And a webview window has to
+    ## be opened, but will be closed automatically the moment the plot is saved.
     var thr: Thread[string]
     if filename.len > 0:
-      # wait a short while to make sure the server is up and running
+      # start a second thread with a webview server to capture the image
       thr.createThread(listenForImage, filename)
 
     let tmpfile = p.save(path, html_template, filename)
-    showPlot(tmpfile)
+    showPlotThreaded(tmpfile, thr, onlySave)
     if filename.len > 0:
       # wait for thread to join
       thr.joinThread
+
     removeFile(tmpfile)
 
   proc saveImage*(p: SomePlot, filename: string) =
@@ -165,4 +189,6 @@ else:
     ## supported filetypes:
     ## - jpg, png, svg, webp
     ## Note: only supported if compiled with --threads:on!
-    p.show(filename = filename)
+    ## If the `webview` target is used, the plot is ``only`` saved and not
+    ## shown (for long; webview closed after image saved correctly).
+    p.show(filename = filename, onlySave = true)
