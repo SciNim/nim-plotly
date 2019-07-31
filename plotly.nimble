@@ -6,7 +6,7 @@ description   = "plotting library for nim"
 license       = "MIT"
 
 
-requires "nim >= 0.18.0", "chroma", "jsbind", "webview", "websocket  >= 0.3.5"
+requires "nim >= 0.18.0", "chroma", "jsbind", "webview", "websocket#head"
 
 srcDir = "src"
 
