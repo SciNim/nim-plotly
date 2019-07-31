@@ -6,7 +6,7 @@ func empty*(): Color =
   ## returns completely black
   result = Color(r: 0, g: 0, b: 0, a: 0)
 
-func empty*(c: Color): bool =
+func isEmpty*(c: Color): bool =
   ## checks whether given color is black according to above
   # TODO: this is also black, but should never need black with alpha == 0
   result = c == empty()
