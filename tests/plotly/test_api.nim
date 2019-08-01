@@ -19,6 +19,79 @@ suite "API serialization":
     check c2 == % "#7F7F7F"
     check c3 == % "#000000"
 
+  test "Marker":
+    test "make Markers, scalar size":
+      let
+        mk = Marker[float](size: @[1.0])
+        expected = %*{ "size": 1.0 }
+      let r = %mk
+      check r == expected
+
+    test "make Markers, seq of sizes":
+      let
+        mk = Marker[float](size: @[1.0, 2.0, 3.0])
+        expected = %*{ "size": [1.0, 2.0, 3.0] }
+      let r = %mk
+      check r == expected
+
+    test "make Markers, scalar color":
+      let
+        mk = Marker[float](size: @[1.0],
+                           color: @[color(0.5, 0.5, 0.5)])
+        expected = %*{ "size": 1.0,
+                       "color" : "#7F7F7F"
+                     }
+      let r = %mk
+      check r == expected
+
+    test "make Markers, seq of colors":
+      let
+        mk = Marker[float](size: @[1.0],
+                           color: @[color(0.5, 0.5, 0.5), color(1.0), empty()])
+        expected = %*{ "size": 1.0,
+                       "color" : ["#7F7F7F", "#FFFFFF", "#000000"]
+                     }
+      let r = %mk
+      check r == expected
+
+    test "make Markers, seq of color based on values; no color map":
+      let
+        mk = Marker[float](size: @[1.0],
+                           colorVals: @[0.25, 0.5, 0.75, 1.0])
+        expected = %*{ "size": 1.0,
+                       "color" : [0.25, 0.5, 0.75, 1.0],
+                       "colorscale" : "",
+                       "showscale" : true
+                     }
+      let r = %mk
+      check r == expected
+
+    test "make Markers, seq of color based on values; w/ color map":
+      let
+        mk = Marker[float](size: @[1.0],
+                           colorVals: @[0.25, 0.5, 0.75, 1.0],
+                           colormap: ColorMap.Viridis
+        )
+        expected = %*{ "size": 1.0,
+                       "color" : [0.25, 0.5, 0.75, 1.0],
+                       "colorscale" : "Viridis",
+                       "showscale" : true
+                     }
+      let r = %mk
+      check r == expected
+
+    test "make Markers, color takes precedent over colorVals":
+      let
+        mk = Marker[float](size: @[1.0],
+                           color: @[color(0.5, 0.5, 0.5)],
+                           colorVals: @[0.25, 0.5, 0.75, 1.0],
+                           colormap: ColorMap.Viridis
+        )
+        expected = %*{ "size": 1.0,
+                       "color" : "#7F7F7F"
+                     }
+      let r = %mk
+      check r == expected
 
   test "ErrorBar":
     test "make ConstantSym ErrorBar, manual":
@@ -68,6 +141,7 @@ suite "API serialization":
                     }
       let r = %eb
       check r == expected
+
     test "make PercentSym ErrorBar, newErrorBar":
       let
         eb = newErrorBar[float](2.0, percent = true) # fields not given won't be serialized
