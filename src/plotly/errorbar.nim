@@ -44,7 +44,7 @@ func newErrorBar*[T: SomeNumber](color: Color = empty(), thickness = 0.0,
                                  width = 0.0, visible = true): ErrorBar[T] =
   ## creates an `ErrorBar` object of type `ebkSqrt`
   result = ErrorBar[T](visible: visible, color: color, thickness: thickness,
-                         width: width, kind: ebkSqrt)
+                       width: width, kind: ebkSqrt)
 
 func newErrorBar*[T](err: seq[T], color: Color = empty(), thickness = 0.0,
                      width = 0.0, visible = true): ErrorBar[T] =

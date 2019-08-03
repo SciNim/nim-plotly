@@ -114,7 +114,7 @@ func `%`*(f: Font): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if f.size != 0:
     fields["size"] = % f.size
-  if not f.color.empty:
+  if not f.color.isEmpty:
     fields["color"] = % f.color
   if f.family.len > 0:
     fields["family"] = % f.family
@@ -144,7 +144,7 @@ func `%`*(a: Axis): JsonNode =
   if a.rangeslider != nil:
     fields["rangeslider"] = % a.rangeslider
 
-  if not a.gridColor.empty:
+  if not a.gridColor.isEmpty:
     fields["gridcolor"] = % a.gridColor
   if a.gridWidth != 0:
     fields["gridwidth"] = % a.gridWidth
@@ -155,9 +155,9 @@ func `%`*(l: Legend): JsonNode =
   var fields = initOrderedTable[string, JsonNode](4)
   if l.font != nil:
     fields["font"] = % l.font
-  if not l.backgroundColor.empty:
+  if not l.backgroundColor.isEmpty:
     fields["bgcolor"] = % l.backgroundColor
-  if not l.bordercolor.empty:
+  if not l.bordercolor.isEmpty:
     fields["bordercolor"] = % l.borderColor
   if l.borderwidth != 0:
     fields["borderwidth"] = % l.borderWidth
@@ -201,9 +201,9 @@ func `%`*(l: Layout): JsonNode =
     fields["hovermode"] = % l.hovermode
   if 0 < l.annotations.len:
     fields["annotations"] = % l.annotations
-  if not l.backgroundColor.empty:
+  if not l.backgroundColor.isEmpty:
     fields["plot_bgcolor"] = % l.backgroundColor
-  if not l.paperColor.empty:
+  if not l.paperColor.isEmpty:
     fields["paper_bgcolor"] = % l.paperColor
 
   result = JsonNode(kind: JObject, fields: fields)
@@ -222,7 +222,7 @@ func `%`*(b: ErrorBar): JsonNode =
   ## creates a JsonNode from an `ErrorBar` object depending on the object variant
   var fields = initOrderedTable[string, JsonNode](4)
   fields["visible"] = % b.visible
-  if not b.color.empty:
+  if not b.color.isEmpty:
     fields["color"] = % b.color.toHtmlHex
   if b.thickness > 0:
     fields["thickness"] = % b.thickness
