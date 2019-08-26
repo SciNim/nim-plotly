@@ -227,6 +227,7 @@ type
     hideticklabels*: bool
     gridColor*: Color
     gridWidth*: int
+    ty*: string # `log`
 
   Annotation* = ref object
     x*: float
