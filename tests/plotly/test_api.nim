@@ -8,6 +8,9 @@ suite "Miscellaneous":
   test "Color checks":
     let c = empty()
     check c.isEmpty
+  test "Default AxisType":
+    var ty: AxisType
+    check ty == AxisType.Default
 
 suite "API serialization":
   test "Color":
@@ -375,5 +378,35 @@ suite "API serialization":
                                 }
                      , "hovermode": "closest"
                      }
+      let r = %layout
+      check r == expected
+    test "Layout with log axis":
+      let
+        a = Annotation(x:1, xshift:10, y:2, yshift:20, text:"text")
+        layout = Layout(title: "title", width: 10, height: 10,
+                        xaxis: Axis(title: "x"),
+                        yaxis: Axis(title: "y", ty: AxisType.Log),
+                        annotations: @[a],
+                        autosize: true)
+        expected = %*{ "title": "title"
+                      , "width": 10
+                      , "height": 10
+                      , "xaxis": { "title": "x"
+                                , "autorange": true
+                                }
+                      , "yaxis": { "title": "y"
+                                , "type": "log"
+                                , "autorange": true
+                                }
+                      , "hovermode": "closest"
+                      , "annotations": [ { "x": 1.0
+                                        , "xshift": 10.0
+                                        , "y": 2.0
+                                        , "yshift": 20.0
+                                        , "text": "text"
+                                        , "showarrow": false
+                                        }
+                                      ]
+                      }
       let r = %layout
       check r == expected

@@ -96,6 +96,10 @@ type
     Viridis = "Viridis"
     Cividis = "Cividis"
 
+  AxisType* {.pure.} = enum
+    Default = "-"
+    Log = "log"
+
   ErrorBarKind* = enum   # different error bar kinds (from constant value, array,...)
     ebkConstantSym,      # constant symmetric error
     ebkConstantAsym,     # constant asymmetric error
@@ -227,6 +231,7 @@ type
     hideticklabels*: bool
     gridColor*: Color
     gridWidth*: int
+    ty*: AxisType
 
   Annotation* = ref object
     x*: float
