@@ -15,8 +15,8 @@ for i in 0..40:
 
 let
   layout = Layout(title: "histogram", width: 1200, height: 400,
-                  xaxis: Axis(title:"values"),
-                  yaxis: Axis(title: "frequency"),
+                  xaxis: Axis(title:"frequency"),
+                  yaxis: Axis(title: "values"),
                   autosize: false)
   p = Plot[int](layout: layout, traces: @[d])
 p.show()
