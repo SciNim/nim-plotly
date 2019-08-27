@@ -16,7 +16,7 @@ for i in 0..40:
 # `ty: "log"` on an axis makes it log scale
 let
   layout = Layout(title: "histogram", width: 1200, height: 400,
-                  xaxis: Axis(title:"frequency", ty: "log"),
+                  xaxis: Axis(title:"frequency", ty: AxisType.Log),
                   yaxis: Axis(title: "values"),
                   autosize: false)
   p = Plot[int](layout: layout, traces: @[d])

@@ -8,6 +8,9 @@ suite "Miscellaneous":
   test "Color checks":
     let c = empty()
     check c.isEmpty
+  test "Default AxisType":
+    var ty: AxisType
+    check ty == AxisType.Default
 
 suite "API serialization":
   test "Color":
@@ -382,7 +385,7 @@ suite "API serialization":
         a = Annotation(x:1, xshift:10, y:2, yshift:20, text:"text")
         layout = Layout(title: "title", width: 10, height: 10,
                         xaxis: Axis(title: "x"),
-                        yaxis: Axis(title: "y", ty:"log"),
+                        yaxis: Axis(title: "y", ty: AxisType.Log),
                         annotations: @[a],
                         autosize: true)
         expected = %*{ "title": "title"

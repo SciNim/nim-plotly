@@ -133,7 +133,7 @@ func `%`*(a: Axis): JsonNode =
     fields["overlaying"] = % "y"
   if a.hideticklabels:
     fields["showticklabels"] = % false
-  if a.ty.len > 0:
+  if a.ty != AxisType.Default:
     fields["type"] = % a.ty
 
   if a.range.start != a.range.stop:
