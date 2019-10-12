@@ -2,7 +2,7 @@ import ../../src/plotly
 import ../../src/plotly/color
 import chroma
 import unittest
-import json
+import json, sequtils
 
 suite "Miscellaneous":
   test "Color checks":
@@ -410,3 +410,37 @@ suite "API serialization":
                       }
       let r = %layout
       check r == expected
+
+suite "Sugar":
+  test "Custom colormap comparisons":
+    var data = newSeqWith(1, newSeq[float](1))
+    data[0][0] = 1.5
+    let d = Trace[float](mode: PlotMode.Lines, `type`: PlotType.HeatMap)
+    d.zs = data
+    proc customHeatmap(name: PredefinedCustomMaps): Plot[float] =
+      d.customCmap = getCustomMap(name)
+      d.colorMap = Custom
+      let
+        layout = Layout(title: $name, width: 800, height: 800,
+                        xaxis: Axis(title: "x"),
+                        yaxis: Axis(title: "y"), autosize: false)
+      result = Plot[float](layout: layout, traces: @[d])
+    proc customSugar(name: PredefinedCustomMaps): Plot[float] =
+      result = heatmap(data)
+        .title($name)
+        .width(800)
+        .height(800)
+        .colormap(name)
+
+    for map in PredefinedCustomMaps:
+      let m1 = customHeatmap(map)
+      let m2 = customSugar(map)
+      check m1.layout.width == m2.layout.width
+      check m1.layout.height == m2.layout.height
+      check m1.layout.xaxis.title == m2.layout.xaxis.title
+      check m1.layout.yaxis.title == m2.layout.yaxis.title
+      check m1.traces[0].`type` == m1.traces[0].`type`
+      check m1.traces[0].colormap == m1.traces[0].colormap
+      check m1.traces[0].customCmap == m1.traces[0].customCmap
+      check m1.traces[0].zs == data
+      check m1.traces[0].zs == m2.traces[0].zs
