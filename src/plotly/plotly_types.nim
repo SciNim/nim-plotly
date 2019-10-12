@@ -179,6 +179,8 @@ type
     of HeatMap, HeatMapGL:
       colormap*: ColorMap
       customCmap*: CustomColorMap
+      zmin*: float # can be used to override calculation of color ranges based on data
+      zmax*: float # `zmin` minimum and `zmax` maximum value of color range
     of Contour:
       colorscale*: ColorMap
       customCscale*: CustomColorMap

@@ -3,6 +3,7 @@ import ../../src/plotly/color
 import chroma
 import unittest
 import json, sequtils
+import random
 
 suite "Miscellaneous":
   test "Color checks":
@@ -446,3 +447,36 @@ suite "Sugar":
       check m1.traces[0].zs == m2.traces[0].zs
       check m1.traces[0].customCmap.name == $map
       check m2.traces[0].customCmap.name == $map
+
+  test "Limit colormap range":
+    var data = newSeqWith(28, newSeq[float](28))
+    for x in 0 ..< 28:
+      for y in 0 ..< 28:
+        data[x][y] = max(random(30.0), 0.1)
+    let
+      layout = Layout()
+    block:
+      let d = Trace[float](mode: PlotMode.Lines, `type`: PlotType.HeatMap,
+                           zmin: 0.0, zmax: 10.0,
+                           zs: data)
+      let plt = Plot[float](layout: layout, traces: @[d])
+      let pltJson = % plt
+      check pltJson["traces"][0]["zmin"] == % 0.0
+      check pltJson["traces"][0]["zmax"] == % 10.0
+      check pltJson["traces"][0]["zauto"] == % false
+    block:
+      let d = Trace[float](mode: PlotMode.Lines, `type`: PlotType.HeatMap,
+                           zs: data)
+      let plt = Plot[float](layout: layout, traces: @[d])
+      let pltJson = % plt
+      check not hasKey(pltJson["traces"][0], "zmin")
+      check not hasKey(pltJson["traces"][0], "zmax")
+      check not hasKey(pltJson["traces"][0], "zauto")
+
+    block:
+      let pltJson = % heatmap(data)
+        .zmin(0.0)
+        .zmax(10.0)
+      check pltJson["traces"][0]["zmin"] == % 0.0
+      check pltJson["traces"][0]["zmax"] == % 10.0
+      check pltJson["traces"][0]["zauto"] == % false

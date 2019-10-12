@@ -345,3 +345,17 @@ proc colormap*[T; U: AllowedColorMap](plt: Plot[T], colormap: U, idx = 0): Plot[
     result.traces[idx].colorscale = cmapEnum
     result.traces[idx].customCscale = customCmap
   else: discard
+
+proc zmin*[T](plt: Plot[T], val: float, idx = 0): Plot[T] =
+  ## Allows to set the minimum value of the colormap for a heatmap
+  ## for trace of index `idx`
+  doAssert plt.traces[idx].`type` in {Heatmap, HeatmapGL}
+  result = plt
+  result.traces[idx].zmin = val
+
+proc zmax*[T](plt: Plot[T], val: float, idx = 0): Plot[T] =
+  ## Allows to set the maximum value of the colormap for a heatmap
+  ## for trace of index `idx`
+  doAssert plt.traces[idx].`type` in {Heatmap, HeatmapGL}
+  result = plt
+  result.traces[idx].zmax = val
