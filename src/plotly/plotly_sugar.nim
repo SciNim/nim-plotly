@@ -311,3 +311,37 @@ proc backgroundColor*[T](plt: Plot[T], color: Color): Plot[T] =
 proc paperColor*[T](plt: Plot[T], color: Color): Plot[T] =
   result = plt
   result.layout.paperColor = color
+
+type
+  AllowedColorMap = ColorMap | PredefinedCustomMaps |
+                    CustomColorMap | seq[tuple[r, g, b: float64]]
+proc colormap*[T; U: AllowedColorMap](plt: Plot[T], colormap: U, idx = 0): Plot[T] =
+  ## assigns the given colormap to the trace of index `idx`
+  ## A colormap can be given as one of the following:
+  ## - `ColorMap: enum`
+  ## - `PredefinedCustomMaps: enum`
+  ## - `CustomColorMap: ref object`
+  ## - `colormapData: seq[tuple[r, g, b: float64]]`
+  result = plt
+  doAssert idx < plt.traces.len, "Invalid trace index!"
+  var cmapEnum: ColorMap
+  var customCmap: CustomColorMap = nil
+  when U is ColorMap:
+    cmapEnum = colormap
+  elif U is PredefinedCustomMaps:
+    cmapEnum = ColorMap.Custom
+    customCmap = getCustomMap(colormap)
+  elif U is CustomColorMap:
+    cmapEnum = ColorMap.Custom
+    customCmap = colorMap
+  else:
+    cmapEnum = ColorMap.Custom
+    customCmap = CustomColorMap(rawColors: colormap)
+  case result.traces[idx].`type`
+  of Heatmap, HeatmapGL:
+    result.traces[idx].colormap = cmapEnum
+    result.traces[idx].customCmap = customCmap
+  of Contour:
+    result.traces[idx].colorscale = cmapEnum
+    result.traces[idx].customCscale = customCmap
+  else: discard
