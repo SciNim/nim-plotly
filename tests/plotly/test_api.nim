@@ -444,3 +444,5 @@ suite "Sugar":
       check m1.traces[0].customCmap == m1.traces[0].customCmap
       check m1.traces[0].zs == data
       check m1.traces[0].zs == m2.traces[0].zs
+      check m1.traces[0].customCmap.name == $map
+      check m2.traces[0].customCmap.name == $map

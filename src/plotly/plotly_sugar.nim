@@ -336,7 +336,7 @@ proc colormap*[T; U: AllowedColorMap](plt: Plot[T], colormap: U, idx = 0): Plot[
     customCmap = colorMap
   else:
     cmapEnum = ColorMap.Custom
-    customCmap = CustomColorMap(rawColors: colormap)
+    customCmap = CustomColorMap(rawColors: colormap, name: "Non-predefined")
   case result.traces[idx].`type`
   of Heatmap, HeatmapGL:
     result.traces[idx].colormap = cmapEnum

@@ -98,6 +98,7 @@ type
     Cividis = "Cividis"
 
   PredefinedCustomMaps* = enum
+    Other, # non predefined custom colormap
     ViridisZeroWhite, # Viridis w/ value of 0 set to white; Viridis is part of Plotly!
     Plasma, PlasmaZeroWhite,
     Magma, MagmaZeroWhite,
@@ -108,6 +109,7 @@ type
     # raw color values in range [0.0, 1.0]
     # using range[0.0 .. 1.0]]] doesn't work properly
     rawColors*: seq[tuple[r, g, b: float64]]
+    name*: string
 
   AxisType* {.pure.} = enum
     Default = "-"

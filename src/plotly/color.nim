@@ -59,4 +59,7 @@ proc getCustomMap*(customMap: PredefinedCustomMaps): CustomColorMap =
     data = toSeq(0 .. 255).mapIt((r: 1.0 - it.float / 255.0,
                                   g: 1.0 - it.float / 255.0,
                                   b: 1.0 - it.float / 255.0))
-  result = CustomColorMap(rawColors: data)
+  of Other:
+    discard
+  result = CustomColorMap(rawColors: data,
+                          name: $customMap)
