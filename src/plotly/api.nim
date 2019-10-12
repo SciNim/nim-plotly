@@ -107,6 +107,19 @@ func parseBarFields[T](fields: var OrderedTable[string, JsonNode], t: Trace[T]) 
     fields["orientation"] = % t.orientation
   else: discard
 
+func serializeColormap(cmap: ColorMap, customColorMap: CustomColorMap): JsonNode =
+  ## Given an element of the ColorMap enum `cmap`, returns the correct
+  ## `JsonNode`. The result is either a `JString` if `cmap` is not `Custom`.
+  ## Else the `customColorMap` must not be `nil` and the custom colormap will
+  ## be converted to plotly valid JSON.
+  case cmap
+  of Custom:
+    doAssert not customColorMap.isNil, "CustomColorMap must not be nil if a " &
+      "custom map is desired!"
+    result = makePlotlyCustomMap(customColorMap)
+  else:
+    result = % $cmap
+
 func `%`*(c: Color): JsonNode =
   result = % c.toHtmlHex()
 
@@ -292,10 +305,10 @@ func `%`*(t: Trace): JsonNode =
     if t.zs.len > 0:
       fields["z"] = % t.zs
 
-    fields["colorscale"] = % t.colormap
+    fields["colorscale"] = serializeColormap(t.colormap, t.customCmap)
   of PlotType.Contour:
     if t.zs.len > 0: fields["z"] = % t.zs
-    fields["colorscale"] = % t.colorscale
+    fields["colorscale"] = serializeColormap(t.colorscale, t.customCscale)
     if t.contours.start != t.contours.stop:
       fields["autocontour"] = % false
       fields["contours"] = %* {
@@ -359,7 +372,7 @@ func `%`*(m: Marker): JsonNode =
       fields["color"] = % m.color
   elif m.colorVals.len > 0:
     fields["color"] = % m.colorVals
-    fields["colorscale"] = % m.colormap
+    fields["colorscale"] = serializeColormap(m.colormap, m.customCmap)
     fields["showscale"] = % true
 
   result = JsonNode(kind: JObject, fields: fields)
