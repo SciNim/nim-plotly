@@ -340,10 +340,10 @@ proc colormap*[T; U: AllowedColorMap](plt: Plot[T], colormap: U, idx = 0): Plot[
   case result.traces[idx].`type`
   of Heatmap, HeatmapGL:
     result.traces[idx].colormap = cmapEnum
-    result.traces[idx].customCmap = customCmap
+    result.traces[idx].customColormap = customCmap
   of Contour:
     result.traces[idx].colorscale = cmapEnum
-    result.traces[idx].customCscale = customCmap
+    result.traces[idx].customColorscale = customCmap
   else: discard
 
 proc zmin*[T](plt: Plot[T], val: float, idx = 0): Plot[T] =

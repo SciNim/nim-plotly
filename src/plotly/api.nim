@@ -305,7 +305,7 @@ func `%`*(t: Trace): JsonNode =
     if t.zs.len > 0:
       fields["z"] = % t.zs
 
-    fields["colorscale"] = serializeColormap(t.colormap, t.customCmap)
+    fields["colorscale"] = serializeColormap(t.colormap, t.customColormap)
     if t.zmin != t.zmax:
       # set `zauto` to false and use `zmin`, `zmax` instead, otherwise `zauto` not set
       fields["zauto"] = % false
@@ -313,7 +313,7 @@ func `%`*(t: Trace): JsonNode =
       fields["zmax"] = % t.zmax
   of PlotType.Contour:
     if t.zs.len > 0: fields["z"] = % t.zs
-    fields["colorscale"] = serializeColormap(t.colorscale, t.customCscale)
+    fields["colorscale"] = serializeColormap(t.colorscale, t.customColorscale)
     if t.contours.start != t.contours.stop:
       fields["autocontour"] = % false
       fields["contours"] = %* {
@@ -377,7 +377,7 @@ func `%`*(m: Marker): JsonNode =
       fields["color"] = % m.color
   elif m.colorVals.len > 0:
     fields["color"] = % m.colorVals
-    fields["colorscale"] = serializeColormap(m.colormap, m.customCmap)
+    fields["colorscale"] = serializeColormap(m.colormap, m.customColormap)
     fields["showscale"] = % true
 
   result = JsonNode(kind: JObject, fields: fields)

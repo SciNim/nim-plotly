@@ -24,7 +24,7 @@ block:
   proc customHeatmap(name: PredefinedCustomMaps) =
     # use `getCustomMap` to get one of the predefined colormaps and assign
     # it to the `customCmap` field of the `Trace`
-    d.customCmap = getCustomMap(name)
+    d.customColormap = getCustomMap(name)
     # for the custom map to have any effect, we have to choose the
     # `Custom` value for the `colorMap` field.
     d.colorMap = Custom
@@ -39,7 +39,7 @@ block:
     customHeatmap(map)
 
   # and now a fully custom map
-  d.customCmap = CustomColorMap(rawColors: randomCustomMap)
+  d.customColormap = CustomColorMap(rawColors: randomCustomMap)
   # for the custom map to have any effect, we have to choose the
   # `Custom` value for the `colorMap` field.
   d.colorMap = Custom

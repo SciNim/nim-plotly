@@ -157,7 +157,7 @@ type
     # the color maps
     colorVals*: seq[T]
     colormap*: ColorMap
-    customCmap*: CustomColorMap
+    customColormap*: CustomColorMap
 
   Trace*[T: SomeNumber] = ref object
     xs*: seq[T]
@@ -178,12 +178,12 @@ type
     case `type`*: PlotType
     of HeatMap, HeatMapGL:
       colormap*: ColorMap
-      customCmap*: CustomColorMap
+      customColormap*: CustomColorMap
       zmin*: float # can be used to override calculation of color ranges based on data
       zmax*: float # `zmin` minimum and `zmax` maximum value of color range
     of Contour:
       colorscale*: ColorMap
-      customCscale*: CustomColorMap
+      customColorscale*: CustomColorMap
       # setting no contours implies `autocontour` true
       contours*: tuple[start, stop, size: float]
       heatmap*: bool

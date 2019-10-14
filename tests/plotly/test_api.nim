@@ -419,7 +419,7 @@ suite "Sugar":
     let d = Trace[float](mode: PlotMode.Lines, `type`: PlotType.HeatMap)
     d.zs = data
     proc customHeatmap(name: PredefinedCustomMaps): Plot[float] =
-      d.customCmap = getCustomMap(name)
+      d.customColormap = getCustomMap(name)
       d.colorMap = Custom
       let
         layout = Layout(title: $name, width: 800, height: 800,
@@ -442,11 +442,11 @@ suite "Sugar":
       check m1.layout.yaxis.title == m2.layout.yaxis.title
       check m1.traces[0].`type` == m1.traces[0].`type`
       check m1.traces[0].colormap == m1.traces[0].colormap
-      check m1.traces[0].customCmap == m1.traces[0].customCmap
+      check m1.traces[0].customColormap == m1.traces[0].customColormap
       check m1.traces[0].zs == data
       check m1.traces[0].zs == m2.traces[0].zs
-      check m1.traces[0].customCmap.name == $map
-      check m2.traces[0].customCmap.name == $map
+      check m1.traces[0].customColormap.name == $map
+      check m2.traces[0].customColormap.name == $map
 
   test "Limit colormap range":
     var data = newSeqWith(28, newSeq[float](28))
