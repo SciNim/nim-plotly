@@ -77,6 +77,7 @@ type
 
   ColorMap* {.pure.} = enum
     None = ""
+    Custom = "Custom"
     Greys = "Greys"
     YlGnBu = "YlGnBu"
     Greens = "Greens"
@@ -95,6 +96,20 @@ type
     Electric = "Electric"
     Viridis = "Viridis"
     Cividis = "Cividis"
+
+  PredefinedCustomMaps* = enum
+    Other, # non predefined custom colormap
+    ViridisZeroWhite, # Viridis w/ value of 0 set to white; Viridis is part of Plotly!
+    Plasma, PlasmaZeroWhite,
+    Magma, MagmaZeroWhite,
+    Inferno, InfernoZeroWhite,
+    WhiteToBlack # 0 = White, 1 = Black
+
+  CustomColorMap* = ref object
+    # raw color values in range [0.0, 1.0]
+    # using range[0.0 .. 1.0]]] doesn't work properly
+    rawColors*: seq[tuple[r, g, b: float64]]
+    name*: string
 
   AxisType* {.pure.} = enum
     Default = "-"
@@ -142,6 +157,7 @@ type
     # the color maps
     colorVals*: seq[T]
     colormap*: ColorMap
+    customColormap*: CustomColorMap
 
   Trace*[T: SomeNumber] = ref object
     xs*: seq[T]
@@ -162,8 +178,12 @@ type
     case `type`*: PlotType
     of HeatMap, HeatMapGL:
       colormap*: ColorMap
+      customColormap*: CustomColorMap
+      zmin*: float # can be used to override calculation of color ranges based on data
+      zmax*: float # `zmin` minimum and `zmax` maximum value of color range
     of Contour:
       colorscale*: ColorMap
+      customColorscale*: CustomColorMap
       # setting no contours implies `autocontour` true
       contours*: tuple[start, stop, size: float]
       heatmap*: bool
