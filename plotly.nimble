@@ -1,12 +1,12 @@
 # Package
 
-version       = "0.1.0"
+version       = "0.2.0"
 author        = "Brent Pedersen"
 description   = "plotting library for nim"
 license       = "MIT"
 
 
-requires "nim >= 0.18.0", "chroma", "jsbind", "webview", "websocket#head"
+requires "nim >= 0.18.0", "chroma", "jsbind", "webview", "websocket >= 0.4.1"
 
 srcDir = "src"
 
