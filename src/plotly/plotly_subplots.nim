@@ -177,7 +177,7 @@ proc handlePlotStmt(plt: NimNode): (NimNode, NimNode) =
   var isSymbol = false
   for i in 1 ..< plt.len:
     case plt[i].kind
-    of nnkPar:
+    of nnkPar, nnkTupleConstr:
       # is nameless tuple
       doAssert plt[i].len == 4, "Domain needs to consist of 4 elements!"
       domain.add handleDomain(ident"left", plt[i][0])
