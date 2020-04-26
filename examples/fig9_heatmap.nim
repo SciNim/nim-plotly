@@ -13,7 +13,7 @@ d.colormap = ColorMap.Viridis
 d.zs = newSeqWith(28, newSeq[float32](28))
 for x in 0 ..< 28:
   for y in 0 ..< 28:
-    d.zs[x][y] = random(1.0)
+    d.zs[x][y] = rand(1.0)
 let
   layout = Layout(title: "Heatmap example", width: 800, height: 800,
                   xaxis: Axis(title: "A heatmap x-axis"),
