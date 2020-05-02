@@ -1,7 +1,7 @@
 ## nim-plotly: simple plots in nim
 
 [![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](http://brentp.github.io/nim-plotly/plotly.html)
-[![Build Status](https://travis-ci.org/brentp/nim-plotly.svg?branch=master)](https://travis-ci.org/brentp/nim-plotly)
+[![Build Status](https://travis-ci.com/brentp/nim-plotly.svg?branch=master)](https://travis-ci.com/brentp/nim-plotly)
 
 This is a functioning plotting library. It supports, *line* (with fill below), *scatter* (with errors), *bar*
 , *histogram*, *heatmap*, *candlestick* and combinations of those plot types. More standard types can be added on request.
