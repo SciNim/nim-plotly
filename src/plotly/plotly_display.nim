@@ -1,5 +1,5 @@
 import strutils
-import os
+import os, osproc
 import json
 import sequtils
 
@@ -50,8 +50,8 @@ else:
       # patched version of Nim's `openDefaultBrowser` which always
       # returns immediately
       var u = quoteShell(file)
-      let cmd = "xdg-open " & u & " &"
-      discard execShellCmd(cmd)
+      let cmd = "xdg-open"
+      discard startProcess(command = cmd, args = [file], options = {poUsePath})
     else:
       # default normal browser
       openDefaultBrowser(file)

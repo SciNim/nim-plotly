@@ -1,4 +1,5 @@
-import websocket, asynchttpserver, asyncnet, asyncdispatch
+import ws
+import asynchttpserver, asyncnet, asyncdispatch
 import strutils, strformat
 import re
 import os
@@ -74,16 +75,16 @@ proc cb(req: Request) {.async.} =
   let filename = filenameChannel.recv()
 
   # now await the connection of the websocket client
-  let (ws, error) = await verifyWebsocketRequest(req)
-
+  #let (ws, error) = await verifyWebsocketRequest(req)
+  var ws = await newWebSocket(req)
   if ws.isNil:
-    echo "WS negotiation failed: ", error
-    await req.respond(Http400, "Websocket negotiation failed: " & $error)
+    echo "WS negotiation failed: ", ws.repr
+    await req.respond(Http400, "Websocket negotiation failed: " & $ws.repr)
     req.client.close()
     return
   else:
     # receive connection successful package
-    let (opcodeConnect, dataConnect) = await ws.readData()
+    let (opcodeConnect, dataConnect) = await ws.receivePacket()
     if dataConnect == $Message.Connected:
       withDebug:
         debugEcho "Plotly connected successfully!"
@@ -92,7 +93,7 @@ proc cb(req: Request) {.async.} =
       return
 
   # now await the actual data package
-  let (opcode, data) = await ws.readData()
+  let (opcode, data) = await ws.receivePacket()
   # get header to parse the actual filetype and remove the header from the data
   # determine header length from data, first appearance of `,`
   let headerLength = data.find(',')
