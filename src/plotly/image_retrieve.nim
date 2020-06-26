@@ -78,7 +78,7 @@ proc cb(req: Request) {.async.} =
 
   if ws.isNil:
     echo "WS negotiation failed: ", error
-    await req.respond(Http400, "Websocket negotiation failed: " & error)
+    await req.respond(Http400, "Websocket negotiation failed: " & $error)
     req.client.close()
     return
   else:
