@@ -1,7 +1,5 @@
 import json, macros, math
 import plotly_types, plotly_sugar, api
-when not defined(js):
-  from plotly_display import show
 
 type
   # subplot specific object, which stores intermediate information about
@@ -400,27 +398,6 @@ proc toPlotJson*(grid: Grid): PlotJson =
                                    nPlots = grid.plots.len)
     gridLayout = GridLayout(useGrid: true, rows: rows, columns: cols)
   result = combine(grid.layout, grid.plots, [], gridLayout)
-
-# show command for a `Grid`
-const hasThreadSupport = compileOption("threads")
-when not hasThreadSupport and not defined(js):
-  when false:
-    # NOTE: for some weird reason this currently always activates the
-    # fatal pragma if not compiled with `--threads:on`, even if it's not
-    # being called somewhere
-    proc show*(grid: Grid, filename: string) =
-      {.fatal: "`filename` argument to `show` only supported if compiled " &
-        "with --threads:on!".}
-
-  proc show*(grid: Grid) =
-    ## display the `Grid` plot. Converts the `grid` to a call to
-    ## `combine` and calls `show` on it.
-    grid.toPlotJson.show()
-elif not defined(js):
-  proc show*(grid: Grid, filename = "") =
-    ## display the `Grid` plot. Converts the `grid` to a call to
-    ## `combine` and calls `show` on it.
-    grid.toPlotJson.show(filename)
 
 when isMainModule:
   # test the calculation of rows and columns
