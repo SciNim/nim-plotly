@@ -24,6 +24,18 @@ when hasThreadSupport:
   import threadpool
   import plotly/image_retrieve
 
+template openBrowser(): untyped {.dirty.} =
+  # default normal browser
+  when defined(posix):
+    # check if running under WSL, if so convert to full path
+    if "Microsoft" in readFile("/proc/version"):
+      let res = execCmdEx("wslpath -m " & file)
+      openDefaultBrowser("file://" & res[0].strip)
+    else:
+      openDefaultBrowser(file)
+  else:
+    openDefaultBrowser(file)
+
 when hasThreadSupport:
   proc showPlotThreaded(file: string, thr: Thread[string], onlySave: static bool = false) =
     when defined(webview) or defined(travis):
@@ -38,8 +50,8 @@ when hasThreadSupport:
         w.run()
       w.exit()
     else:
-      # default normal browser
-      openDefaultBrowser(file)
+      # WARNING: dirty template, see above!
+      openBrowser()
 else:
   proc showPlot(file: string) =
     when defined(webview):
@@ -53,8 +65,8 @@ else:
       let cmd = "xdg-open"
       discard startProcess(command = cmd, args = [file], options = {poUsePath})
     else:
-      # default normal browser
-      openDefaultBrowser(file)
+      # WARNING: dirty template, see above!
+      openBrowser()
 
 include plotly/tmpl_html
 
