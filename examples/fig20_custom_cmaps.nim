@@ -7,7 +7,7 @@ import sequtils
 var data = newSeqWith(28, newSeq[float32](28))
 for x in 0 ..< 28:
   for y in 0 ..< 28:
-    data[x][y] = max(random(1.0), 0.3)
+    data[x][y] = max(rand(1.0), 0.3)
 
 let randomCustomMap = @[
 (r: 0.9719701409339905, g: 0.463617742061615, b: 0.4272273480892181),

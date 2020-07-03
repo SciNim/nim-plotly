@@ -33,6 +33,7 @@ addons:
         packages:
                 - libgtk-3-dev
                 - libwebkit2gtk-4.0-dev
+                - at-spi2-core
 
 install:
   - curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh

@@ -452,7 +452,7 @@ suite "Sugar":
     var data = newSeqWith(28, newSeq[float](28))
     for x in 0 ..< 28:
       for y in 0 ..< 28:
-        data[x][y] = max(random(30.0), 0.1)
+        data[x][y] = max(rand(30.0), 0.1)
     let
       layout = Layout()
     block:
