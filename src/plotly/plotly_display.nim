@@ -24,6 +24,18 @@ when hasThreadSupport:
   import threadpool
   import plotly/image_retrieve
 
+template openBrowser(): untyped {.dirty.} =
+  # default normal browser
+  when defined(posix):
+    # check if running under WSL, if so convert to full path
+    if "Microsoft" in readFile("/proc/version"):
+      let res = execCmdEx("wslpath -m " & file)
+      openDefaultBrowser("file://" & res[0].strip)
+    else:
+      openDefaultBrowser(file)
+  else:
+    openDefaultBrowser(file)
+
 when hasThreadSupport:
   proc showPlotThreaded(file: string, thr: Thread[string], onlySave: static bool = false) =
     when defined(webview) or defined(travis):
@@ -38,8 +50,8 @@ when hasThreadSupport:
         w.run()
       w.exit()
     else:
-      # default normal browser
-      openDefaultBrowser(file)
+      # WARNING: dirty template, see above!
+      openBrowser()
 else:
   proc showPlot(file: string) =
     when defined(webview):
@@ -53,8 +65,8 @@ else:
       let cmd = "xdg-open"
       discard startProcess(command = cmd, args = [file], options = {poUsePath})
     else:
-      # default normal browser
-      openDefaultBrowser(file)
+      # WARNING: dirty template, see above!
+      openBrowser()
 
 include plotly/tmpl_html
 
@@ -142,8 +154,8 @@ when not hasThreadSupport:
   proc show*(p: SomePlot,
              filename: string,
              path = "",
-             html_template = defaultTmplString) =
-    {.fatal: "`filename` argument to `show` only supported if compiled " &
+             html_template = defaultTmplString)
+    {.error: "`filename` argument to `show` only supported if compiled " &
       "with --threads:on!".}
 
   proc show*(p: SomePlot, path = "", html_template = defaultTmplString) =
@@ -156,9 +168,18 @@ when not hasThreadSupport:
     ## remove file after thread is finished
     removeFile(tmpfile)
 
-  proc saveImage*(p: SomePlot, filename: string) =
-    {.fatal: "`saveImage` only supported if compiled with --threads:on!".}
+  proc saveImage*(p: SomePlot, filename: string)
+    {.error: "`saveImage` only supported if compiled with --threads:on!".}
 
+  when not defined(js):
+    proc show*(grid: Grid, filename: string)
+      {.error: "`filename` argument to `show` only supported if compiled " &
+        "with --threads:on!".}
+
+    proc show*(grid: Grid) =
+      ## display the `Grid` plot. Converts the `grid` to a call to
+      ## `combine` and calls `show` on it.
+      grid.toPlotJson.show()
 else:
   # if compiled with --threads:on
   proc show*(p: SomePlot,
@@ -192,3 +213,9 @@ else:
     ## If the `webview` target is used, the plot is ``only`` saved and not
     ## shown (for long; webview closed after image saved correctly).
     p.show(filename = filename, onlySave = true)
+
+  when not defined(js):
+    proc show*(grid: Grid, filename = "") =
+      ## display the `Grid` plot. Converts the `grid` to a call to
+      ## `combine` and calls `show` on it.
+      grid.toPlotJson.show(filename)

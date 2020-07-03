@@ -480,3 +480,35 @@ suite "Sugar":
       check pltJson["traces"][0]["zmin"] == % 0.0
       check pltJson["traces"][0]["zmax"] == % 10.0
       check pltJson["traces"][0]["zauto"] == % false
+
+suite "show w/ filename without threads fails compilation":
+  template compileFails(body: untyped): untyped =
+    when not compiles(body):
+      true
+    else:
+      false
+
+  let xs = toSeq(0 ..< 100).mapIt(it.float)
+  let ys = xs.mapIt(it * it * it)
+  let layout = Layout()
+  let d = Trace[float](mode: PlotMode.Lines, `type`: PlotType.Scatter,
+                       xs: xs, ys: ys)
+  let plt = Plot[float](layout: layout, traces: @[d])
+
+  ## NOTE: the following tests assume the test is compiled without `--threads:on`!
+  test "Plot - saveImage fails":
+    check compileFails(plt.saveImage("test.svg"))
+
+  test "PlotJson - saveImage fails":
+    check compileFails(plt.toPlotJson.saveImage("test.svg"))
+
+  test "Plot - show w/ filename w/o threads:on fails":
+    check compileFails(plt.show("test.svg"))
+
+  test "PlotJson - show w/ filename w/o threads:on fails":
+    check compileFails(plt.toPlotJson.show("test.svg"))
+
+  test "Grid - show w/ filename w/o threads:on fails":
+    var grid = createGrid(1)
+    grid[0] = plt
+    check compileFails(grid.show("test.svg"))

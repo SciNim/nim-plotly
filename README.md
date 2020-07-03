@@ -85,6 +85,24 @@ available, including `react` and `restyle`, which allow to change the
 data and / or layout of a plot defined in a `div` container. See the
 `fig8_js_interactive.nim` for such an example.
 
+## Note about plotly under Windows Subsystem for Linux (WSL)
+
+Starting from version `v0.3.0` of plotly, WSL is supported. This
+requires the user to define the `BROWSER` environment variable and
+assumes the user wishes to use a normal Windows browser.
+
+When setting the `BROWSER` variable, make sure to handle the possible
+spaces (e.g. if browser installed in `Program Files`) by either
+escaping spaces and parenthesis with a backslash or just putting the
+whole path into quotation marks. E.g:
+
+```sh
+export BROWSER="/mnt/c/Program Files (x86)/MyBrowserCompany/Browser.exe"
+```
+
+to set the variable for the local session.
+
+
 ## TODO
 
 + [X] add .show() method to plot which looks for and opens a browser (similar to python webbrowser module)
