@@ -12,7 +12,7 @@ srcDir = "src"
 
 skipDirs = @["tests"]
 
-import ospaths,strutils
+import os, strutils
 
 task test, "run the tests":
   exec "nim c -r tests/plotly/test_api.nim"
