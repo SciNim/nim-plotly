@@ -29,7 +29,7 @@ template openBrowser(): untyped {.dirty.} =
   # default normal browser
   when defined(posix):
     # check if running under WSL, if so convert to full path
-    let release = posix_utils.uname().release
+    let release = uname().release
     if "microsoft" in release or "Microsoft" in release:
       let res = execCmdEx("wslpath -m " & file)
       openDefaultBrowser("file://" & res[0].strip)
