@@ -2,6 +2,7 @@ import strutils
 import os, osproc
 import json
 import sequtils
+import posix_utils
 
 # we now import the plotly modules and export them so that
 # the user sees them as a single module
@@ -28,7 +29,8 @@ template openBrowser(): untyped {.dirty.} =
   # default normal browser
   when defined(posix):
     # check if running under WSL, if so convert to full path
-    if "Microsoft" in readFile("/proc/version"):
+    let release = posix_utils.uname().release
+    if "microsoft" in release or "Microsoft" in release:
       let res = execCmdEx("wslpath -m " & file)
       openDefaultBrowser("file://" & res[0].strip)
     else:
