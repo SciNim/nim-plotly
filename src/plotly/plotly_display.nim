@@ -2,7 +2,6 @@ import strutils
 import os, osproc
 import json
 import sequtils
-import posix_utils
 
 # we now import the plotly modules and export them so that
 # the user sees them as a single module
@@ -24,6 +23,9 @@ const hasThreadSupport* = compileOption("threads")
 when hasThreadSupport:
   import threadpool
   import plotly/image_retrieve
+
+when defined(posix):
+  import posix_utils
 
 template openBrowser(): untyped {.dirty.} =
   # default normal browser
