@@ -28,7 +28,7 @@ template openBrowser(): untyped {.dirty.} =
   # default normal browser
   when defined(posix):
     # check if running under WSL, if so convert to full path
-    if "Microsoft" in readFile("/proc/version"):
+    if fileExists("/proc/version") and "Microsoft" in readFile("/proc/version"):
       let res = execCmdEx("wslpath -m " & file)
       openDefaultBrowser("file://" & res[0].strip)
     else:
