@@ -24,11 +24,15 @@ when hasThreadSupport:
   import threadpool
   import plotly/image_retrieve
 
+when defined(posix):
+  import posix_utils
+
 template openBrowser(): untyped {.dirty.} =
   # default normal browser
   when defined(posix):
     # check if running under WSL, if so convert to full path
-    if "Microsoft" in readFile("/proc/version"):
+    let release = uname().release
+    if "microsoft" in release or "Microsoft" in release:
       let res = execCmdEx("wslpath -m " & file)
       openDefaultBrowser("file://" & res[0].strip)
     else:
