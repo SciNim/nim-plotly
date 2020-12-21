@@ -29,7 +29,7 @@ let legend = Legend(x: 0.1,
                     y: 0.9,
                     backgroundColor: color(0.6, 0.6, 0.6),
                     orientation: Vertical,
-                    font: Font(color: color())
+                    font: Font(color: color(0, 0, 0))
 )
 
 let layout = Layout(title: "saw the sin", width: 800, height: 600,
