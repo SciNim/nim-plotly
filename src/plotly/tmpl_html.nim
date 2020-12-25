@@ -9,7 +9,7 @@ const defaultTmplString = """
 	<body>
 		<div id="plot0"></div>
 		<script>
-			Plotly.newPlot('plot0', $data, $layout)
+			Plotly.newPlot('plot1', $data, $layout)
                 </script>
                 $saveImage
 	</body>
