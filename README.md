@@ -1,7 +1,7 @@
 ## nim-plotly: simple plots in nim
 
 [![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](http://brentp.github.io/nim-plotly/plotly.html)
-[![Build Status](https://travis-ci.com/brentp/nim-plotly.svg?branch=master)](https://travis-ci.com/brentp/nim-plotly)
+[![plotly CI](https://github.com/SciNim/nim-plotly/actions/workflows/ci.yml/badge.svg)](https://github.com/SciNim/nim-plotly/actions/workflows/ci.yml)
 
 This is a functioning plotting library. It supports, *line* (with fill below), *scatter* (with errors), *bar*
 , *histogram*, *heatmap*, *candlestick* and combinations of those plot types. More standard types can be added on request.
@@ -64,7 +64,7 @@ be interactive.
 
 ![stacked histogram](https://user-images.githubusercontent.com/1739/40438473-66ce8a6e-5e75-11e8-8f27-79cef2752e52.png)
 
-#### Other examples 
+#### Other examples
 
 [in examples](https://github.com/brentp/nim-plotly/blob/master/examples/)
 
@@ -75,7 +75,7 @@ The library supports both the `C` as well as `Javascript` targets of
 Nim. In case of the `C` target, the data and layout is statically
 parsed and inserted into a template Html file, which is stored in
 `/tmp/x.html`. A call to the default browser is made, which loads said
-file. The file is deleted thereafter. 
+file. The file is deleted thereafter.
 
 This static nature has the implication that it is not possible to
 update the data in the plots. However, thanks to Nim's ability to
