@@ -1,0 +1,119 @@
+name: plotly CI
+on:
+  push:
+    paths:
+      - 'tests/**'
+      - 'src/**'
+      - 'plotly.nimble'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    paths:
+      - 'tests/**'
+      - 'src/**'
+      - 'plotly.nimble'
+      - '.github/workflows/ci.yml'
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        branch: [version-1-4, devel]
+        target: [linux, macos, windows]
+        include:
+          - target: linux
+            builder: ubuntu-18.04
+          - target: macos
+            builder: macos-10.15
+          - target: windows
+            builder: windows-2019
+    name: '${{ matrix.target }} (${{ matrix.branch }})'
+    runs-on: ${{ matrix.builder }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: plotly
+
+      - name: Setup Nim
+        uses: alaviss/setup-nim@0.1.1
+        with:
+          path: nim
+          version: ${{ matrix.branch }}
+
+      - name: Install dependencies (Ubuntu)
+        if: ${{matrix.target == 'linux'}}
+        run: |
+          sudo apt-get update
+          sudo apt-get install libgtk-3-dev libwebkit2gtk-4.0-dev \
+          at-spi2-core firefox
+
+      - name: Install dependencies (OSX)
+        if: ${{matrix.target == 'macos'}}
+        run: |
+          brew install firefox
+
+      - name: Setup MSYS2 (Windows)
+        if: ${{matrix.target == 'windows'}}
+        uses: msys2/setup-msys2@v2
+        with:
+          path-type: inherit
+          update: true
+          install: base-devel git mingw-w64-x86_64-toolchain
+
+      - name: Install dependencies (Windows)
+        if: ${{matrix.target == 'windows'}}
+        shell: msys2 {0}
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --needed --noconfirm mingw-w64-x86_64-qtwebkit
+
+      - name: Setup nimble & deps
+        shell: bash
+        run: |
+          cd plotly
+          nimble refresh -y
+          nimble install -y
+
+      - name: Run tests (Linux & Mac)
+        if: ${{matrix.target != 'windows'}}
+        shell: bash
+        run: |
+          cd plotly
+          export BROWSER=firefox
+          nimble -y testCINoSave
+
+      - name: Run tests (Windows)
+        if: ${{matrix.target == 'windows'}}
+        shell: msys2 {0}
+        run: |
+          cd plotly
+          export BROWSER=firefox
+          nimble -y testCINoSave
+
+      - name: Build docs
+        if: >
+          github.event_name == 'push' && github.ref == 'refs/heads/master' &&
+          matrix.target == 'linux' && matrix.branch == 'devel'
+        shell: bash
+        run: |
+          cd plotly
+          branch=${{ github.ref }}
+          branch=${branch##*/}
+          nimble doc --project --path="." --outdir:docs \
+            '--git.url:https://github.com/${{ github.repository }}' \
+            '--git.commit:${{ github.sha }}' \
+            "--git.devel:$branch" \
+            src/plotly.nim
+          # Ignore failures for older Nim
+          cp docs/{the,}index.html || true
+
+      - name: Publish docs
+        if: >
+          github.event_name == 'push' && github.ref == 'refs/heads/master' &&
+          matrix.target == 'linux' && matrix.branch == 'devel'
+        uses: crazy-max/ghaction-github-pages@v1
+        with:
+          build_dir: plotly/docs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
