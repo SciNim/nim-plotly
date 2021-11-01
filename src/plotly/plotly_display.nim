@@ -1,7 +1,4 @@
-import strutils
-import os, osproc
-import json
-import sequtils
+import std / [strutils, os, osproc, json, sequtils, times]
 
 # we now import the plotly modules and export them so that
 # the user sees them as a single module
@@ -93,10 +90,11 @@ proc fillImageInjectTemplate(filetype, width, height: string): string =
                               width,
                               height]
 
-proc fillHtmlTemplate(html_template,
+proc fillHtmlTemplate(htmlTemplate,
                       data_string: string,
                       p: SomePlot,
-                      filename = ""): string =
+                      filename = "",
+                      autoResize = true): string =
   ## fills the HTML template with the correct strings and, if compiled with
   ## ``--threads:on``, inject the save image HTML code and fills that
   var
@@ -126,100 +124,225 @@ proc fillHtmlTemplate(html_template,
         let sheight = $p.layout{"height"}
       imageInject = fillImageInjectTemplate(filetype, swidth, sheight)
 
-  # now fill all values into the html template
-  result = html_template % ["data", data_string, "layout", slayout,
-                            "title", title, "saveImage", imageInject]
+  let scriptTag = if autoResize: resizeScript()
+                  else: staticScript()
+  let scriptFilled = scriptTag % [ "data", data_string,
+                                   "layout", slayout ]
 
-proc save*(p: SomePlot, path = "", html_template = defaultTmplString, filename = ""): string =
-  result = path
-  if result == "":
-    when defined(Windows):
-      result = getEnv("TEMP") / "x.html"
-    else:
-      result = "/tmp/x.html"
+  # now fill all values into the html template
+  result = htmlTemplate % [ "title", title,
+                            "scriptTag", scriptFilled,
+                            "saveImage", imageInject]
+
+proc genPlotDirname(filename, outdir: string): string =
+  ## generates unique name for the given input file based on its name and
+  ## the current time
+  const defaultName = "nim_plotly"
+  let filename = if filename.len == 0: defaultName # default to give some sane human readable idea
+                 else: splitFile(filename)[1]
+  let timeStr = format(now(), "yyyy-MM-dd'_'HH-mm-ss'.'fff")
+  let dir = outdir / defaultName
+  createDir(dir)
+  let outfile = filename & "_" & timeStr & ".html"
+  result = dir / outfile
+
+proc save*(p: SomePlot,
+           htmlPath = "",
+           htmlTemplate = defaultTmplString,
+           filename = "",
+           autoResize = true
+          ): string =
+  result = if htmlPath.len > 0: htmlPath
+           else: genPlotDirname(filename, getTempDir())
 
   when type(p) is Plot:
     # convert traces to data suitable for plotly and fill Html template
     let data_string = parseTraces(p.traces)
   else:
     let data_string = $p.traces
-  let html = html_template.fillHtmlTemplate(data_string, p, filename)
+  let html = htmlTemplate.fillHtmlTemplate(data_string, p, filename, autoResize)
 
-  var
-    f: File
-  if not open(f, result, fmWrite):
-    quit "could not open file for json"
-  f.write(html)
-  f.close()
+  writeFile(result, html)
 
 when not hasThreadSupport:
   # some violation of DRY for the sake of better error messages at
   # compile time
   proc show*(p: SomePlot,
              filename: string,
-             path = "",
-             html_template = defaultTmplString)
+             htmlPath = "",
+             htmlTemplate = defaultTmplString,
+             removeTempFile = false,
+             autoResize = true)
     {.error: "`filename` argument to `show` only supported if compiled " &
       "with --threads:on!".}
 
-  proc show*(p: SomePlot, path = "", html_template = defaultTmplString) =
-    ## creates the temporary Html file using `save`, and opens the user's
-    ## default browser
-    let tmpfile = p.save(path, html_template)
-
+  proc show*(p: SomePlot,
+             htmlPath = "",
+             htmlTemplate = defaultTmplString,
+             removeTempFile = false,
+             autoResize = true) =
+    ## Creates the temporary Html file in using `save`, and opens the user's
+    ## default browser.
+    ##
+    ## If `htmlPath` is given the file is stored in the given path and name.
+    ## Else a suitable name will be generated based on the current time.
+    ##
+    ## `htmlTemplate` allows to overwrite the default HTML template.
+    ##
+    ## If `removeTempFile` is true, the temporary file will be deleted after
+    ## a short while (not recommended).
+    ##
+    ## If `autoResize` is true, the shown plot will automatically resize according
+    ## to the browser window size. This overrides any possible custom sizes for
+    ## the plot. By default it is disabled for plots that should be saved.
+    let tmpfile = p.save(htmlPath = htmlPath,
+                         htmlTemplate = htmlTemplate,
+                         autoResize = autoResize)
     showPlot(tmpfile)
-    sleep(1000)
-    ## remove file after thread is finished
-    removeFile(tmpfile)
+    if removeTempFile:
+      sleep(2000)
+      ## remove file after thread is finished
+      removeFile(tmpfile)
 
-  proc saveImage*(p: SomePlot, filename: string)
+  proc saveImage*(p: SomePlot, filename: string,
+                  htmlPath = "",
+                  htmlTemplate = defaultTmplString,
+                  removeTempFile = false,
+                  autoResize = false)
     {.error: "`saveImage` only supported if compiled with --threads:on!".}
 
   when not defined(js):
-    proc show*(grid: Grid, filename: string)
+    proc show*(grid: Grid, filename: string,
+               htmlPath = "",
+               htmlTemplate = defaultTmplString,
+               removeTempFile = false,
+               autoResize = true)
       {.error: "`filename` argument to `show` only supported if compiled " &
         "with --threads:on!".}
 
-    proc show*(grid: Grid) =
-      ## display the `Grid` plot. Converts the `grid` to a call to
+    proc show*(grid: Grid,
+               htmlPath = "",
+               htmlTemplate = defaultTmplString,
+               removeTempFile = false,
+               autoResize = true) =
+      ## Displays the `Grid` plot. Converts the `grid` to a call to
       ## `combine` and calls `show` on it.
-      grid.toPlotJson.show()
+      ##
+      ## If `htmlPath` is given the file is stored in the given path and name.
+      ## Else a suitable name will be generated based on the current time.
+      ##
+      ## `htmlTemplate` allows to overwrite the default HTML template.
+      ##
+      ## If `removeTempFile` is true, the temporary file will be deleted after
+      ## a short while (not recommended).
+      ##
+      ## If `autoResize` is true, the shown plot will automatically resize according
+      ## to the browser window size. This overrides any possible custom sizes for
+      ## the plot. By default it is disabled for plots that should be saved.
+      grid.toPlotJson.show(htmlPath = htmlPath,
+                           htmlTemplate = defaultTmplString,
+                           removeTempFile = removeTempFile,
+                           autoResize = autoResize)
 else:
   # if compiled with --threads:on
   proc show*(p: SomePlot,
              filename = "",
-             path = "",
-             html_template = defaultTmplString,
-             onlySave: static bool = false) =
-    ## creates the temporary Html file using `save`, and opens the user's
+             htmlPath = "",
+             htmlTemplate = defaultTmplString,
+             onlySave: static bool = false,
+             removeTempFile = false,
+             autoResize = true) =
+    ## Creates the temporary Html file using `save`, and opens the user's
     ## default browser.
+    ##
     ## If `onlySave` is true, the plot is only saved and "not shown". However
     ## this only works on the `webview` target. And a webview window has to
     ## be opened, but will be closed automatically the moment the plot is saved.
+    ##
+    ## If `htmlPath` is given the file is stored in the given path and name.
+    ## Else a suitable name will be generated based on the current time.
+    ##
+    ## `htmlTemplate` allows to overwrite the default HTML template.
+    ##
+    ## If `removeTempFile` is true, the temporary file will be deleted after
+    ## a short while (not recommended).
+    ##
+    ## If `autoResize` is true, the shown plot will automatically resize according
+    ## to the browser window size. This overrides any possible custom sizes for
+    ## the plot. By default it is disabled for plots that should be saved.
     var thr: Thread[string]
     if filename.len > 0:
       # start a second thread with a webview server to capture the image
       thr.createThread(listenForImage, filename)
 
-    let tmpfile = p.save(path, html_template, filename)
+    let tmpfile = p.save(htmlPath = htmlPath,
+                         filename = filename,
+                         htmlTemplate = htmlTemplate,
+                         autoResize = autoResize)
     showPlotThreaded(tmpfile, thr, onlySave)
     if filename.len > 0:
       # wait for thread to join
       thr.joinThread
+    if removeTempFile:
+      sleep(2000)
+      removeFile(tmpfile)
 
-    removeFile(tmpfile)
-
-  proc saveImage*(p: SomePlot, filename: string) =
-    ## saves the image under the given filename
+  proc saveImage*(p: SomePlot, filename: string,
+                  htmlPath = "",
+                  htmlTemplate = defaultTmplString,
+                  removeTempFile = false,
+                  autoResize = false) =
+    ## Saves the image under the given filename
     ## supported filetypes:
+    ##
     ## - jpg, png, svg, webp
+    ##
     ## Note: only supported if compiled with --threads:on!
+    ##
     ## If the `webview` target is used, the plot is ``only`` saved and not
     ## shown (for long; webview closed after image saved correctly).
-    p.show(filename = filename, onlySave = true)
+    ##
+    ## If `htmlPath` is given the file is stored in the given path and name.
+    ## Else a suitable name will be generated based on the current time.
+    ##
+    ## `htmlTemplate` allows to overwrite the default HTML template.
+    ##
+    ## If `removeTempFile` is true, the temporary file will be deleted after
+    ## a short while (not recommended).
+    ##
+    ## If `autoResize` is true, the shown plot will automatically resize according
+    ## to the browser window size. This overrides any possible custom sizes for
+    ## the plot. By default it is disabled for plots that should be saved.
+    p.show(filename = filename,
+           htmlPath = htmlPath,
+           htmlTemplate = htmlTemplate,
+           onlySave = true,
+           removeTempFile = removeTempFile,
+           autoResize = autoResize)
 
   when not defined(js):
-    proc show*(grid: Grid, filename = "") =
-      ## display the `Grid` plot. Converts the `grid` to a call to
+    proc show*(grid: Grid,
+               filename: string,
+               htmlPath = "",
+               htmlTemplate = defaultTmplString,
+               removeTempFile = false,
+               autoResize = true) =
+      ## Displays the `Grid` plot. Converts the `grid` to a call to
       ## `combine` and calls `show` on it.
-      grid.toPlotJson.show(filename)
+      ##
+      ## If `htmlPath` is given the file is stored in the given path and name.
+      ## Else a suitable name will be generated based on the current time.
+      ##
+      ## `htmlTemplate` allows to overwrite the default HTML template.
+      ##
+      ## If `removeTempFile` is true, the temporary file will be deleted after
+      ## a short while (not recommended).
+      ##
+      ## If `autoResize` is true, the shown plot will automatically resize according
+      ## to the browser window size. This overrides any possible custom sizes for
+      ## the plot. By default it is disabled for plots that should be saved.
+      grid.toPlotJson.show(filename,
+                           htmlPath = htmlPath,
+                           htmlTemplate = htmlTemplate,
+                           removeTempFile = removeTempFile,
+                           autoResize = autoResize)
