@@ -16,7 +16,7 @@ suite "Miscellaneous":
 suite "API serialization":
   test "Color":
     let
-      c1 = % color(1.0)
+      c1 = % color(1.0, 1.0, 1.0)
       c2 = % color(0.5, 0.5, 0.5)
       c3 = % empty()
     check c1 == % "#FFFFFF"
@@ -51,7 +51,7 @@ suite "API serialization":
     test "make Markers, seq of colors":
       let
         mk = Marker[float](size: @[1.0],
-                           color: @[color(0.5, 0.5, 0.5), color(1.0), empty()])
+                           color: @[color(0.5, 0.5, 0.5), color(1.0, 1.0, 1.0), empty()])
         expected = %*{ "size": 1.0,
                        "color" : ["#7F7F7F", "#FFFFFF", "#000000"]
                      }
@@ -101,7 +101,7 @@ suite "API serialization":
     test "make ConstantSym ErrorBar, manual":
       let
         eb = ErrorBar[float](visible: true,
-                             color: color(0.0),
+                             color: color(0.0, 1.0, 1.0),
                              thickness: 1.0,
                              width: 1.0,
                              kind: ErrorBarKind.ebkConstantSym,
@@ -130,7 +130,7 @@ suite "API serialization":
     test "make PercentSym ErrorBar, manual":
       let
         eb = ErrorBar[float](visible: true,
-                             color: color(0.0),
+                             color: color(0.0, 1.0, 1.0),
                              thickness: 1.0,
                              width: 1.0,
                              kind: ErrorBarKind.ebkPercentSym,
@@ -160,7 +160,7 @@ suite "API serialization":
     test "make ConstantAsym ErrorBar, manual":
       let
         eb = ErrorBar[float](visible: true,
-                             color: color(0.0),
+                             color: color(0.0, 1.0, 1.0),
                              thickness: 1.0,
                              width: 1.0,
                              kind: ErrorBarKind.ebkConstantAsym,
@@ -192,7 +192,7 @@ suite "API serialization":
     test "make PercentAsym ErrorBar, manual":
       let
         eb = ErrorBar[float](visible: true,
-                             color: color(0.0),
+                             color: color(0.0, 1.0, 1.0),
                              thickness: 1.0,
                              width: 1.0,
                              kind: ErrorBarKind.ebkPercentAsym,
@@ -224,7 +224,7 @@ suite "API serialization":
     test "make Sqrt ErrorBar, manual":
       let
         eb = ErrorBar[float](visible: true,
-                             color: color(0.0),
+                             color: color(0.0, 1.0, 1.0),
                              thickness: 1.0,
                              width: 1.0,
                              kind: ErrorBarKind.ebkSqrt)
@@ -248,7 +248,7 @@ suite "API serialization":
     test "make ArraySym ErrorBar, manual":
       let
         eb = ErrorBar[float](visible: true,
-                             color: color(0.0),
+                             color: color(0.0, 1.0, 1.0),
                              thickness: 1.0,
                              width: 1.0,
                              kind: ErrorBarKind.ebkArraySym,
@@ -277,7 +277,7 @@ suite "API serialization":
     test "make ArrayAsym ErrorBar, manual":
       let
         eb = ErrorBar[float](visible: true,
-                             color: color(0.0),
+                             color: color(0.0, 1.0, 1.0),
                              thickness: 1.0,
                              width: 1.0,
                              kind: ErrorBarKind.ebkArrayAsym,
