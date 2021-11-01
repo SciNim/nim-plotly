@@ -2,13 +2,13 @@ template resizeScript(): untyped =
   # TODO: this currently overrides size settings given in plots;
   # need to expose whether to autoresize or not
   # Note: this didn't seem to work: Plotly.Plots.resize('plot0');
+  # Consider to add: `{responsive: true}`
   """
       runRelayout = function() {
         var margin = 50; // if 0, would introduce scrolling
         Plotly.relayout('plot0', {width: window.innerWidth - margin, height: window.innerHeight - margin } );
       };
       window.onresize = runRelayout;
-      # Consider: {responsive: true}
       Plotly.newPlot('plot0', $data, $layout).then(runRelayout);
 """
 

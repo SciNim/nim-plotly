@@ -126,11 +126,12 @@ proc fillHtmlTemplate(htmlTemplate,
 
   let scriptTag = if autoResize: resizeScript()
                   else: staticScript()
+  let scriptFilled = scriptTag % [ "data", data_string,
+                                   "layout", slayout ]
+
   # now fill all values into the html template
-  result = htmlTemplate % [ "data", data_string,
-                            "layout", slayout,
-                            "title", title,
-                            "scriptTag", scriptTag,
+  result = htmlTemplate % [ "title", title,
+                            "scriptTag", scriptFilled,
                             "saveImage", imageInject]
 
 proc genPlotDirname(filename, outdir: string): string =
