@@ -1,7 +1,4 @@
-import strutils
-import os, osproc
-import json
-import sequtils
+import std / [strutils, os, osproc, json, sequtils, times]
 
 # we now import the plotly modules and export them so that
 # the user sees them as a single module

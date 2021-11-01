@@ -1,8 +1,3 @@
-import strutils
-import json
-import chroma
-import sequtils
-
 # we now import the plotly modules and export them so that
 # the user sees them as a single module
 import plotly / [api, plotly_types, errorbar, plotly_sugar, plotly_subplots]
