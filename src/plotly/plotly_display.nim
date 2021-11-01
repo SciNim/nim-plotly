@@ -137,12 +137,14 @@ proc fillHtmlTemplate(htmlTemplate,
 proc genPlotDirname(filename, outdir: string): string =
   ## generates unique name for the given input file based on its name and
   ## the current time
-  let filename = if filename.len == 0: "nim_plotly" # default to give some sane human readable idea
+  const defaultName = "nim_plotly"
+  let filename = if filename.len == 0: defaultName # default to give some sane human readable idea
                  else: splitFile(filename)[1]
   let timeStr = format(now(), "yyyy-MM-dd'_'HH-mm-ss'.'fff")
-  let dir = outdir / filename & "_" & timeStr
+  let dir = outdir / defaultName
   createDir(dir)
-  result = dir / filename & ".html"
+  let outfile = filename & "_" & timeStr & ".html"
+  result = dir / outfile
 
 proc save*(p: SomePlot,
            htmlPath = "",
