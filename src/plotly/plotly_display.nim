@@ -317,7 +317,8 @@ else:
            htmlPath = htmlPath,
            htmlTemplate = htmlTemplate,
            onlySave = true,
-           removeTempFile = removeTempFile)
+           removeTempFile = removeTempFile,
+           autoResize = autoResize)
 
   when not defined(js):
     proc show*(grid: Grid,
@@ -343,4 +344,5 @@ else:
       grid.toPlotJson.show(filename,
                            htmlPath = htmlPath,
                            htmlTemplate = htmlTemplate,
-                           removeTempFile = removeTempFile)
+                           removeTempFile = removeTempFile,
+                           autoResize = autoResize)
