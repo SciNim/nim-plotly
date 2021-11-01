@@ -4,14 +4,14 @@ import std / [strutils, os, osproc, json, sequtils, times]
 # the user sees them as a single module
 import api, plotly_types, plotly_subplots
 
-when defined(webview) or defined(travis):
+when defined(webview) or defined(testCI):
   import webview
 
 # normally just import browsers module. Howver, in case we run
-# tests on travis, we need a way to open a browser, which is
+# tests on testCI, we need a way to open a browser, which is
 # non-blocking. For some reason `xdg-open` does not return immediately
-# on travis.
-when not defined(travis):
+# on testCI.
+when not defined(testCI):
   import browsers
 
 # check whether user is compiling with thread support. We can only compile
@@ -39,11 +39,11 @@ template openBrowser(): untyped {.dirty.} =
 
 when hasThreadSupport:
   proc showPlotThreaded(file: string, thr: Thread[string], onlySave: static bool = false) =
-    when defined(webview) or defined(travis):
-      # on travis we use webview when saving files. We run the webview loop
+    when defined(webview) or defined(testCI):
+      # on testCI we use webview when saving files. We run the webview loop
       # until the image saving thread is finished
       let w = newWebView("Nim Plotly", "file://" & file)
-      when onlySave or defined(travis):
+      when onlySave or defined(testCI):
         while thr.running:
           discard w.loop(1)
         thr.joinThread
@@ -59,7 +59,7 @@ else:
       let w = newWebView("Nim Plotly", "file://" & file)
       w.run()
       w.exit()
-    elif defined(travis):
+    elif defined(testCI):
       # patched version of Nim's `openDefaultBrowser` which always
       # returns immediately
       var u = quoteShell(file)
