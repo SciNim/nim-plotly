@@ -1,0 +1,8 @@
+* v0.3.0
+- =nim-plotly= now lives under the SciNim organization
+- adds option for auto resizing of plots (=autoResize= argument to
+  =show/saveImage=); #72
+- temporary HTML files of plotly are now not removed by default
+  (=removeTempFiles= argument to =show/saveImage=); #72
+- temporary HTML files are stored in a =nim_plotly= subdirectory and
+  the file names are generated based on a timestamp; #72
