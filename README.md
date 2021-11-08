@@ -1,6 +1,6 @@
 ## nim-plotly: simple plots in nim
 
-[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](http://brentp.github.io/nim-plotly/plotly.html)
+[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](http://scinim.github.io/nim-plotly/)
 [![plotly CI](https://github.com/SciNim/nim-plotly/actions/workflows/ci.yml/badge.svg)](https://github.com/SciNim/nim-plotly/actions/workflows/ci.yml)
 
 This is a functioning plotting library. It supports, *line* (with fill below), *scatter* (with errors), *bar*
