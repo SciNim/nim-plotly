@@ -330,7 +330,7 @@ else:
 
   when not defined(js):
     proc show*(grid: Grid,
-               filename: string,
+               filename = "",
                htmlPath = "",
                htmlTemplate = defaultTmplString,
                removeTempFile = false,
