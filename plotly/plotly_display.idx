@@ -1,0 +1,8 @@
+hasThreadSupport	plotly/plotly_display.html#hasThreadSupport	plotly_display: hasThreadSupport	
+parseTraces	plotly/plotly_display.html#parseTraces,seq[Trace[T]]	plotly_display: parseTraces[T](traces: seq[Trace[T]]): string	
+save	plotly/plotly_display.html#save,SomePlot,string,string	plotly_display: save(p: SomePlot; htmlPath = &quot;&quot;; htmlTemplate = defaultTmplString;\n     filename = &quot;&quot;; autoResize = true): string	
+show	plotly/plotly_display.html#show,SomePlot,string,string	plotly_display: show(p: SomePlot; filename: string; htmlPath = &quot;&quot;;\n     htmlTemplate = defaultTmplString; removeTempFile = false; autoResize = true)	
+show	plotly/plotly_display.html#show,SomePlot,string	plotly_display: show(p: SomePlot; htmlPath = &quot;&quot;; htmlTemplate = defaultTmplString;\n     removeTempFile = false; autoResize = true)	
+saveImage	plotly/plotly_display.html#saveImage,SomePlot,string,string	plotly_display: saveImage(p: SomePlot; filename: string; htmlPath = &quot;&quot;;\n          htmlTemplate = defaultTmplString; removeTempFile = false;\n          autoResize = false)	
+show	plotly/plotly_display.html#show,Grid,string,string	plotly_display: show(grid: Grid; filename: string; htmlPath = &quot;&quot;;\n     htmlTemplate = defaultTmplString; removeTempFile = false; autoResize = true)	
+show	plotly/plotly_display.html#show,Grid,string	plotly_display: show(grid: Grid; htmlPath = &quot;&quot;; htmlTemplate = defaultTmplString;\n     removeTempFile = false; autoResize = true)	

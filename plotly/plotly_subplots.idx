@@ -1,0 +1,11 @@
+Grid	plotly/plotly_subplots.html#Grid	plotly_subplots: Grid	
+convertDomain	plotly/plotly_subplots.html#convertDomain	plotly_subplots: convertDomain(d: Domain | DomainAlt): Domain	
+subplots	plotly/plotly_subplots.html#subplots.m,untyped	plotly_subplots: subplots(stmts: untyped): untyped	
+createGrid	plotly/plotly_subplots.html#createGrid,int,int	plotly_subplots: createGrid(numPlots: int; numPlotsPerRow = 0; layout = Layout()): Grid	
+createGrid	plotly/plotly_subplots.html#createGrid,tuple[int,int]	plotly_subplots: createGrid(size: tuple[rows, cols: int]; layout = Layout()): Grid	
+add	plotly/plotly_subplots.html#add,Grid,Plot[T]	plotly_subplots: add[T](grid: var Grid; plt: Plot[T])	
+`[]=`	plotly/plotly_subplots.html#[]=,Grid,int,Plot[T]	plotly_subplots: `[]=`[T](grid: var Grid; idx: int; plt: Plot[T])	
+`[]=`	plotly/plotly_subplots.html#[]=,Grid,tuple[int,int],Plot[T]	plotly_subplots: `[]=`[T](grid: var Grid; coord: tuple[row, col: int]; plt: Plot[T])	
+`[]`	plotly/plotly_subplots.html#[],Grid,int	plotly_subplots: `[]`(grid: Grid; idx: int): PlotJson	
+`[]`	plotly/plotly_subplots.html#[],Grid,tuple[int,int]	plotly_subplots: `[]`(grid: Grid; coord: tuple[row, col: int]): PlotJson	
+toPlotJson	plotly/plotly_subplots.html#toPlotJson,Grid	plotly_subplots: toPlotJson(grid: Grid): PlotJson	

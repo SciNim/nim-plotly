@@ -1,0 +1,45 @@
+newPlot	plotly/plotly_sugar.html#newPlot,string,string,string	plotly_sugar: newPlot(xlabel = &quot;&quot;; ylabel = &quot;&quot;; title = &quot;&quot;): Plot[float64]	
+roundOrIdent	plotly/plotly_sugar.html#roundOrIdent,T	plotly_sugar: roundOrIdent[T: SomeNumber](x: T): T	
+barPlot	plotly/plotly_sugar.html#barPlot.t,untyped,untyped	plotly_sugar: barPlot(x, y: untyped): untyped	
+histTrace	plotly/plotly_sugar.html#histTrace,seq[T]	plotly_sugar: histTrace[T](hist: seq[T]): Trace[T]	
+histPlot	plotly/plotly_sugar.html#histPlot.t,untyped	plotly_sugar: histPlot(hist: untyped): untyped	
+heatmap	plotly/plotly_sugar.html#heatmap.t,untyped,untyped,untyped	plotly_sugar: heatmap(x, y, z: untyped): untyped	
+heatmapTrace	plotly/plotly_sugar.html#heatmapTrace,seq[seq[T]]	plotly_sugar: heatmapTrace[T](z: seq[seq[T]]): Trace[T]	
+heatmap	plotly/plotly_sugar.html#heatmap.t,seq[seq[T]]	plotly_sugar: heatmap[T](z: seq[seq[T]]): untyped	
+scatterTrace	plotly/plotly_sugar.html#scatterTrace,seq[T],seq[U]	plotly_sugar: scatterTrace[T, U](x: seq[T]; y: seq[U]): Trace[T]	
+scatterPlot	plotly/plotly_sugar.html#scatterPlot.t,untyped,untyped	plotly_sugar: scatterPlot(x, y: untyped): untyped	
+scatterColor	plotly/plotly_sugar.html#scatterColor.t,untyped,untyped,untyped	plotly_sugar: scatterColor(x, y, z: untyped): untyped	
+addTrace	plotly/plotly_sugar.html#addTrace,Plot[T],Trace[T]	plotly_sugar: addTrace[T](plt: Plot[T]; t: Trace[T]): Plot[T]	
+title	plotly/plotly_sugar.html#title,Plot[T],string	plotly_sugar: title[T](plt: Plot[T]; t: string): Plot[T]	
+width	plotly/plotly_sugar.html#width,Plot[T: SomeNumber],U	plotly_sugar: width[T, U: SomeNumber](plt: Plot[T]; width: U): Plot[T]	
+height	plotly/plotly_sugar.html#height,Plot[T: SomeNumber],U	plotly_sugar: height[T, U: SomeNumber](plt: Plot[T]; height: U): Plot[T]	
+text	plotly/plotly_sugar.html#text,Plot[T],U,int	plotly_sugar: text[T; U: string | seq[string]](plt: Plot[T]; val: U; idx = 0): Plot[T]	
+markerSize	plotly/plotly_sugar.html#markerSize,Plot[T],SomeNumber,int	plotly_sugar: markerSize[T](plt: Plot[T]; val: SomeNumber; idx = 0): Plot[T]	
+markerSizes	plotly/plotly_sugar.html#markerSizes,Plot[T],seq[T],int	plotly_sugar: markerSizes[T](plt: Plot[T]; sizes: seq[T]; idx = 0): Plot[T]	
+markerColor	plotly/plotly_sugar.html#markerColor,Plot[T],ColorMap,int	plotly_sugar: markerColor[T](plt: Plot[T]; colors: seq[Color] | seq[T] = @[];\n               map: ColorMap = ColorMap.None; idx = 0): Plot[T]	
+mode	plotly/plotly_sugar.html#mode,Plot[T],PlotMode,int	plotly_sugar: mode[T](plt: Plot[T]; m: PlotMode; idx = 0): Plot[T]	
+lineWidth	plotly/plotly_sugar.html#lineWidth,Plot[T],SomeNumber,int	plotly_sugar: lineWidth[T](plt: Plot[T]; val: SomeNumber; idx = 0): Plot[T]	
+pltLabel	plotly/plotly_sugar.html#pltLabel.t,untyped,untyped,string	plotly_sugar: pltLabel(plt: untyped; axis: untyped; label: string): untyped	
+xlabel	plotly/plotly_sugar.html#xlabel,Plot[T],string	plotly_sugar: xlabel[T](plt: Plot[T]; label: string): Plot[T]	
+ylabel	plotly/plotly_sugar.html#ylabel,Plot[T],string	plotly_sugar: ylabel[T](plt: Plot[T]; label: string): Plot[T]	
+name	plotly/plotly_sugar.html#name,Plot[T],string,int	plotly_sugar: name[T](plt: Plot[T]; name: string; idx = 0): Plot[T]	
+nbins	plotly/plotly_sugar.html#nbins,Plot[T],int,int	plotly_sugar: nbins[T](plt: Plot[T]; nbins: int; idx = 0): Plot[T]	
+binSize	plotly/plotly_sugar.html#binSize,Plot[T],float,int	plotly_sugar: binSize[T](plt: Plot[T]; size: float; idx = 0): Plot[T]	
+binRange	plotly/plotly_sugar.html#binRange,Plot[T],float,float,int	plotly_sugar: binRange[T](plt: Plot[T]; start, stop: float; idx = 0): Plot[T]	
+legend	plotly/plotly_sugar.html#legend,Plot[T],Legend	plotly_sugar: legend[T](plt: Plot[T]; legend: Legend): Plot[T]	
+legendLocation	plotly/plotly_sugar.html#legendLocation,Plot[T],float,float	plotly_sugar: legendLocation[T](plt: Plot[T]; x, y: float): Plot[T]	
+legendBgColor	plotly/plotly_sugar.html#legendBgColor,Plot[T],Color	plotly_sugar: legendBgColor[T](plt: Plot[T]; color: Color): Plot[T]	
+legendBorderColor	plotly/plotly_sugar.html#legendBorderColor,Plot[T],Color	plotly_sugar: legendBorderColor[T](plt: Plot[T]; color: Color): Plot[T]	
+legendBorderWidth	plotly/plotly_sugar.html#legendBorderWidth,Plot[T],int	plotly_sugar: legendBorderWidth[T](plt: Plot[T]; width: int): Plot[T]	
+legendOrientation	plotly/plotly_sugar.html#legendOrientation,Plot[T],Orientation	plotly_sugar: legendOrientation[T](plt: Plot[T]; orientation: Orientation): Plot[T]	
+gridWidthX	plotly/plotly_sugar.html#gridWidthX,Plot[T],int	plotly_sugar: gridWidthX[T](plt: Plot[T]; width: int): Plot[T]	
+gridWidthY	plotly/plotly_sugar.html#gridWidthY,Plot[T],int	plotly_sugar: gridWidthY[T](plt: Plot[T]; width: int): Plot[T]	
+gridWidth	plotly/plotly_sugar.html#gridWidth,Plot[T],int	plotly_sugar: gridWidth[T](plt: Plot[T]; width: int): Plot[T]	
+gridColorX	plotly/plotly_sugar.html#gridColorX,Plot[T],Color	plotly_sugar: gridColorX[T](plt: Plot[T]; color: Color): Plot[T]	
+gridColorY	plotly/plotly_sugar.html#gridColorY,Plot[T],Color	plotly_sugar: gridColorY[T](plt: Plot[T]; color: Color): Plot[T]	
+gridColor	plotly/plotly_sugar.html#gridColor,Plot[T],Color	plotly_sugar: gridColor[T](plt: Plot[T]; color: Color): Plot[T]	
+backgroundColor	plotly/plotly_sugar.html#backgroundColor,Plot[T],Color	plotly_sugar: backgroundColor[T](plt: Plot[T]; color: Color): Plot[T]	
+paperColor	plotly/plotly_sugar.html#paperColor,Plot[T],Color	plotly_sugar: paperColor[T](plt: Plot[T]; color: Color): Plot[T]	
+colormap	plotly/plotly_sugar.html#colormap,Plot[T],U,int	plotly_sugar: colormap[T; U: AllowedColorMap](plt: Plot[T]; colormap: U; idx = 0): Plot[T]	
+zmin	plotly/plotly_sugar.html#zmin,Plot[T],float,int	plotly_sugar: zmin[T](plt: Plot[T]; val: float; idx = 0): Plot[T]	
+zmax	plotly/plotly_sugar.html#zmax,Plot[T],float,int	plotly_sugar: zmax[T](plt: Plot[T]; val: float; idx = 0): Plot[T]	

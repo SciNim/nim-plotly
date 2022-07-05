@@ -1,0 +1,6 @@
+empty	plotly/color.html#empty	color: empty(): Color	
+isEmpty	plotly/color.html#isEmpty,Color	color: isEmpty(c: Color): bool	
+toHtmlHex	plotly/color.html#toHtmlHex,seq[Color]	color: toHtmlHex(colors: seq[Color]): seq[string]	
+makeZeroWhite	plotly/color.html#makeZeroWhite,CmapData	color: makeZeroWhite(cmap: CmapData): CmapData	
+makePlotlyCustomMap	plotly/color.html#makePlotlyCustomMap,CustomColorMap	color: makePlotlyCustomMap(map: CustomColorMap): JsonNode	
+getCustomMap	plotly/color.html#getCustomMap,PredefinedCustomMaps	color: getCustomMap(customMap: PredefinedCustomMaps): CustomColorMap	

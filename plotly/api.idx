@@ -1,0 +1,12 @@
+toPlotJson	plotly/api.html#toPlotJson,Plot[T]	api: toPlotJson[T](plt: Plot[T]): PlotJson	
+`%`	plotly/api.html#%,Color	api: `%`(c: Color): JsonNode	
+`%`	plotly/api.html#%,Font	api: `%`(f: Font): JsonNode	
+`%`	plotly/api.html#%,Axis	api: `%`(a: Axis): JsonNode	
+`%`	plotly/api.html#%,Legend	api: `%`(l: Legend): JsonNode	
+`%`	plotly/api.html#%,Layout	api: `%`(l: Layout): JsonNode	
+`%`	plotly/api.html#%,Annotation	api: `%`(a: Annotation): JsonNode	
+`%`	plotly/api.html#%,ErrorBar	api: `%`(b: ErrorBar): JsonNode	
+`%`	plotly/api.html#%,Trace	api: `%`(t: Trace): JsonNode	
+`%`	plotly/api.html#%,Marker	api: `%`(m: Marker): JsonNode	
+`$`	plotly/api.html#$,Trace	api: `$`(d: Trace): string	
+json	plotly/api.html#json,Trace	api: json(d: Trace; as_pretty = false): string	
