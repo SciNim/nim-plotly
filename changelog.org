@@ -1,3 +1,7 @@
+* v0.3.2
+- fix behavior of =show= when =--threads:on= for =Grid= usage, in
+  particular for example 18. =filename= argument is now optional,
+  implying just viewing a plot when none given instead of saving.
 * v0.3.1
 - fix link to docs in the README
 * v0.3.0
