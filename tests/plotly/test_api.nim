@@ -495,20 +495,21 @@ suite "show w/ filename without threads fails compilation":
                        xs: xs, ys: ys)
   let plt = Plot[float](layout: layout, traces: @[d])
 
-  ## NOTE: the following tests assume the test is compiled without `--threads:on`!
-  test "Plot - saveImage fails":
-    check compileFails(plt.saveImage("test.svg"))
+  when not compileOption("threads"):
+    ## NOTE: the following tests assume the test is compiled without `--threads:on`!
+    test "Plot - saveImage fails":
+      check compileFails(plt.saveImage("test.svg"))
 
-  test "PlotJson - saveImage fails":
-    check compileFails(plt.toPlotJson.saveImage("test.svg"))
+    test "PlotJson - saveImage fails":
+      check compileFails(plt.toPlotJson.saveImage("test.svg"))
 
-  test "Plot - show w/ filename w/o threads:on fails":
-    check compileFails(plt.show("test.svg"))
+    test "Plot - show w/ filename w/o threads:on fails":
+      check compileFails(plt.show("test.svg"))
 
-  test "PlotJson - show w/ filename w/o threads:on fails":
-    check compileFails(plt.toPlotJson.show("test.svg"))
+    test "PlotJson - show w/ filename w/o threads:on fails":
+      check compileFails(plt.toPlotJson.show("test.svg"))
 
-  test "Grid - show w/ filename w/o threads:on fails":
-    var grid = createGrid(1)
-    grid[0] = plt
-    check compileFails(grid.show("test.svg"))
+    test "Grid - show w/ filename w/o threads:on fails":
+      var grid = createGrid(1)
+      grid[0] = plt
+      check compileFails(grid.show("test.svg"))
