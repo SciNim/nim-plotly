@@ -43,6 +43,7 @@ type
     Unset = ""
     ToNextY = "tonexty"
     ToZeroY = "tozeroy"
+    ToSelf = "toself"
 
   PlotMode* {.pure.} = enum
     Lines = "lines"
