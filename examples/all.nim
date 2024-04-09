@@ -14,3 +14,4 @@ import fig15_horizontalBarPlot
 import fig16_plotly_sugar
 import fig17_color_font_legend
 import fig18_subplots
+import fig21_error_band
