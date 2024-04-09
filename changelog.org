@@ -1,3 +1,10 @@
+* v0.3.3
+- add ~hideLine~ for ~Trace~ object for scatter plots, in order to set
+  the line width to 0. Used for backwards compatibility, because
+  setting a value of 0 would be the default.
+- add ~FillMode~ value of ~toSelf~ to allow colored bands / filled
+  polygons
+- add example for a manual error band    
 * v0.3.2
 - fix behavior of =show= when =--threads:on= for =Grid= usage, in
   particular for example 18. =filename= argument is now optional,
