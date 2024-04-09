@@ -1,0 +1,14 @@
+nimTitle	api	plotly/api.html	module plotly/api		0
+nim	toPlotJson	plotly/api.html#toPlotJson,Plot[T]	proc toPlotJson[T](plt: Plot[T]): PlotJson		12
+nim	`%`	plotly/api.html#%,Color	proc `%`(c: Color): JsonNode		123
+nim	`%`	plotly/api.html#%,Font	proc `%`(f: Font): JsonNode		126
+nim	`%`	plotly/api.html#%,Axis	proc `%`(a: Axis): JsonNode		136
+nim	`%`	plotly/api.html#%,Legend	proc `%`(l: Legend): JsonNode		169
+nim	`%`	plotly/api.html#%,Layout	proc `%`(l: Layout): JsonNode		190
+nim	`%`	plotly/api.html#%,Annotation	proc `%`(a: Annotation): JsonNode		226
+nim	`%`	plotly/api.html#%,ErrorBar	proc `%`(b: ErrorBar): JsonNode		236
+nim	`%`	plotly/api.html#%,Trace	proc `%`(t: Trace): JsonNode		278
+nim	`%`	plotly/api.html#%,Marker	proc `%`(m: Marker): JsonNode		368
+nim	`$`	plotly/api.html#$,Trace	proc `$`(d: Trace): string		387
+nim	json	plotly/api.html#json,Trace	proc json(d: Trace; as_pretty = false): string		391
+nimgrp	%	plotly/api.html#%-procs-all	proc		123

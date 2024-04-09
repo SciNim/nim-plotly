@@ -1,0 +1,5 @@
+nimTitle	predefined_colormaps	plotly/predefined_colormaps.html	module plotly/predefined_colormaps		0
+nim	MagmaRaw	plotly/predefined_colormaps.html#MagmaRaw	let MagmaRaw		12
+nim	InfernoRaw	plotly/predefined_colormaps.html#InfernoRaw	let InfernoRaw		271
+nim	PlasmaRaw	plotly/predefined_colormaps.html#PlasmaRaw	let PlasmaRaw		530
+nim	ViridisRaw	plotly/predefined_colormaps.html#ViridisRaw	let ViridisRaw		789

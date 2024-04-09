@@ -1,0 +1,8 @@
+nimTitle	plotly_display	plotly/plotly_display.html	module plotly/plotly_display		0
+nim	hasThreadSupport	plotly/plotly_display.html#hasThreadSupport	const hasThreadSupport		19
+nim	parseTraces	plotly/plotly_display.html#parseTraces,seq[Trace[T]]	proc parseTraces[T](traces: seq[Trace[T]]): string		82
+nim	save	plotly/plotly_display.html#save,SomePlot,string,string	proc save(p: SomePlot; htmlPath = ""; htmlTemplate = defaultTmplString;\n     filename = ""; autoResize = true): string		157
+nim	show	plotly/plotly_display.html#show,SomePlot,string,string,staticbool	proc show(p: SomePlot; filename = ""; htmlPath = "";\n     htmlTemplate = defaultTmplString; onlySave: static bool = false;\n     removeTempFile = false; autoResize = true)		256
+nim	saveImage	plotly/plotly_display.html#saveImage,SomePlot,string,string	proc saveImage(p: SomePlot; filename: string; htmlPath = "";\n          htmlTemplate = defaultTmplString; removeTempFile = false;\n          autoResize = false)		298
+nim	show	plotly/plotly_display.html#show,Grid,string,string	proc show(grid: Grid; filename = ""; htmlPath = ""; htmlTemplate = defaultTmplString;\n     removeTempFile = false; autoResize = true)		332
+nimgrp	show	plotly/plotly_display.html#show-procs-all	proc		256

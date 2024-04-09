@@ -1,0 +1,7 @@
+nimTitle	color	plotly/color.html	module plotly/color		0
+nim	empty	plotly/color.html#empty	proc empty(): Color		16
+nim	isEmpty	plotly/color.html#isEmpty,Color	proc isEmpty(c: Color): bool		20
+nim	toHtmlHex	plotly/color.html#toHtmlHex,seq[Color]	proc toHtmlHex(colors: seq[Color]): seq[string]		25
+nim	makeZeroWhite	plotly/color.html#makeZeroWhite,CmapData	proc makeZeroWhite(cmap: CmapData): CmapData		30
+nim	makePlotlyCustomMap	plotly/color.html#makePlotlyCustomMap,CustomColorMap	proc makePlotlyCustomMap(map: CustomColorMap): JsonNode		34
+nim	getCustomMap	plotly/color.html#getCustomMap,PredefinedCustomMaps	proc getCustomMap(customMap: PredefinedCustomMaps): CustomColorMap		41

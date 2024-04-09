@@ -1,0 +1,15 @@
+nimTitle	plotly_subplots	plotly/plotly_subplots.html	module plotly/plotly_subplots		0
+nim	Grid	plotly/plotly_subplots.html#Grid	object Grid		12
+nim	convertDomain	plotly/plotly_subplots.html#convertDomain	proc convertDomain(d: Domain | DomainAlt): Domain		18
+nim	subplots	plotly/plotly_subplots.html#subplots.m,untyped	macro subplots(stmts: untyped): untyped		251
+nim	createGrid	plotly/plotly_subplots.html#createGrid,int,int	proc createGrid(numPlots: int; numPlotsPerRow = 0; layout = Layout()): Grid		335
+nim	createGrid	plotly/plotly_subplots.html#createGrid,tuple[int,int]	proc createGrid(size: tuple[rows, cols: int]; layout = Layout()): Grid		345
+nim	add	plotly/plotly_subplots.html#add,Grid,Plot[T]	proc add[T](grid: var Grid; plt: Plot[T])		352
+nim	`[]=`	plotly/plotly_subplots.html#[]=,Grid,int,Plot[T]	proc `[]=`[T](grid: var Grid; idx: int; plt: Plot[T])		359
+nim	`[]=`	plotly/plotly_subplots.html#[]=,Grid,tuple[int,int],Plot[T]	proc `[]=`[T](grid: var Grid; coord: tuple[row, col: int]; plt: Plot[T])		367
+nim	`[]`	plotly/plotly_subplots.html#[],Grid,int	proc `[]`(grid: Grid; idx: int): PlotJson		379
+nim	`[]`	plotly/plotly_subplots.html#[],Grid,tuple[int,int]	proc `[]`(grid: Grid; coord: tuple[row, col: int]): PlotJson		385
+nim	toPlotJson	plotly/plotly_subplots.html#toPlotJson,Grid	proc toPlotJson(grid: Grid): PlotJson		392
+nimgrp	creategrid	plotly/plotly_subplots.html#createGrid-procs-all	proc		335
+nimgrp	[]=	plotly/plotly_subplots.html#[]=-procs-all	proc		359
+nimgrp	[]	plotly/plotly_subplots.html#[]-procs-all	proc		379

@@ -1,0 +1,3 @@
+nimTitle	image_retrieve	plotly/image_retrieve.html	module plotly/image_retrieve		0
+nim	parseImageType	plotly/image_retrieve.html#parseImageType,string	proc parseImageType(filename: string): string		23
+nim	listenForImage	plotly/image_retrieve.html#listenForImage,string	proc listenForImage(filename: string)		127

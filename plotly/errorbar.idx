@@ -1,0 +1,7 @@
+nimTitle	errorbar	plotly/errorbar.html	module plotly/errorbar		0
+nim	newErrorBar	plotly/errorbar.html#newErrorBar,T,Color,float,float	proc newErrorBar[T: SomeNumber](err: T; color: Color = empty(); thickness = 0.0;\n                           width = 0.0; visible = true; percent = false): ErrorBar[\n    T]		10
+nim	newErrorBar	plotly/errorbar.html#newErrorBar,tuple[T,T],Color,float,float	proc newErrorBar[T: SomeNumber](err: tuple[m, p: T]; color: Color = empty();\n                           thickness = 0.0; width = 0.0; visible = true;\n                           percent = false): ErrorBar[T]		25
+nim	newErrorBar	plotly/errorbar.html#newErrorBar,Color,float,float	proc newErrorBar[T: SomeNumber](color: Color = empty(); thickness = 0.0; width = 0.0;\n                           visible = true): ErrorBar[T]		43
+nim	newErrorBar	plotly/errorbar.html#newErrorBar,seq[T],Color,float,float	proc newErrorBar[T](err: seq[T]; color: Color = empty(); thickness = 0.0;\n               width = 0.0; visible = true): ErrorBar[T]		49
+nim	newErrorBar	plotly/errorbar.html#newErrorBar,tuple[seq[T],seq[T]],Color,float,float	proc newErrorBar[T: SomeNumber](err: tuple[m, p: seq[T]]; color: Color = empty();\n                           thickness = 0.0; width = 0.0; visible = true): ErrorBar[\n    T]		56
+nimgrp	newerrorbar	plotly/errorbar.html#newErrorBar-procs-all	proc		10

@@ -1,0 +1,46 @@
+nimTitle	plotly_types	plotly/plotly_types.html	module plotly/plotly_types		0
+nim	Plot	plotly/plotly_types.html#Plot	type Plot		6
+nim	PlotJson	plotly/plotly_types.html#PlotJson	type PlotJson		10
+nim	SomePlot	plotly/plotly_types.html#SomePlot	type SomePlot		14
+nim	PlotType	plotly/plotly_types.html#PlotType	enum PlotType		16
+nim	HistFunc	plotly/plotly_types.html#HistFunc	enum HistFunc		27
+nim	HistNorm	plotly/plotly_types.html#HistNorm	enum HistNorm		35
+nim	PlotFill	plotly/plotly_types.html#PlotFill	enum PlotFill		42
+nim	PlotMode	plotly/plotly_types.html#PlotMode	enum PlotMode		48
+nim	BarMode	plotly/plotly_types.html#BarMode	enum BarMode		53
+nim	BarAlign	plotly/plotly_types.html#BarAlign	enum BarAlign		58
+nim	Orientation	plotly/plotly_types.html#Orientation	enum Orientation		63
+nim	HoverMode	plotly/plotly_types.html#HoverMode	enum HoverMode		68
+nim	PlotSide	plotly/plotly_types.html#PlotSide	enum PlotSide		74
+nim	ColorMap	plotly/plotly_types.html#ColorMap	enum ColorMap		79
+nim	Other	plotly/plotly_types.html#Other	PredefinedCustomMaps.Other		101
+nim	ViridisZeroWhite	plotly/plotly_types.html#ViridisZeroWhite	PredefinedCustomMaps.ViridisZeroWhite		101
+nim	Plasma	plotly/plotly_types.html#Plasma	PredefinedCustomMaps.Plasma		101
+nim	PlasmaZeroWhite	plotly/plotly_types.html#PlasmaZeroWhite	PredefinedCustomMaps.PlasmaZeroWhite		101
+nim	Magma	plotly/plotly_types.html#Magma	PredefinedCustomMaps.Magma		101
+nim	MagmaZeroWhite	plotly/plotly_types.html#MagmaZeroWhite	PredefinedCustomMaps.MagmaZeroWhite		101
+nim	Inferno	plotly/plotly_types.html#Inferno	PredefinedCustomMaps.Inferno		101
+nim	InfernoZeroWhite	plotly/plotly_types.html#InfernoZeroWhite	PredefinedCustomMaps.InfernoZeroWhite		101
+nim	WhiteToBlack	plotly/plotly_types.html#WhiteToBlack	PredefinedCustomMaps.WhiteToBlack		101
+nim	PredefinedCustomMaps	plotly/plotly_types.html#PredefinedCustomMaps	enum PredefinedCustomMaps		101
+nim	CustomColorMap	plotly/plotly_types.html#CustomColorMap	type CustomColorMap		109
+nim	AxisType	plotly/plotly_types.html#AxisType	enum AxisType		115
+nim	ebkConstantSym	plotly/plotly_types.html#ebkConstantSym	ErrorBarKind.ebkConstantSym		119
+nim	ebkConstantAsym	plotly/plotly_types.html#ebkConstantAsym	ErrorBarKind.ebkConstantAsym		119
+nim	ebkPercentSym	plotly/plotly_types.html#ebkPercentSym	ErrorBarKind.ebkPercentSym		119
+nim	ebkPercentAsym	plotly/plotly_types.html#ebkPercentAsym	ErrorBarKind.ebkPercentAsym		119
+nim	ebkSqrt	plotly/plotly_types.html#ebkSqrt	ErrorBarKind.ebkSqrt		119
+nim	ebkArraySym	plotly/plotly_types.html#ebkArraySym	ErrorBarKind.ebkArraySym		119
+nim	ebkArrayAsym	plotly/plotly_types.html#ebkArrayAsym	ErrorBarKind.ebkArrayAsym		119
+nim	ErrorBarKind	plotly/plotly_types.html#ErrorBarKind	enum ErrorBarKind		119
+nim	ErrorBar	plotly/plotly_types.html#ErrorBar	type ErrorBar		128
+nim	Marker	plotly/plotly_types.html#Marker	type Marker		154
+nim	Trace	plotly/plotly_types.html#Trace	type Trace		163
+nim	Font	plotly/plotly_types.html#Font	type Font		227
+nim	RangeSlider	plotly/plotly_types.html#RangeSlider	type RangeSlider		232
+nim	Domain	plotly/plotly_types.html#Domain	tuple Domain		237
+nim	DomainAlt	plotly/plotly_types.html#DomainAlt	tuple DomainAlt		241
+nim	Axis	plotly/plotly_types.html#Axis	type Axis		244
+nim	Annotation	plotly/plotly_types.html#Annotation	type Annotation		258
+nim	Legend	plotly/plotly_types.html#Legend	type Legend		266
+nim	Layout	plotly/plotly_types.html#Layout	type Layout		276

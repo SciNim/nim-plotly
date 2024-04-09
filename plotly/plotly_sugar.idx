@@ -1,0 +1,47 @@
+nimTitle	plotly_sugar	plotly/plotly_sugar.html	module plotly/plotly_sugar		0
+nim	newPlot	plotly/plotly_sugar.html#newPlot,string,string,string	proc newPlot(xlabel = ""; ylabel = ""; title = ""): Plot[float64]		6
+nim	roundOrIdent	plotly/plotly_sugar.html#roundOrIdent,T	proc roundOrIdent[T: SomeNumber](x: T): T		15
+nim	barPlot	plotly/plotly_sugar.html#barPlot.t,untyped,untyped	template barPlot(x, y: untyped): untyped		21
+nim	histTrace	plotly/plotly_sugar.html#histTrace,seq[T]	proc histTrace[T](hist: seq[T]): Trace[T]		44
+nim	histPlot	plotly/plotly_sugar.html#histPlot.t,untyped	template histPlot(hist: untyped): untyped		49
+nim	heatmap	plotly/plotly_sugar.html#heatmap.t,untyped,untyped,untyped	template heatmap(x, y, z: untyped): untyped		61
+nim	heatmapTrace	plotly/plotly_sugar.html#heatmapTrace,seq[seq[T]]	proc heatmapTrace[T](z: seq[seq[T]]): Trace[T]		84
+nim	heatmap	plotly/plotly_sugar.html#heatmap.t,seq[seq[T]]	template heatmap[T](z: seq[seq[T]]): untyped		90
+nim	scatterTrace	plotly/plotly_sugar.html#scatterTrace,seq[T],seq[U]	proc scatterTrace[T, U](x: seq[T]; y: seq[U]): Trace[T]		105
+nim	scatterPlot	plotly/plotly_sugar.html#scatterPlot.t,untyped,untyped	template scatterPlot(x, y: untyped): untyped		116
+nim	scatterColor	plotly/plotly_sugar.html#scatterColor.t,untyped,untyped,untyped	template scatterColor(x, y, z: untyped): untyped		128
+nim	addTrace	plotly/plotly_sugar.html#addTrace,Plot[T],Trace[T]	proc addTrace[T](plt: Plot[T]; t: Trace[T]): Plot[T]		142
+nim	title	plotly/plotly_sugar.html#title,Plot[T],string	proc title[T](plt: Plot[T]; t: string): Plot[T]		146
+nim	width	plotly/plotly_sugar.html#width,Plot[T: SomeNumber],U	proc width[T, U: SomeNumber](plt: Plot[T]; width: U): Plot[T]		150
+nim	height	plotly/plotly_sugar.html#height,Plot[T: SomeNumber],U	proc height[T, U: SomeNumber](plt: Plot[T]; height: U): Plot[T]		154
+nim	text	plotly/plotly_sugar.html#text,Plot[T],U,int	proc text[T; U: string | seq[string]](plt: Plot[T]; val: U; idx = 0): Plot[T]		158
+nim	markerSize	plotly/plotly_sugar.html#markerSize,Plot[T],SomeNumber,int	proc markerSize[T](plt: Plot[T]; val: SomeNumber; idx = 0): Plot[T]		167
+nim	markerSizes	plotly/plotly_sugar.html#markerSizes,Plot[T],seq[T],int	proc markerSizes[T](plt: Plot[T]; sizes: seq[T]; idx = 0): Plot[T]		175
+nim	markerColor	plotly/plotly_sugar.html#markerColor,Plot[T],ColorMap,int	proc markerColor[T](plt: Plot[T]; colors: seq[Color] | seq[T] = @[];\n               map: ColorMap = ColorMap.None; idx = 0): Plot[T]		183
+nim	mode	plotly/plotly_sugar.html#mode,Plot[T],PlotMode,int	proc mode[T](plt: Plot[T]; m: PlotMode; idx = 0): Plot[T]		198
+nim	lineWidth	plotly/plotly_sugar.html#lineWidth,Plot[T],SomeNumber,int	proc lineWidth[T](plt: Plot[T]; val: SomeNumber; idx = 0): Plot[T]		202
+nim	pltLabel	plotly/plotly_sugar.html#pltLabel.t,untyped,untyped,string	template pltLabel(plt: untyped; axis: untyped; label: string): untyped		207
+nim	xlabel	plotly/plotly_sugar.html#xlabel,Plot[T],string	proc xlabel[T](plt: Plot[T]; label: string): Plot[T]		214
+nim	ylabel	plotly/plotly_sugar.html#ylabel,Plot[T],string	proc ylabel[T](plt: Plot[T]; label: string): Plot[T]		218
+nim	name	plotly/plotly_sugar.html#name,Plot[T],string,int	proc name[T](plt: Plot[T]; name: string; idx = 0): Plot[T]		222
+nim	nbins	plotly/plotly_sugar.html#nbins,Plot[T],int,int	proc nbins[T](plt: Plot[T]; nbins: int; idx = 0): Plot[T]		226
+nim	binSize	plotly/plotly_sugar.html#binSize,Plot[T],float,int	proc binSize[T](plt: Plot[T]; size: float; idx = 0): Plot[T]		231
+nim	binRange	plotly/plotly_sugar.html#binRange,Plot[T],float,float,int	proc binRange[T](plt: Plot[T]; start, stop: float; idx = 0): Plot[T]		236
+nim	legend	plotly/plotly_sugar.html#legend,Plot[T],Legend	proc legend[T](plt: Plot[T]; legend: Legend): Plot[T]		241
+nim	legendLocation	plotly/plotly_sugar.html#legendLocation,Plot[T],float,float	proc legendLocation[T](plt: Plot[T]; x, y: float): Plot[T]		246
+nim	legendBgColor	plotly/plotly_sugar.html#legendBgColor,Plot[T],Color	proc legendBgColor[T](plt: Plot[T]; color: Color): Plot[T]		253
+nim	legendBorderColor	plotly/plotly_sugar.html#legendBorderColor,Plot[T],Color	proc legendBorderColor[T](plt: Plot[T]; color: Color): Plot[T]		259
+nim	legendBorderWidth	plotly/plotly_sugar.html#legendBorderWidth,Plot[T],int	proc legendBorderWidth[T](plt: Plot[T]; width: int): Plot[T]		265
+nim	legendOrientation	plotly/plotly_sugar.html#legendOrientation,Plot[T],Orientation	proc legendOrientation[T](plt: Plot[T]; orientation: Orientation): Plot[T]		271
+nim	gridWidthX	plotly/plotly_sugar.html#gridWidthX,Plot[T],int	proc gridWidthX[T](plt: Plot[T]; width: int): Plot[T]		277
+nim	gridWidthY	plotly/plotly_sugar.html#gridWidthY,Plot[T],int	proc gridWidthY[T](plt: Plot[T]; width: int): Plot[T]		283
+nim	gridWidth	plotly/plotly_sugar.html#gridWidth,Plot[T],int	proc gridWidth[T](plt: Plot[T]; width: int): Plot[T]		289
+nim	gridColorX	plotly/plotly_sugar.html#gridColorX,Plot[T],Color	proc gridColorX[T](plt: Plot[T]; color: Color): Plot[T]		292
+nim	gridColorY	plotly/plotly_sugar.html#gridColorY,Plot[T],Color	proc gridColorY[T](plt: Plot[T]; color: Color): Plot[T]		298
+nim	gridColor	plotly/plotly_sugar.html#gridColor,Plot[T],Color	proc gridColor[T](plt: Plot[T]; color: Color): Plot[T]		304
+nim	backgroundColor	plotly/plotly_sugar.html#backgroundColor,Plot[T],Color	proc backgroundColor[T](plt: Plot[T]; color: Color): Plot[T]		307
+nim	paperColor	plotly/plotly_sugar.html#paperColor,Plot[T],Color	proc paperColor[T](plt: Plot[T]; color: Color): Plot[T]		311
+nim	colormap	plotly/plotly_sugar.html#colormap,Plot[T],U,int	proc colormap[T; U: AllowedColorMap](plt: Plot[T]; colormap: U; idx = 0): Plot[T]		318
+nim	zmin	plotly/plotly_sugar.html#zmin,Plot[T],float,int	proc zmin[T](plt: Plot[T]; val: float; idx = 0): Plot[T]		349
+nim	zmax	plotly/plotly_sugar.html#zmax,Plot[T],float,int	proc zmax[T](plt: Plot[T]; val: float; idx = 0): Plot[T]		356
+nimgrp	heatmap	plotly/plotly_sugar.html#heatmap-templates-all	template		61
