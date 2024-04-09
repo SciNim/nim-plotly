@@ -220,6 +220,7 @@ type
       orientation*: Orientation
     of Scatter, ScatterGL:
       lineWidth*: int
+      hideLine*: bool # can be used to force line to be width 0 (for backwards compatiblity)
     else:
       discard
 

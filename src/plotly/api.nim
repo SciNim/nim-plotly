@@ -342,8 +342,10 @@ func `%`*(t: Trace): JsonNode =
     if t.xs.len > 0:
       fields.parseBarFields(t)
   of PlotType.Scatter, PlotType.ScatterGL:
-    if t.lineWidth > 0:
+    if not t.hideLine and t.lineWidth > 0:
       fields["line"] = %* {"width": t.lineWidth}
+    elif t.hideLine:
+      fields["line"] = %* {"width": 0}
   else:
     discard
 
